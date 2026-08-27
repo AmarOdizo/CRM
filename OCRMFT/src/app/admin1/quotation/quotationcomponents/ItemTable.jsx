@@ -1,5 +1,12 @@
 "use client";
 
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+
 import {
   calculateGrossAmount,
   calculateDiscountAmount,
@@ -112,6 +119,117 @@ export default function ItemTable({ items = [], onChange }) {
     };
   };
 
+  const columnDefs = [
+    {
+      headerName: "Product / Service",
+      field: "productName",
+      editable: true,
+      flex: 1.5,
+      minWidth: 150,
+    },
+    {
+      headerName: "Description",
+      field: "description",
+      editable: true,
+      flex: 2,
+      minWidth: 200,
+    },
+    {
+      headerName: "Qty",
+      field: "quantity",
+      editable: true,
+      width: 90,
+      valueParser: (params) => Number(params.newValue) || 0,
+    },
+    {
+      headerName: "Rate",
+      field: "rate",
+      editable: true,
+      width: 120,
+      valueParser: (params) => Number(params.newValue) || 0,
+    },
+    {
+      headerName: "Discount %",
+      field: "discount",
+      editable: true,
+      width: 110,
+      valueParser: (params) => Number(params.newValue) || 0,
+    },
+    {
+      headerName: "Tax %",
+      field: "tax",
+      editable: true,
+      width: 90,
+      valueParser: (params) => Number(params.newValue) || 0,
+    },
+    {
+      headerName: "Amount",
+      field: "amount",
+      width: 180,
+      cellRenderer: (params) => {
+        const item = params.data;
+        if (!item) return null;
+        const details = params.context.getItemDetails(item);
+        return (
+          <div className="flex flex-col justify-center h-full py-1 text-right leading-tight select-none">
+            <div className="text-sm font-semibold text-gray-800">
+              ₹
+              {details.amount.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </div>
+            <div className="text-[10px] text-gray-400">
+              Gross: ₹{details.grossAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+            </div>
+            {details.discountAmount > 0 && (
+              <div className="text-[10px] text-red-500">
+                Discount: -₹{details.discountAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </div>
+            )}
+            {details.taxAmount > 0 && (
+              <div className="text-[10px] text-blue-500">
+                Tax: +₹{details.taxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              </div>
+            )}
+          </div>
+        );
+      },
+      cellStyle: { textAlign: "right" },
+    },
+    {
+      headerName: "Action",
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-center h-full py-1">
+          <button
+            type="button"
+            onClick={() => params.context.handleRemoveItem(params.node.rowIndex)}
+            disabled={params.context.items.length === 1}
+            className="rounded bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Delete
+          </button>
+        </div>
+      ),
+      width: 100,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    resizable: true,
+    sortable: false,
+    filter: false,
+  };
+
+  const onCellValueChanged = (params) => {
+    const field = params.column.colId;
+    const value = params.newValue;
+    const index = params.node.rowIndex;
+    handleItemChange(index, field, value);
+  };
+
   return (
     <div className="w-full">
       {/* ======================================================
@@ -144,7 +262,7 @@ export default function ItemTable({ items = [], onChange }) {
               text-gray-500
             "
           >
-            Add products or services to this quotation.
+            Add products or services to this quotation. (Double-click or click to edit cells)
           </p>
         </div>
 
@@ -168,7 +286,7 @@ export default function ItemTable({ items = [], onChange }) {
       </div>
 
       {/* ======================================================
-          EMPTY STATE
+          EMPTY STATE / TABLE
       ====================================================== */}
 
       {items.length === 0 ? (
@@ -209,454 +327,22 @@ export default function ItemTable({ items = [], onChange }) {
           </button>
         </div>
       ) : (
-        <div
-          className="
-            overflow-x-auto
-            rounded-xl
-            border
-            border-gray-200
-          "
-        >
-          <table
-            className="
-              min-w-[1100px]
-              w-full
-              border-collapse
-            "
-          >
-            {/* =================================================
-                TABLE HEADER
-            ================================================= */}
-
-            <thead>
-              <tr
-                className="
-                  border-b
-                  border-gray-200
-                  bg-gray-50
-                "
-              >
-                <th
-                  className="
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Product / Service
-                </th>
-
-                <th
-                  className="
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Description
-                </th>
-
-                <th
-                  className="
-                    w-24
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Qty
-                </th>
-
-                <th
-                  className="
-                    w-32
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Rate
-                </th>
-
-                <th
-                  className="
-                    w-28
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Discount %
-                </th>
-
-                <th
-                  className="
-                    w-24
-                    px-4
-                    py-3
-                    text-left
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Tax %
-                </th>
-
-                <th
-                  className="
-                    w-36
-                    px-4
-                    py-3
-                    text-right
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Amount
-                </th>
-
-                <th
-                  className="
-                    w-20
-                    px-4
-                    py-3
-                    text-center
-                    text-xs
-                    font-semibold
-                    uppercase
-                    tracking-wide
-                    text-gray-600
-                  "
-                >
-                  Action
-                </th>
-              </tr>
-            </thead>
-
-            {/* =================================================
-                TABLE BODY
-            ================================================= */}
-
-            <tbody>
-              {items.map((item, index) => {
-                const details = getItemDetails(item);
-
-                return (
-                  <tr
-                    key={item._id || `item-${index}`}
-                    className="
-                        border-b
-                        border-gray-100
-                        align-top
-                        last:border-b-0
-                      "
-                  >
-                    {/* =======================================
-                          PRODUCT NAME
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="text"
-                        value={item.productName || ""}
-                        onChange={(e) =>
-                          handleItemChange(index, "productName", e.target.value)
-                        }
-                        placeholder="Product / Service"
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          DESCRIPTION
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="text"
-                        value={item.description || ""}
-                        onChange={(e) =>
-                          handleItemChange(index, "description", e.target.value)
-                        }
-                        placeholder="Description"
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          QUANTITY
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          handleItemChange(index, "quantity", e.target.value)
-                        }
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          RATE
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.rate}
-                        onChange={(e) =>
-                          handleItemChange(index, "rate", e.target.value)
-                        }
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          DISCOUNT
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        value={item.discount}
-                        onChange={(e) =>
-                          handleItemChange(index, "discount", e.target.value)
-                        }
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          TAX
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        value={item.tax}
-                        onChange={(e) =>
-                          handleItemChange(index, "tax", e.target.value)
-                        }
-                        className="
-                            w-full
-                            rounded-lg
-                            border
-                            border-gray-300
-                            px-3
-                            py-2
-                            text-sm
-                            outline-none
-                            focus:border-blue-500
-                            focus:ring-2
-                            focus:ring-blue-100
-                          "
-                      />
-                    </td>
-
-                    {/* =======================================
-                          AMOUNT
-                      ======================================= */}
-
-                    <td className="px-4 py-3">
-                      <div
-                        className="
-                            text-right
-                            text-sm
-                            font-semibold
-                            text-gray-800
-                          "
-                      >
-                        ₹
-                        {details.amount.toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </div>
-
-                      {/* Calculation Details */}
-
-                      <div
-                        className="
-                            mt-1
-                            text-right
-                            text-[11px]
-                            text-gray-400
-                          "
-                      >
-                        Gross: ₹
-                        {details.grossAmount.toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </div>
-
-                      {details.discountAmount > 0 && (
-                        <div
-                          className="
-                              text-right
-                              text-[11px]
-                              text-red-500
-                            "
-                        >
-                          Discount: -₹
-                          {details.discountAmount.toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </div>
-                      )}
-
-                      {details.taxAmount > 0 && (
-                        <div
-                          className="
-                              text-right
-                              text-[11px]
-                              text-blue-500
-                            "
-                        >
-                          Tax: +₹
-                          {details.taxAmount.toLocaleString("en-IN", {
-                            minimumFractionDigits: 2,
-                          })}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* =======================================
-                          DELETE
-                      ======================================= */}
-
-                    <td className="px-4 py-3 text-center">
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(index)}
-                        disabled={items.length === 1}
-                        className="
-                            rounded-lg
-                            px-3
-                            py-2
-                            text-sm
-                            font-medium
-                            text-red-600
-                            transition
-                            hover:bg-red-50
-                            disabled:cursor-not-allowed
-                            disabled:opacity-40
-                          "
-                        title={
-                          items.length === 1
-                            ? "At least one item is required"
-                            : "Remove item"
-                        }
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="overflow-hidden rounded-xl border border-gray-200 ag-theme-quartz w-full">
+          <AgGridReact
+            rowData={items}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            domLayout="autoHeight"
+            rowHeight={70}
+            headerHeight={50}
+            singleClickEdit={true}
+            onCellValueChanged={onCellValueChanged}
+            context={{
+              items,
+              getItemDetails,
+              handleRemoveItem,
+            }}
+          />
         </div>
       )}
 

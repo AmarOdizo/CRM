@@ -7,6 +7,12 @@ import {
   IndianRupee,
   ReceiptText,
 } from "lucide-react";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import PaymentBadge from "./PaymentBadge";
 import PaymentActions from "./PaymentActions";
@@ -67,6 +73,182 @@ export default function PaymentTable({
     );
   }
 
+  const columnDefs = [
+    {
+      headerName: "#",
+      valueGetter: "node.rowIndex + 1",
+      width: 60,
+      suppressMenu: true,
+      sortable: false,
+    },
+    {
+      headerName: "Invoice",
+      field: "invoiceNumber",
+      flex: 2,
+      minWidth: 200,
+      cellRenderer: (params) => {
+        const invoice =
+          typeof params.data?.invoiceId === "object"
+            ? params.data.invoiceId
+            : params.data?.invoice;
+
+        const invoiceNumber =
+          invoice?.invoiceNumber ||
+          invoice?.invoiceNo ||
+          invoice?.number ||
+          params.data?.invoiceNumber ||
+          params.data?.invoiceNo ||
+          params.data?.invoiceId ||
+          "-";
+
+        const paymentId = params.data?._id || params.data?.id;
+
+        return (
+          <div className="flex items-center gap-3 h-full py-1">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <FileText size={17} />
+            </div>
+
+            <div className="min-w-0 leading-tight">
+              <p className="max-w-[180px] truncate text-sm font-semibold text-gray-800">
+                {invoiceNumber}
+              </p>
+
+              {paymentId && (
+                <p className="max-w-[180px] truncate text-xs text-gray-400">
+                  ID: {paymentId}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Payment Date",
+      field: "paymentDate",
+      flex: 1.5,
+      minWidth: 150,
+      cellRenderer: (params) => {
+        const paymentDate =
+          params.data?.paymentDate || params.data?.date || params.data?.createdAt;
+
+        return (
+          <div className="flex items-center gap-2 text-sm text-gray-600 h-full">
+            <CalendarDays
+              size={16}
+              className="shrink-0 text-gray-400"
+            />
+
+            <span>{params.context.formatDate(paymentDate)}</span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Amount",
+      field: "amount",
+      flex: 1.5,
+      minWidth: 150,
+      cellRenderer: (params) => {
+        const amount =
+          params.data?.amount ??
+          params.data?.paidAmount ??
+          params.data?.paymentAmount ??
+          0;
+
+        return (
+          <div className="flex items-center gap-1.5 h-full">
+            <IndianRupee size={15} className="text-green-600" />
+
+            <span className="text-sm font-bold text-gray-800">
+              {params.context.formatCurrency(amount)}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Method",
+      field: "paymentMethod",
+      flex: 1.5,
+      minWidth: 150,
+      cellRenderer: (params) => {
+        const paymentMethod =
+          params.data?.paymentMethod || params.data?.method || "-";
+
+        return (
+          <div className="flex items-center gap-2 h-full">
+            <CreditCard size={16} className="text-gray-400" />
+
+            <span className="text-sm text-gray-700">
+              {params.context.formatPaymentMethod(paymentMethod)}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Reference",
+      field: "reference",
+      flex: 1.8,
+      minWidth: 180,
+      cellRenderer: (params) => {
+        const reference =
+          params.data?.transactionReference ||
+          params.data?.referenceNumber ||
+          params.data?.transactionId ||
+          params.data?.reference ||
+          "-";
+
+        return (
+          <span
+            className="block max-w-[180px] truncate text-sm text-gray-600 self-center"
+            title={reference}
+          >
+            {params.context.formatReference(reference)}
+          </span>
+        );
+      },
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1.2,
+      minWidth: 120,
+      cellRenderer: (params) => {
+        const status = params.value || "Pending";
+        return (
+          <div className="flex items-center h-full">
+            <PaymentBadge status={status} />
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Actions",
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-end h-full">
+          <PaymentActions
+            payment={params.data}
+            onView={params.context.onView}
+            onEdit={params.context.onEdit}
+            onDelete={params.context.onDelete}
+          />
+        </div>
+      ),
+      width: 120,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       {/* ========================================
@@ -85,242 +267,27 @@ export default function PaymentTable({
       </div>
 
       {/* ========================================
-          RESPONSIVE TABLE
+          RESPONSIVE TABLE (AG GRID)
       ========================================= */}
 
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[1050px] border-collapse">
-          {/* ==================================
-              TABLE HEAD
-          =================================== */}
-
-          <thead>
-            <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                #
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Invoice
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Payment Date
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Amount
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Method
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Reference
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Status
-              </th>
-
-              <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wide text-gray-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          {/* ==================================
-              TABLE BODY
-          =================================== */}
-
-          <tbody className="divide-y divide-gray-100">
-            {payments.map((payment, index) => {
-              // -------------------------------
-              // PAYMENT ID
-              // -------------------------------
-
-              const paymentId = payment?._id || payment?.id;
-
-              // -------------------------------
-              // INVOICE DATA
-              // -------------------------------
-
-              const invoice =
-                typeof payment?.invoiceId === "object"
-                  ? payment.invoiceId
-                  : payment?.invoice;
-
-              const invoiceNumber =
-                invoice?.invoiceNumber ||
-                invoice?.invoiceNo ||
-                invoice?.number ||
-                payment?.invoiceNumber ||
-                payment?.invoiceNo ||
-                payment?.invoiceId ||
-                "-";
-
-              // -------------------------------
-              // PAYMENT AMOUNT
-              // -------------------------------
-
-              const amount =
-                payment?.amount ??
-                payment?.paidAmount ??
-                payment?.paymentAmount ??
-                0;
-
-              // -------------------------------
-              // PAYMENT DATE
-              // -------------------------------
-
-              const paymentDate =
-                payment?.paymentDate || payment?.date || payment?.createdAt;
-
-              // -------------------------------
-              // PAYMENT METHOD
-              // -------------------------------
-
-              const paymentMethod =
-                payment?.paymentMethod || payment?.method || "-";
-
-              // -------------------------------
-              // REFERENCE
-              // -------------------------------
-
-              const reference =
-                payment?.transactionReference ||
-                payment?.referenceNumber ||
-                payment?.transactionId ||
-                payment?.reference ||
-                "-";
-
-              // -------------------------------
-              // STATUS
-              // -------------------------------
-
-              const status = payment?.status || "Pending";
-
-              return (
-                <tr
-                  key={paymentId || index}
-                  className="transition hover:bg-gray-50"
-                >
-                  {/* =========================
-                      INDEX
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <span className="text-sm font-medium text-gray-500">
-                      {index + 1}
-                    </span>
-                  </td>
-
-                  {/* =========================
-                      INVOICE
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                        <FileText size={17} />
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="max-w-[180px] truncate text-sm font-semibold text-gray-800">
-                          {invoiceNumber}
-                        </p>
-
-                        {paymentId && (
-                          <p className="max-w-[180px] truncate text-xs text-gray-400">
-                            ID: {paymentId}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* =========================
-                      DATE
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <CalendarDays
-                        size={16}
-                        className="shrink-0 text-gray-400"
-                      />
-
-                      <span>{formatDate(paymentDate)}</span>
-                    </div>
-                  </td>
-
-                  {/* =========================
-                      AMOUNT
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-1.5">
-                      <IndianRupee size={15} className="text-green-600" />
-
-                      <span className="text-sm font-bold text-gray-800">
-                        {formatCurrency(amount)}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* =========================
-                      METHOD
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-2">
-                      <CreditCard size={16} className="text-gray-400" />
-
-                      <span className="text-sm text-gray-700">
-                        {formatPaymentMethod(paymentMethod)}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* =========================
-                      REFERENCE
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <span
-                      className="block max-w-[180px] truncate text-sm text-gray-600"
-                      title={reference}
-                    >
-                      {formatReference(reference)}
-                    </span>
-                  </td>
-
-                  {/* =========================
-                      STATUS
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <PaymentBadge status={status} />
-                  </td>
-
-                  {/* =========================
-                      ACTIONS
-                  ========================== */}
-
-                  <td className="px-5 py-4">
-                    <PaymentActions
-                      payment={payment}
-                      onView={onView}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="w-full ag-theme-quartz">
+        <AgGridReact
+          rowData={payments}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          domLayout="autoHeight"
+          rowHeight={60}
+          headerHeight={50}
+          context={{
+            onView,
+            onEdit,
+            onDelete,
+            formatCurrency,
+            formatDate,
+            formatPaymentMethod,
+            formatReference,
+          }}
+        />
       </div>
 
       {/* ========================================

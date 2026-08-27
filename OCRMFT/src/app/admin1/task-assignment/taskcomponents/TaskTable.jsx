@@ -1,14 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { ClipboardList } from "lucide-react";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import StatusBadge from "./StatusBadge";
 import PriorityBadge from "./PriorityBadge";
 import TaskActions from "./TaskActions";
 import DeleteModal from "./DeleteModal";
 import ExportCSV from "./ExportCSV";
-
-import { useState } from "react";
 
 export default function TaskTable({
   tasks = [],
@@ -39,9 +44,96 @@ export default function TaskTable({
     setSelectedTask(null);
   };
 
+  const columnDefs = [
+    {
+      headerName: "#",
+      valueGetter: "node.rowIndex + 1",
+      width: 60,
+      suppressMenu: true,
+      sortable: false,
+    },
+    {
+      headerName: "Task",
+      field: "title",
+      flex: 2,
+      minWidth: 200,
+      cellRenderer: (params) => (
+        <div className="flex flex-col justify-center h-full py-1 leading-tight">
+          <p className="truncate text-sm font-semibold text-gray-800">
+            {params.data.title || "Untitled Task"}
+          </p>
+          {params.data.description && (
+            <p className="mt-0.5 truncate text-xs text-gray-500">
+              {params.data.description}
+            </p>
+          )}
+        </div>
+      ),
+    },
+    {
+      headerName: "Assigned To",
+      field: "assignedTo.fullName",
+      flex: 1.2,
+      minWidth: 120,
+      valueGetter: (params) => {
+        return params.data.assignedTo?.fullName || params.data.assignedTo || "-";
+      },
+    },
+    {
+      headerName: "Priority",
+      field: "priority",
+      flex: 1,
+      minWidth: 100,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <PriorityBadge priority={params.value} />
+        </div>
+      ),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1.2,
+      minWidth: 120,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <StatusBadge status={params.value} />
+        </div>
+      ),
+    },
+    {
+      headerName: "Due Date",
+      field: "dueDate",
+      flex: 1.2,
+      minWidth: 120,
+      valueGetter: (params) => {
+        return params.data.dueDate
+          ? new Date(params.data.dueDate).toLocaleDateString()
+          : "-";
+      },
+    },
+    {
+      headerName: "Actions",
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-end gap-2 h-full py-1">
+          <TaskActions task={params.data} onDelete={params.context.onDeleteClick} />
+        </div>
+      ),
+      width: 120,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
   return (
     <>
-      <div className="w-full rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="w-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
         {/* Table Header */}
         <div className="flex flex-col gap-3 border-b border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -71,100 +163,16 @@ export default function TaskTable({
             </p>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto">
-            <table className="w-full min-w-[1000px] border-collapse">
-              {/* Table Head */}
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    #
-                  </th>
-
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Task
-                  </th>
-
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Assigned To
-                  </th>
-
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Priority
-                  </th>
-
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Status
-                  </th>
-
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Due Date
-                  </th>
-
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-
-              {/* Table Body */}
-              <tbody>
-                {tasks.map((task, index) => (
-                  <tr
-                    key={task.id}
-                    className="border-b border-gray-100 transition hover:bg-gray-50"
-                  >
-                    {/* Number */}
-                    <td className="px-4 py-4 text-sm font-medium text-gray-500">
-                      {index + 1}
-                    </td>
-
-                    {/* Task */}
-                    <td className="max-w-[280px] px-4 py-4">
-                      <div>
-                        <p className="truncate text-sm font-semibold text-gray-800">
-                          {task.title || "Untitled Task"}
-                        </p>
-
-                        {task.description && (
-                          <p className="mt-1 truncate text-xs text-gray-500">
-                            {task.description}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Assigned To */}
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {task.assignedTo?.fullName || task.assignedTo || "-"}
-                    </td>
-
-                    {/* Priority */}
-                    <td className="px-4 py-4">
-                      <PriorityBadge priority={task.priority} />
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-4 py-4">
-                      <StatusBadge status={task.status} />
-                    </td>
-
-                    {/* Due Date */}
-                    <td className="px-4 py-4 text-sm text-gray-600">
-                      {task.dueDate
-                        ? new Date(task.dueDate).toLocaleDateString()
-                        : "-"}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-4 py-4">
-                      <div className="flex justify-end">
-                        <TaskActions task={task} onDelete={handleDeleteClick} />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="w-full ag-theme-quartz">
+            <AgGridReact
+              rowData={tasks}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              domLayout="autoHeight"
+              rowHeight={60}
+              headerHeight={50}
+              context={{ onDeleteClick: handleDeleteClick }}
+            />
           </div>
         )}
       </div>

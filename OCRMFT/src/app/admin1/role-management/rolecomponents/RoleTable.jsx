@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import DeleteModal from "./DeleteModal";
 import StatusBadge from "./StatusBadge";
@@ -10,130 +16,123 @@ export default function RoleTable({ roles, onDelete }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
+  const columnDefs = [
+    {
+      headerName: "Role Name",
+      field: "roleName",
+      flex: 2,
+      minWidth: 200,
+      cellRenderer: (params) => (
+        <div className="flex flex-col justify-center h-full py-1 leading-tight">
+          <h3 className="font-semibold text-slate-800">{params.data.roleName}</h3>
+          <p className="text-xs text-slate-500 truncate max-w-[250px]">{params.data.description}</p>
+        </div>
+      ),
+    },
+    {
+      headerName: "Role Code",
+      field: "roleCode",
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      headerName: "Department",
+      field: "department",
+      flex: 1.2,
+      minWidth: 120,
+    },
+    {
+      headerName: "Permissions",
+      field: "permissions",
+      flex: 2,
+      minWidth: 220,
+      cellRenderer: (params) => (
+        <div className="flex flex-wrap gap-1 items-center h-full py-1">
+          {params.value?.length > 0 ? (
+            params.value.slice(0, 3).map((permission, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700"
+              >
+                {permission}
+              </span>
+            ))
+          ) : (
+            <span className="text-gray-400 text-xs">No Permissions</span>
+          )}
+
+          {params.value?.length > 3 && (
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px]">
+              +{params.value.length - 3}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1,
+      minWidth: 120,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <StatusBadge status={params.value} />
+        </div>
+      ),
+    },
+    {
+      headerName: "Actions",
+      cellRenderer: (params) => {
+        const role = params.data;
+        return (
+          <div className="flex items-center gap-2 h-full py-1">
+            <Link
+              href={`/admin1/role-management/view/${role.id}`}
+              className="rounded bg-green-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-green-700 transition"
+            >
+              View
+            </Link>
+            <Link
+              href={`/admin1/role-management/edit/${role.id}`}
+              className="rounded bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 transition"
+            >
+              Edit
+            </Link>
+            <button
+              onClick={() => {
+                setSelectedRole(role);
+                setIsOpen(true);
+              }}
+              className="rounded bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 transition"
+            >
+              Delete
+            </button>
+          </div>
+        );
+      },
+      width: 200,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
   return (
     <>
-      <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Role Name
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Role Code
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Department
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Permissions
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Status
-                </th>
-
-                <th className="px-6 py-4 text-center text-sm font-semibold">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {roles.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="py-10 text-center text-gray-500">
-                    No Roles Found
-                  </td>
-                </tr>
-              ) : (
-                roles.map((role) => (
-                  <tr
-                    key={role.id}
-                    className="border-b hover:bg-slate-50 transition"
-                  >
-                    <td className="px-6 py-4">
-                      <div>
-                        <h3 className="font-semibold text-slate-800">
-                          {role.roleName}
-                        </h3>
-
-                        <p className="text-sm text-slate-500">
-                          {role.description}
-                        </p>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">{role.roleCode}</td>
-
-                    <td className="px-6 py-4">{role.department}</td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {role.permissions?.length > 0 ? (
-                          role.permissions
-                            .slice(0, 3)
-                            .map((permission, index) => (
-                              <span
-                                key={index}
-                                className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700"
-                              >
-                                {permission}
-                              </span>
-                            ))
-                        ) : (
-                          <span className="text-gray-400">No Permissions</span>
-                        )}
-
-                        {role.permissions?.length > 3 && (
-                          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs">
-                            +{role.permissions.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <StatusBadge status={role.status} />
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center gap-2">
-                        <Link
-                          href={`/admin1/role-management/view/${role.id}`}
-                          className="rounded-lg bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700"
-                        >
-                          View
-                        </Link>
-
-                        <Link
-                          href={`/admin1/role-management/edit/${role.id}`}
-                          className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
-                        >
-                          Edit
-                        </Link>
-
-                        <button
-                          onClick={() => {
-                            setSelectedRole(role);
-                            setIsOpen(true);
-                          }}
-                          className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="overflow-hidden rounded-2xl bg-white shadow-xl ag-theme-quartz w-full">
+        <AgGridReact
+          rowData={roles}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          domLayout="autoHeight"
+          rowHeight={60}
+          headerHeight={50}
+        />
       </div>
 
       <DeleteModal
