@@ -1,0 +1,99 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+import ProjectForm from "../projectcomponents/ProjectForm";
+import { addProject } from "../data";
+
+export default function AddProject() {
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    projectName: "",
+    projectCode: "",
+    clientName: "",
+    projectManager: "",
+    teamMembers: [],
+    startDate: "",
+    endDate: "",
+    budget: "",
+    priority: "Medium",
+    status: "Planning",
+    technologyStack: [],
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        ...formData,
+        teamMembers: formData.teamMembers
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+
+        technologyStack: formData.technologyStack
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+      };
+
+      await addProject(payload);
+
+      alert("Project Added Successfully");
+
+      router.push("/admin1/project-management");
+    } catch (error) {
+      console.log(error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-100 p-6">
+      {/* Header */}
+
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-800">Add New Project</h1>
+
+          <p className="mt-2 text-slate-500">
+            Create a new project and assign team members.
+          </p>
+        </div>
+
+        <Link
+          href="/admin1/project-management"
+          className="rounded-xl bg-gray-700 px-5 py-3 font-medium text-white hover:bg-gray-800"
+        >
+          ← Back
+        </Link>
+      </div>
+
+      <ProjectForm
+        formData={formData}
+        setFormData={setFormData}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+        buttonText={loading ? "Saving..." : "Add Project"}
+      />
+    </div>
+  );
+}
