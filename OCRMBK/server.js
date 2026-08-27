@@ -26,6 +26,7 @@ app.use("/api/Task", require("./routes/taskRoutes"));
 app.use("/api/Invoice", require("./routes/invoiceRoutes"));
 app.use("/api/Payment", require("./routes/paymentRoutes"));
 app.use("/api/Meeting", require("./routes/meetingRoutes"));
+app.use("/api/Quotation", require("./routes/quotationRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Employee API Running...");
