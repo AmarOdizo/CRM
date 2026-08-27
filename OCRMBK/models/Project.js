@@ -18,14 +18,28 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client",
+      default: null,
+    },
     projectManager: {
       type: String,
       required: true,
+    },
+    projectManagerRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     teamMembers: {
       type: [String],
       required: true,
     },
+    teamMembersRefs: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    }],
     startDate: {
       type: String,
       required: true,

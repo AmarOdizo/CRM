@@ -4,6 +4,7 @@ const router = express.Router();
 const Leads = require("../models/Leads");
 const Counter = require("../models/Counter");
 const Client = require("../models/Client");
+const { resolveUserRef } = require("../config/relationResolver");
 
 // =======================
 // GET ALL Leads
@@ -11,7 +12,7 @@ const Client = require("../models/Client");
 
 router.get("/", async (req, res) => {
   try {
-    const leads = await Leads.find().populate("client", "clientName");
+    const leads = await Leads.find().populate("client", "clientName").populate("assignedEmployeeRef");
 
     res.status(200).json({
       success: true,
@@ -33,7 +34,7 @@ router.get("/:id", async (req, res) => {
   try {
     const lead = await Leads.findOne({
       id: Number(req.params.id),
-    }).populate("client", "clientName");
+    }).populate("client", "clientName").populate("assignedEmployeeRef");
 
     if (!lead) {
       return res.status(404).json({
@@ -68,6 +69,10 @@ router.post("/", async (req, res) => {
 
     req.body.id = counter.seq;
 
+    if (req.body.assignedEmployee) {
+      req.body.assignedEmployeeRef = await resolveUserRef(req.body.assignedEmployee);
+    }
+
     // Client exists or not
     const client = await Client.findById(req.body.client);
 
@@ -101,6 +106,9 @@ router.post("/", async (req, res) => {
 
 router.put("/update/:id", async (req, res) => {
   try {
+    if (req.body.assignedEmployee !== undefined) {
+      req.body.assignedEmployeeRef = await resolveUserRef(req.body.assignedEmployee);
+    }
     // Agar client update ho raha hai to verify karo
     if (req.body.client) {
       const client = await Client.findById(req.body.client);
@@ -120,7 +128,7 @@ router.put("/update/:id", async (req, res) => {
         new: true,
         runValidators: true,
       },
-    ).populate("client", "clientName");
+    ).populate("client", "clientName").populate("assignedEmployeeRef");
 
     if (!lead) {
       return res.status(404).json({

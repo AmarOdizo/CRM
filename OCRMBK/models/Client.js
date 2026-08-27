@@ -30,6 +30,11 @@ const ClientSchema = new mongoose.Schema(
     clientType: { type: String, required: true },
     status: { type: String, required: true },
     assignedEmployee: { type: String, required: true },
+    assignedEmployeeRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     notes: { type: String, required: true },
   },
 

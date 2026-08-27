@@ -3,11 +3,12 @@ const router = express.Router();
 
 const User = require("../models/User");
 const UserCounter = require("../models/UserCounter");
+const { resolveRoleRef } = require("../config/relationResolver");
 
 // GET All Users
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await User.find().populate("roleRef").sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
 // GET User By MongoDB _id
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findOne({ id: Number(req.params.id) });
+    const user = await User.findOne({ id: Number(req.params.id) }).populate("roleRef");
 
     if (!user) {
       return res.status(404).json({
@@ -119,6 +120,7 @@ router.post("/", async (req, res) => {
       department,
       designation,
       role,
+      roleRef: await resolveRoleRef(role),
       status,
       joiningDate,
       address,
@@ -147,6 +149,9 @@ router.post("/", async (req, res) => {
 
 router.put("/update/:id", async (req, res) => {
   try {
+    if (req.body.role !== undefined) {
+      req.body.roleRef = await resolveRoleRef(req.body.role);
+    }
     const user = await User.findOneAndUpdate(
       { id: Number(req.params.id) },
       req.body,

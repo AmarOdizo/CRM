@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Admin = require("../models/Admin");
+const { resolveRoleRef } = require("../config/relationResolver");
 
 // =======================
 // GET ALL ADMIN
@@ -9,7 +10,7 @@ const Admin = require("../models/Admin");
 
 router.get("/", async (req, res) => {
   try {
-    const admins = await Admin.find();
+    const admins = await Admin.find().populate("roleRef");
 
     res.status(200).json({
       success: true,
@@ -30,6 +31,9 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
+    if (req.body.adminrole) {
+      req.body.roleRef = await resolveRoleRef(req.body.adminrole);
+    }
     const admins = await Admin.create(req.body);
 
     res.status(201).json({
@@ -52,6 +56,9 @@ router.post("/", async (req, res) => {
 
 router.put("/phone/:phone", async (req, res) => {
   try {
+    if (req.body.adminrole !== undefined) {
+      req.body.roleRef = await resolveRoleRef(req.body.adminrole);
+    }
     const admin = await Admin.findOneAndUpdate(
       { phone: req.params.phone }, // Find by phone
       req.body, // Update data

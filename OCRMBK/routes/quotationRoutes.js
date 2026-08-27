@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 const Quotation = require("../models/Quotation");
-
 const { generateQuotationNumber } = require("../models/QuotationCounter");
+const { resolveClientRef } = require("../config/relationResolver");
 
 // ============================================================
 // HELPER: CHECK VALID MONGODB ID
@@ -161,6 +161,11 @@ router.post("/", async (req, res) => {
     // CREATE QUOTATION
     // ------------------------------------------
 
+    let finalCustomerId = customerId;
+    if (!finalCustomerId && customerName) {
+      finalCustomerId = await resolveClientRef(customerName);
+    }
+
     const quotation = new Quotation({
       quotationNumber,
 
@@ -168,7 +173,7 @@ router.post("/", async (req, res) => {
 
       validUntil,
 
-      customerId: customerId || null,
+      customerId: finalCustomerId || null,
 
       customerName,
 
@@ -236,7 +241,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const quotations = await Quotation.find().sort({
+    const quotations = await Quotation.find().populate("customerId").sort({
       createdAt: -1,
     });
 
@@ -279,7 +284,7 @@ router.get("/customer/:customerId", async (req, res) => {
 
     const quotations = await Quotation.find({
       customerId: customerId,
-    }).sort({
+    }).populate("customerId").sort({
       createdAt: -1,
     });
 
@@ -320,7 +325,7 @@ router.get("/:id", async (req, res) => {
       });
     }
 
-    const quotation = await Quotation.findById(id);
+    const quotation = await Quotation.findById(id).populate("customerId");
 
     if (!quotation) {
       return res.status(404).json({
@@ -431,6 +436,8 @@ router.put("/:id", async (req, res) => {
 
     if (customerId !== undefined) {
       existingQuotation.customerId = customerId || null;
+    } else if (customerName !== undefined) {
+      existingQuotation.customerId = await resolveClientRef(customerName) || null;
     }
 
     if (customerName !== undefined) {

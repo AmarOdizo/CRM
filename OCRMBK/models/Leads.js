@@ -51,6 +51,11 @@ const LeadSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    assignedEmployeeRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     notes: {
       type: String,
       required: true,

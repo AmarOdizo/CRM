@@ -26,6 +26,11 @@ const AdminSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    roleRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      default: null,
+    },
     department: {
       type: String,
       required: true,

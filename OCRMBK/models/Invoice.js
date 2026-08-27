@@ -60,6 +60,12 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+ 
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client",
+      default: null,
+    },
 
     clientEmail: {
       type: String,

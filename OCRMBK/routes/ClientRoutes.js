@@ -3,13 +3,14 @@ const router = express.Router();
 
 const Client = require("../models/Client");
 const ClientCounter = require("../models/ClientCounter");
+const { resolveUserRef } = require("../config/relationResolver");
 
 // =======================
 // GET ALL Clients
 // =======================
 router.get("/", async (req, res) => {
   try {
-    const clients = await Client.find().sort({ createdAt: -1 });
+    const clients = await Client.find().populate("assignedEmployeeRef").sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -33,7 +34,7 @@ router.get("/:id", async (req, res) => {
   try {
     const client = await Client.findOne({
       id: Number(req.params.id),
-    });
+    }).populate("assignedEmployeeRef");
 
     if (!client) {
       return res.status(404).json({
@@ -128,6 +129,7 @@ router.post("/", async (req, res) => {
       clientType,
       status,
       assignedEmployee,
+      assignedEmployeeRef: await resolveUserRef(assignedEmployee),
       notes,
     });
 
@@ -151,6 +153,9 @@ router.post("/", async (req, res) => {
 
 router.put("/update/:id", async (req, res) => {
   try {
+    if (req.body.assignedEmployee !== undefined) {
+      req.body.assignedEmployeeRef = await resolveUserRef(req.body.assignedEmployee);
+    }
     const client = await Client.findOneAndUpdate(
       { id: Number(req.params.id) },
       req.body,
