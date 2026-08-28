@@ -160,33 +160,18 @@ export default function CustomerSelector({ value, onChange }) {
 
   return (
     <div className="w-full">
-      {/* =====================================================
-          LABEL
-      ===================================================== */}
-
-      <label
-        className="
-          mb-2
-          block
-          text-sm
-          font-medium
-          text-gray-700
-        "
-      >
+      {/* LABEL */}
+      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
         Select Customer
       </label>
 
-      {/* =====================================================
-          SEARCH INPUT
-      ===================================================== */}
-
+      {/* SEARCH INPUT */}
       <div className="relative">
         <input
           type="text"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-
             if (value?.customerId) {
               onChange({
                 ...value,
@@ -194,107 +179,47 @@ export default function CustomerSelector({ value, onChange }) {
               });
             }
           }}
-          placeholder="Search customer..."
-          className="
-            w-full
-            rounded-lg
-            border
-            border-gray-300
-            bg-white
-            px-4
-            py-2.5
-            text-sm
-            outline-none
-            transition
-            focus:border-blue-500
-            focus:ring-2
-            focus:ring-blue-100
-          "
+          placeholder="Type client name to search..."
+          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-700 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
         />
-
-        {/* =================================================
-            CLEAR BUTTON
-        ================================================= */}
 
         {search && (
           <button
             type="button"
             onClick={handleClear}
-            className="
-              absolute
-              right-3
-              top-1/2
-              -translate-y-1/2
-              text-gray-400
-              hover:text-gray-700
-            "
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold text-sm cursor-pointer"
           >
             ✕
           </button>
         )}
       </div>
 
-      {/* =====================================================
-          LOADING
-      ===================================================== */}
-
+      {/* LOADING */}
       {loading && (
-        <p
-          className="
-            mt-2
-            text-sm
-            text-gray-500
-          "
-        >
-          Loading customers...
+        <p className="mt-2 text-xs font-semibold text-slate-400 animate-pulse">
+          Retrieving customers...
         </p>
       )}
 
-      {/* =====================================================
-          ERROR
-      ===================================================== */}
-
+      {/* ERROR */}
       {error && (
-        <p
-          className="
-            mt-2
-            text-sm
-            text-red-500
-          "
-        >
+        <p className="mt-2 text-xs font-semibold text-rose-600">
           {error}
         </p>
       )}
 
-      {/* =====================================================
-          CUSTOMER LIST
-      ===================================================== */}
-
+      {/* CUSTOMER LIST */}
       {!loading &&
         search &&
         !value?.customerId &&
         filteredCustomers.length > 0 && (
-          <div
-            className="
-              mt-2
-              max-h-60
-              overflow-y-auto
-              rounded-lg
-              border
-              border-gray-200
-              bg-white
-              shadow-lg
-            "
-          >
+          <div className="mt-2 max-h-60 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-xl divide-y divide-slate-100 z-10 relative">
             {filteredCustomers.map((customer) => {
               const customerId = customer?._id || customer?.id;
-
               const customerName =
                 customer?.clientName || customer?.name || customer?.customerName || "Unnamed Customer";
-
               const companyName =
                 customer?.companyName || customer?.company || "";
-
               const email = customer?.email || customer?.customerEmail || "";
 
               return (
@@ -302,48 +227,18 @@ export default function CustomerSelector({ value, onChange }) {
                   key={customerId}
                   type="button"
                   onClick={() => handleSelectCustomer(customer)}
-                  className="
-                      w-full
-                      border-b
-                      border-gray-100
-                      px-4
-                      py-3
-                      text-left
-                      transition
-                      last:border-b-0
-                      hover:bg-blue-50
-                    "
+                  className="w-full px-4 py-3 text-left transition hover:bg-slate-50/80 cursor-pointer"
                 >
-                  <div
-                    className="
-                        text-sm
-                        font-semibold
-                        text-gray-800
-                      "
-                  >
+                  <div className="text-xs font-bold text-slate-700">
                     {customerName}
                   </div>
-
                   {companyName && (
-                    <div
-                      className="
-                          mt-0.5
-                          text-xs
-                          text-gray-500
-                        "
-                    >
+                    <div className="mt-0.5 text-[10px] text-slate-400 font-medium">
                       {companyName}
                     </div>
                   )}
-
                   {email && (
-                    <div
-                      className="
-                          mt-0.5
-                          text-xs
-                          text-gray-400
-                        "
-                    >
+                    <div className="mt-0.5 text-[10px] text-slate-400 font-medium">
                       {email}
                     </div>
                   )}
@@ -353,97 +248,36 @@ export default function CustomerSelector({ value, onChange }) {
           </div>
         )}
 
-      {/* =====================================================
-          NO CUSTOMER
-      ===================================================== */}
-
+      {/* NO CUSTOMER */}
       {!loading &&
         search &&
         !value?.customerId &&
         filteredCustomers.length === 0 && (
-          <div
-            className="
-              mt-2
-              rounded-lg
-              border
-              border-gray-200
-              bg-gray-50
-              px-4
-              py-3
-              text-sm
-              text-gray-500
-            "
-          >
-            No customer found.
+          <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-400">
+            No customer profiles match search parameter.
           </div>
         )}
 
-      {/* =====================================================
-          SELECTED CUSTOMER
-      ===================================================== */}
-
+      {/* SELECTED CUSTOMER */}
       {value?.customerId && (
-        <div
-          className="
-            mt-3
-            rounded-lg
-            border
-            border-blue-200
-            bg-blue-50
-            p-4
-          "
-        >
-          <div
-            className="
-              flex
-              items-start
-              justify-between
-              gap-4
-            "
-          >
+        <div className="mt-3.5 rounded-xl border border-blue-100 bg-blue-50/30 p-4">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <p
-                className="
-                  text-sm
-                  font-semibold
-                  text-blue-900
-                "
-              >
+              <p className="text-xs font-bold text-blue-900">
                 {value.customerName}
               </p>
-
               {value.companyName && (
-                <p
-                  className="
-                    mt-1
-                    text-xs
-                    text-blue-700
-                  "
-                >
+                <p className="mt-0.5 text-[10px] text-blue-700 font-semibold">
                   {value.companyName}
                 </p>
               )}
-
               {value.customerEmail && (
-                <p
-                  className="
-                    mt-1
-                    text-xs
-                    text-gray-600
-                  "
-                >
+                <p className="mt-1 text-[10px] text-slate-500 font-medium">
                   {value.customerEmail}
                 </p>
               )}
-
               {value.customerPhone && (
-                <p
-                  className="
-                    mt-1
-                    text-xs
-                    text-gray-600
-                  "
-                >
+                <p className="mt-0.5 text-[10px] text-slate-500 font-medium">
                   {value.customerPhone}
                 </p>
               )}
@@ -452,15 +286,7 @@ export default function CustomerSelector({ value, onChange }) {
             <button
               type="button"
               onClick={handleClear}
-              className="
-                rounded-md
-                px-2
-                py-1
-                text-xs
-                font-medium
-                text-red-600
-                hover:bg-red-100
-              "
+              className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-1.5 text-[10px] font-bold text-blue-600 hover:bg-blue-100 transition cursor-pointer"
             >
               Change
             </button>

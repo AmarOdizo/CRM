@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ClipboardPlus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import TaskForm from "../taskcomponents/TaskForm";
 import { createTask } from "../data";
@@ -34,47 +34,33 @@ export default function AddTaskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-slate-50 p-6">
       {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-100">
-            <ClipboardPlus size={22} className="text-blue-600" />
-          </div>
-
-          <div>
-            <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
-              Add New Task
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Create and assign a new task.
-            </p>
-          </div>
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Add New Task</h1>
+          <p className="mt-1 text-slate-500 font-medium">Create a new task deliverable and assign ownership.</p>
         </div>
 
         {/* Back Button */}
         <Link
           href="/admin1/task-assignment"
-          className="inline-flex w-fit items-center gap-2 rounded-lg
-                     border border-gray-300 bg-white px-4 py-2.5
-                     text-sm font-medium text-gray-700
-                     transition hover:bg-gray-100"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer w-fit"
         >
-          <ArrowLeft size={17} />
-          Back to Tasks
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <p className="text-sm font-medium text-red-600">{error}</p>
+        <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-600 font-semibold text-sm">
+          {error}
         </div>
       )}
 
       {/* Form */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm md:p-6">
+      <div className="max-w-4xl">
         <TaskForm onSubmit={handleSubmit} loading={loading} />
       </div>
     </div>

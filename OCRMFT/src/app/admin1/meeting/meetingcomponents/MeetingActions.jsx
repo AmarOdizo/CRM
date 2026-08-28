@@ -123,38 +123,35 @@ export default function MeetingActions({ meeting, onDelete }) {
           ACTION BUTTONS
       ================================================== */}
 
-      <div className="flex items-center justify-end gap-1.5">
+      <div className="flex items-center justify-end gap-1">
         {/* VIEW */}
-
         <button
           type="button"
           onClick={handleView}
-          title="View Meeting"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 text-blue-600 transition hover:bg-blue-100"
+          title="View Details"
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition duration-150 cursor-pointer"
         >
-          <Eye size={17} />
+          <Eye size={15} />
         </button>
 
         {/* EDIT */}
-
         <button
           type="button"
           onClick={handleEdit}
-          title="Edit Meeting"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-yellow-200 bg-yellow-50 text-yellow-600 transition hover:bg-yellow-100"
+          title="Edit Details"
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition duration-150 cursor-pointer"
         >
-          <Pencil size={17} />
+          <Pencil size={15} />
         </button>
 
         {/* DELETE */}
-
         <button
           type="button"
           onClick={handleDeleteClick}
           title="Delete Meeting"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
+          className="p-1.5 rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition duration-150 cursor-pointer"
         >
-          <Trash2 size={17} />
+          <Trash2 size={15} />
         </button>
       </div>
 

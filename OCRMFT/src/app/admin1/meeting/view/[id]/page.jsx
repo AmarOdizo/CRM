@@ -222,315 +222,253 @@ export default function ViewMeetingPage() {
   // ==================================================
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      {/* ==================================================
-          HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <CalendarDays size={22} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Meeting Details
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              View complete meeting information
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href="/admin1/meeting"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            <ArrowLeft size={17} />
-            Back
-          </Link>
-
-          <Link
-            href={`/admin1/meeting/edit/${meetingId}`}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            <Edit size={17} />
-            Edit Meeting
-          </Link>
-        </div>
-      </div>
-
-      {/* ==================================================
-          MAIN CARD
-      ================================================== */}
-
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         {/* HEADER */}
-
-        <div className="border-b border-gray-200 bg-gray-50 px-5 py-5 sm:px-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push("/admin1/meeting")}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer"
+            >
+              <ArrowLeft size={16} />
+            </button>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">
-                {meeting?.title || "Untitled Meeting"}
-              </h2>
-
-              {meeting?.description && (
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-500">
-                  {meeting.description}
-                </p>
-              )}
+              <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                Meeting Details
+              </h1>
+              <p className="text-xs font-medium text-slate-500 mt-0.5">
+                Review agenda, timing, and attendee statuses.
+              </p>
             </div>
+          </div>
 
-            <MeetingBadge meeting={meeting} />
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/admin1/meeting/edit/${meetingId}`}
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/10 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
+            >
+              <Edit size={15} />
+              <span>Edit Details</span>
+            </Link>
           </div>
         </div>
 
-        {/* ==================================================
-            DETAILS GRID
-        ================================================== */}
-
-        <div className="grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-2">
-          {/* ==================================================
-              DATE
-          ================================================== */}
-
-          <DetailItem
-            icon={CalendarDays}
-            title="Meeting Date"
-            value={formatMeetingDate(meeting?.meetingDate)}
-          />
-
-          {/* ==================================================
-              TIME
-          ================================================== */}
-
-          <DetailItem
-            icon={Clock}
-            title="Meeting Time"
-            value={`${formatMeetingTime(
-              meeting?.startTime,
-            )} - ${formatMeetingTime(meeting?.endTime)}`}
-          />
-
-          {/* ==================================================
-              DURATION
-          ================================================== */}
-
-          <DetailItem
-            icon={Clock}
-            title="Duration"
-            value={calculateMeetingDuration(
-              meeting?.startTime,
-              meeting?.endTime,
-            )}
-          />
-
-          {/* ==================================================
-              TYPE
-          ================================================== */}
-
-          <DetailItem
-            icon={
-              meeting?.meetingType === "Online"
-                ? Video
-                : meeting?.meetingType === "Phone"
-                  ? Phone
-                  : MapPin
-            }
-            title="Meeting Type"
-            value={meeting?.meetingType || "Not specified"}
-          />
-
-          {/* ==================================================
-              LOCATION
-          ================================================== */}
-
-          {meeting?.meetingType === "Offline" && (
-            <DetailItem
-              icon={MapPin}
-              title="Location"
-              value={meeting?.location || "Location not specified"}
-            />
-          )}
-
-          {/* ==================================================
-              MEETING LINK
-          ================================================== */}
-
-          {meeting?.meetingType === "Online" && (
-            <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                <Video size={18} />
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Meeting Link
-                </p>
-
-                {meeting?.meetingLink ? (
-                  <a
-                    href={meeting.meetingLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 inline-flex max-w-full items-center gap-1.5 truncate text-sm font-semibold text-blue-600 hover:text-blue-800"
-                  >
-                    <span className="truncate">{meeting.meetingLink}</span>
-
-                    <ExternalLink size={14} className="shrink-0" />
-                  </a>
-                ) : (
-                  <p className="mt-1 text-sm text-gray-400">No meeting link</p>
+        {/* MAIN CARD */}
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          {/* HEADER SUMMARY */}
+          <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-6 sm:px-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="text-xl font-black text-slate-800 tracking-tight">
+                  {meeting?.title || "Untitled Meeting"}
+                </h2>
+                {meeting?.description && (
+                  <p className="mt-2 max-w-3xl text-xs leading-relaxed text-slate-500 font-medium">
+                    {meeting.description}
+                  </p>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* ==================================================
-              ORGANIZER
-          ================================================== */}
-
-          {meeting?.organizer && (
-            <DetailItem
-              icon={User}
-              title="Organizer"
-              value={
-                meeting.organizer?.name ||
-                meeting.organizer?.email ||
-                meeting.organizer
-              }
-            />
-          )}
-
-          {meeting?.clientId && (
-            <DetailItem
-              icon={User}
-              title="Client Name"
-              value={
-                typeof meeting.clientId === "object"
-                  ? meeting.clientId.clientName || "Associated Client"
-                  : meeting.clientId
-              }
-            />
-          )}
-
-          {meeting?.projectId && (
-            <DetailItem
-              icon={FileText}
-              title="Project Name"
-              value={
-                typeof meeting.projectId === "object"
-                  ? meeting.projectId.projectName || "Associated Project"
-                  : meeting.projectId
-              }
-            />
-          )}
-        </div>
-
-        {/* ==================================================
-            PARTICIPANTS
-        ================================================== */}
-
-        <div className="border-t border-gray-200 p-5 sm:p-6">
-          <div className="mb-4 flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
-              <Users size={18} />
-            </div>
-
-            <div>
-              <h3 className="text-sm font-bold text-gray-800">Participants</h3>
-
-              <p className="text-xs text-gray-500">
-                {participants.length} participant
-                {participants.length !== 1 ? "s" : ""}
-              </p>
+              <div className="shrink-0">
+                <MeetingBadge meeting={meeting} />
+              </div>
             </div>
           </div>
 
-          {participants.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {participants.map((participant, index) => (
-                <div
-                  key={participant?._id || participant?.id || index}
-                  className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
-                    {(participant?.name || participant?.email || "P")
-                      .charAt(0)
-                      .toUpperCase()}
-                  </div>
+          {/* DETAILS GRID */}
+          <div className="grid grid-cols-1 gap-5 p-6 sm:p-8 lg:grid-cols-2">
+            <DetailItem
+              icon={CalendarDays}
+              title="Meeting Date"
+              value={formatMeetingDate(meeting?.meetingDate)}
+            />
 
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-800">
-                      {participant?.name || "Participant"}
-                    </p>
+            <DetailItem
+              icon={Clock}
+              title="Meeting Time"
+              value={`${formatMeetingTime(
+                meeting?.startTime,
+              )} - ${formatMeetingTime(meeting?.endTime)}`}
+            />
 
-                    {participant?.email && (
-                      <p className="truncate text-xs text-gray-500">
-                        {participant.email}
-                      </p>
-                    )}
-                  </div>
+            <DetailItem
+              icon={Clock}
+              title="Duration"
+              value={calculateMeetingDuration(
+                meeting?.startTime,
+                meeting?.endTime,
+              )}
+            />
+
+            <DetailItem
+              icon={
+                meeting?.meetingType === "Online"
+                  ? Video
+                  : meeting?.meetingType === "Phone"
+                    ? Phone
+                    : MapPin
+              }
+              title="Meeting Type"
+              value={meeting?.meetingType || "Not specified"}
+            />
+
+            {meeting?.meetingType === "Offline" && (
+              <DetailItem
+                icon={MapPin}
+                title="Venue Location"
+                value={meeting?.location || "Location not specified"}
+              />
+            )}
+
+            {meeting?.meetingType === "Online" && (
+              <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/30 p-4">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100/50 text-blue-600">
+                  <Video size={16} />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-xl border border-dashed border-gray-300 p-6 text-center">
-              <Users size={24} className="mx-auto text-gray-300" />
-
-              <p className="mt-2 text-sm text-gray-500">
-                No participants added
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* ==================================================
-            NOTES
-        ================================================== */}
-
-        {meeting?.notes && (
-          <div className="border-t border-gray-200 p-5 sm:p-6">
-            <div className="flex items-start gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
-                <FileText size={18} />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Meeting Link
+                  </p>
+                  {meeting?.meetingLink ? (
+                    <a
+                      href={meeting.meetingLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex max-w-full items-center gap-1 truncate text-xs font-bold text-blue-600 hover:text-blue-800"
+                    >
+                      <span className="truncate">{meeting.meetingLink}</span>
+                      <ExternalLink size={12} className="shrink-0" />
+                    </a>
+                  ) : (
+                    <p className="mt-1 text-xs font-medium text-slate-400">No join link provided</p>
+                  )}
+                </div>
               </div>
+            )}
 
+            {meeting?.organizer && (
+              <DetailItem
+                icon={User}
+                title="Organizer"
+                value={
+                  meeting.organizer?.name ||
+                  meeting.organizer?.email ||
+                  meeting.organizer
+                }
+              />
+            )}
+
+            {meeting?.clientId && (
+              <DetailItem
+                icon={User}
+                title="Linked Client"
+                value={
+                  typeof meeting.clientId === "object"
+                    ? meeting.clientId.clientName || "Associated Client"
+                    : meeting.clientId
+                }
+              />
+            )}
+
+            {meeting?.projectId && (
+              <DetailItem
+                icon={FileText}
+                title="Linked Project"
+                value={
+                  typeof meeting.projectId === "object"
+                    ? meeting.projectId.projectName || "Associated Project"
+                    : meeting.projectId
+                }
+              />
+            )}
+          </div>
+
+          {/* PARTICIPANTS */}
+          <div className="border-t border-slate-100 p-6 sm:p-8">
+            <div className="mb-4 flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 border border-purple-100 text-purple-600">
+                <Users size={16} />
+              </div>
               <div>
-                <h3 className="text-sm font-bold text-gray-800">Notes</h3>
-
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-600">
-                  {meeting.notes}
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Attendees</h3>
+                <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                  {participants.length} attendee{participants.length !== 1 ? "s" : ""}
                 </p>
               </div>
             </div>
+
+            {participants.length > 0 ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {participants.map((participant, index) => (
+                  <div
+                    key={participant?._id || participant?.id || index}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/20 p-3"
+                  >
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 border border-blue-100 text-xs font-bold text-blue-700">
+                      {(participant?.name || participant?.email || "P")
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-bold text-slate-700">
+                        {participant?.name || "Participant"}
+                      </p>
+                      {participant?.email && (
+                        <p className="truncate text-[10px] text-slate-400 font-medium">
+                          {participant.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center">
+                <Users size={20} className="mx-auto text-slate-300" />
+                <p className="mt-1.5 text-xs font-medium text-slate-400">
+                  No participants configured for this schedule.
+                </p>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* NOTES */}
+          {meeting?.notes && (
+            <div className="border-t border-slate-100 p-6 sm:p-8">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 border border-amber-100 text-amber-600">
+                  <FileText size={16} />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Notes</h3>
+                  <p className="mt-2 whitespace-pre-wrap text-xs leading-relaxed text-slate-500 font-medium">
+                    {meeting.notes}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-// ======================================================
-// DETAIL ITEM
-// ======================================================
-
+// DETAIL ITEM COMPONENT
 function DetailItem({ icon: Icon, title, value }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 shadow-sm">
-        <Icon size={18} />
+    <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/30 p-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-250/20 text-blue-600 shadow-sm">
+        <Icon size={16} />
       </div>
 
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
           {title}
         </p>
 
-        <p className="mt-1 break-words text-sm font-semibold text-gray-800">
+        <p className="mt-1 break-words text-xs font-bold text-slate-700">
           {value || "Not specified"}
         </p>
       </div>

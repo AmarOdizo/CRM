@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import LeadForm from "../leadcomponents/LeadForm";
 import { addLead } from "../data";
@@ -54,26 +55,24 @@ export default function AddLead() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="min-h-screen bg-slate-50 p-6">
       {/* Header */}
-
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Add New Lead</h1>
-
-          <p className="mt-2 text-slate-500">Create a new lead for your CRM.</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Add New Lead</h1>
+          <p className="mt-1 text-slate-500 font-medium">Create a new potential client lead profile.</p>
         </div>
 
         <Link
           href="/admin1/lead-management"
-          className="rounded-xl bg-gray-700 px-5 py-3 text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 
       {/* Form */}
-
       <LeadForm
         formData={formData}
         handleChange={handleChange}

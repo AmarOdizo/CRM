@@ -57,103 +57,57 @@ export default function QuotationSummary({ quotations = [] }) {
 
   const summaryCards = [
     {
-      title: "Total Quotations",
+      title: "Total Quotes",
       value: totalQuotations,
       icon: FileText,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
+      color: "text-blue-600 bg-blue-50 border-blue-100",
     },
     {
-      title: "Draft",
-      value: draftCount,
+      title: "Draft/Sent",
+      value: draftCount + sentCount,
       icon: Clock3,
-      iconBg: "bg-gray-100",
-      iconColor: "text-gray-600",
-    },
-    {
-      title: "Sent",
-      value: sentCount,
-      icon: Send,
-      iconBg: "bg-yellow-100",
-      iconColor: "text-yellow-600",
+      color: "text-amber-600 bg-amber-50 border-amber-100",
     },
     {
       title: "Accepted",
       value: acceptedCount,
       icon: CheckCircle2,
-      iconBg: "bg-green-100",
-      iconColor: "text-green-600",
+      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
-      title: "Rejected",
-      value: rejectedCount,
-      icon: XCircle,
-      iconBg: "bg-red-100",
-      iconColor: "text-red-600",
+      title: "Total Volume",
+      value: formatAmount(totalAmount),
+      icon: IndianRupee,
+      color: "text-purple-600 bg-purple-50 border-purple-100",
     },
   ];
 
   return (
-    <div className="w-full space-y-4">
-      {/* Status Summary */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {summaryCards.map((card) => {
-          const Icon = card.icon;
+    <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full">
+      {summaryCards.map((card, idx) => {
+        const Icon = card.icon;
 
-          return (
-            <div
-              key={card.title}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    {card.title}
-                  </p>
-
-                  <p className="mt-2 text-2xl font-bold text-gray-800">
-                    {card.value}
-                  </p>
-                </div>
-
-                <div
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.iconBg}`}
-                >
-                  <Icon className={`h-5 w-5 ${card.iconColor}`} />
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Total Amount */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100">
-              <IndianRupee className="h-6 w-6 text-indigo-600" />
-            </div>
-
+        return (
+          <div
+            key={idx}
+            className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group"
+          >
             <div>
-              <p className="text-sm font-medium text-gray-500">
-                Total Quotation Value
-              </p>
-
-              <p className="mt-1 text-2xl font-bold text-gray-800">
-                {formatAmount(totalAmount)}
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {card.title}
+              </h3>
+              <p className="mt-2 text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">
+                {card.value}
               </p>
             </div>
+            <div
+              className={`h-12 w-12 rounded-xl flex items-center justify-center border transition-all duration-300 group-hover:scale-105 ${card.color}`}
+            >
+              <Icon size={22} />
+            </div>
           </div>
-
-          <div className="text-left sm:text-right">
-            <p className="text-xs text-gray-400">
-              Based on {totalQuotations} quotation
-              {totalQuotations !== 1 ? "s" : ""}
-            </p>
-          </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }

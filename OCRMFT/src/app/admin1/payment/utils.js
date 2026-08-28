@@ -67,22 +67,22 @@ export const getStatusClass = (status) => {
 
   switch (normalizedStatus) {
     case "paid":
-      return "bg-green-100 text-green-700";
+      return "bg-emerald-50 text-emerald-700 border border-emerald-100";
 
     case "partial":
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-amber-50 text-amber-700 border border-amber-100";
 
     case "pending":
-      return "bg-red-100 text-red-700";
+      return "bg-rose-50 text-rose-700 border border-rose-100";
 
     case "overdue":
-      return "bg-orange-100 text-orange-700";
+      return "bg-orange-50 text-orange-700 border border-orange-100";
 
     case "cancelled":
-      return "bg-gray-100 text-gray-700";
+      return "bg-slate-50 text-slate-600 border border-slate-200/60";
 
     default:
-      return "bg-gray-100 text-gray-700";
+      return "bg-slate-50 text-slate-600 border border-slate-200/60";
   }
 };
 

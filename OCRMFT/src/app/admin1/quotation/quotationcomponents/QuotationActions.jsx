@@ -2,12 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { deleteQuotation, updateQuotationStatus } from "../data";
-
-// ============================================================
-// COMPONENT
-// ============================================================
 
 export default function QuotationActions({
   quotation,
@@ -16,58 +12,27 @@ export default function QuotationActions({
   showView = true,
   showEdit = true,
   showDelete = true,
-  showStatus = true,
+  showStatus = false,
 }) {
   const router = useRouter();
-
-  // ==========================================================
-  // STATES
-  // ==========================================================
-
   const [loading, setLoading] = useState(false);
-
-  const [statusLoading, setStatusLoading] = useState(false);
-
   const [error, setError] = useState("");
-
-  // ==========================================================
-  // QUOTATION ID
-  // ==========================================================
 
   const quotationId = quotation?._id || quotation?.id;
 
-  // ==========================================================
-  // VIEW
-  // ==========================================================
-
   const handleView = () => {
-    if (!quotationId) {
-      return;
-    }
-
+    if (!quotationId) return;
     router.push(`/admin1/quotation/view/${quotationId}`);
   };
 
-  // ==========================================================
-  // EDIT
-  // ==========================================================
-
   const handleEdit = () => {
-    if (!quotationId) {
-      return;
-    }
-
+    if (!quotationId) return;
     router.push(`/admin1/quotation/edit/${quotationId}`);
   };
-
-  // ==========================================================
-  // DELETE
-  // ==========================================================
 
   const handleDelete = async () => {
     if (!quotationId) {
       setError("Quotation ID not found.");
-
       return;
     }
 
@@ -77,260 +42,65 @@ export default function QuotationActions({
       }?`,
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       setLoading(true);
       setError("");
-
       await deleteQuotation(quotationId);
-
-      // Parent refresh callback
       if (onDelete) {
         onDelete(quotationId);
       }
     } catch (err) {
       console.error("Delete Quotation Error:", err);
-
       setError(err.message || "Failed to delete quotation.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ==========================================================
-  // STATUS UPDATE
-  // ==========================================================
-
-  const handleStatusChange = async (e) => {
-    const newStatus = e.target.value;
-
-    if (!quotationId) {
-      setError("Quotation ID not found.");
-
-      return;
-    }
-
-    if (newStatus === quotation?.status) {
-      return;
-    }
-
-    try {
-      setStatusLoading(true);
-      setError("");
-
-      const result = await updateQuotationStatus(quotationId, newStatus);
-
-      // Parent update callback
-      if (onStatusChange) {
-        onStatusChange(
-          result?.data || {
-            ...quotation,
-            status: newStatus,
-          },
-        );
-      }
-    } catch (err) {
-      console.error("Status Update Error:", err);
-
-      setError(err.message || "Failed to update quotation status.");
-    } finally {
-      setStatusLoading(false);
-    }
-  };
-
   return (
-    <div className="flex flex-col gap-2">
-      {/* ======================================================
-          ACTION BUTTONS
-      ====================================================== */}
-
-      <div
-        className="
-          flex
-          items-center
-          justify-end
-          gap-2
-        "
-      >
-        {/* ====================================================
-            VIEW
-        ==================================================== */}
-
-        {showView && (
-          <button
-            type="button"
-            onClick={handleView}
-            disabled={loading}
-            title="View quotation"
-            className="
-              rounded-lg
-              border
-              border-gray-200
-              bg-white
-              px-3
-              py-2
-              text-sm
-              font-medium
-              text-gray-700
-              transition
-              hover:bg-gray-50
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
-          >
-            View
-          </button>
-        )}
-
-        {/* ====================================================
-            EDIT
-        ==================================================== */}
-
-        {showEdit && (
-          <button
-            type="button"
-            onClick={handleEdit}
-            disabled={loading}
-            title="Edit quotation"
-            className="
-              rounded-lg
-              border
-              border-blue-200
-              bg-blue-50
-              px-3
-              py-2
-              text-sm
-              font-medium
-              text-blue-700
-              transition
-              hover:bg-blue-100
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
-          >
-            Edit
-          </button>
-        )}
-
-        {/* ====================================================
-            DELETE
-        ==================================================== */}
-
-        {showDelete && (
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={loading || statusLoading}
-            title="Delete quotation"
-            className="
-              rounded-lg
-              border
-              border-red-200
-              bg-red-50
-              px-3
-              py-2
-              text-sm
-              font-medium
-              text-red-600
-              transition
-              hover:bg-red-100
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
-          >
-            {loading ? "Deleting..." : "Delete"}
-          </button>
-        )}
-      </div>
-
-      {/* ======================================================
-          STATUS
-      ====================================================== */}
-
-      {showStatus && (
-        <div
-          className="
-            flex
-            items-center
-            justify-end
-            gap-2
-          "
+    <div className="flex items-center justify-end gap-1.5">
+      {showView && (
+        <button
+          type="button"
+          onClick={handleView}
+          disabled={loading}
+          title="View Details"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-emerald-600 hover:bg-emerald-50 transition active:scale-90 cursor-pointer"
         >
-          <label
-            htmlFor={`quotation-status-${quotationId}`}
-            className="
-              text-xs
-              font-medium
-              text-gray-500
-            "
-          >
-            Status
-          </label>
-
-          <select
-            id={`quotation-status-${quotationId}`}
-            value={quotation?.status || "Draft"}
-            onChange={handleStatusChange}
-            disabled={loading || statusLoading}
-            className="
-              rounded-lg
-              border
-              border-gray-300
-              bg-white
-              px-3
-              py-2
-              text-sm
-              outline-none
-              focus:border-blue-500
-              focus:ring-2
-              focus:ring-blue-100
-              disabled:cursor-not-allowed
-              disabled:bg-gray-100
-            "
-          >
-            <option value="Draft">Draft</option>
-
-            <option value="Sent">Sent</option>
-
-            <option value="Accepted">Accepted</option>
-
-            <option value="Rejected">Rejected</option>
-
-            <option value="Expired">Expired</option>
-
-            <option value="Converted">Converted</option>
-          </select>
-
-          {statusLoading && (
-            <span
-              className="
-                text-xs
-                text-gray-500
-              "
-            >
-              Updating...
-            </span>
-          )}
-        </div>
+          <Eye size={16} />
+        </button>
       )}
 
-      {/* ======================================================
-          ERROR
-      ====================================================== */}
+      {showEdit && (
+        <button
+          type="button"
+          onClick={handleEdit}
+          disabled={loading}
+          title="Edit Item"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-blue-600 hover:bg-blue-50 transition active:scale-90 cursor-pointer"
+        >
+          <Pencil size={15} />
+        </button>
+      )}
+
+      {showDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={loading}
+          title="Delete Item"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-rose-600 hover:bg-rose-50 transition active:scale-90 cursor-pointer"
+        >
+          <Trash2 size={15} />
+        </button>
+      )}
 
       {error && (
-        <p
-          className="
-            text-right
-            text-xs
-            text-red-600
-          "
-        >
+        <span className="text-[10px] text-rose-600 font-medium ml-1">
           {error}
-        </p>
+        </span>
       )}
     </div>
   );

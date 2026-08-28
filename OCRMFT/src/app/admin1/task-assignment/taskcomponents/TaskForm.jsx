@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, X } from "lucide-react";
+import { Save, X, ClipboardList, User, Calendar } from "lucide-react";
 import { formatDateForInput } from "../utils";
 
 export default function TaskForm({
@@ -41,10 +41,6 @@ export default function TaskForm({
 
   const [errors, setErrors] = useState({});
 
-  // ==========================================
-  // HANDLE INPUT
-  // ==========================================
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -53,7 +49,6 @@ export default function TaskForm({
       [name]: value,
     }));
 
-    // Remove field error while typing
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -61,10 +56,6 @@ export default function TaskForm({
       }));
     }
   };
-
-  // ==========================================
-  // VALIDATION
-  // ==========================================
 
   const validateForm = () => {
     const newErrors = {};
@@ -108,21 +99,12 @@ export default function TaskForm({
     return Object.keys(newErrors).length === 0;
   };
 
-  // ==========================================
-  // SUBMIT
-  // ==========================================
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
-
-    /*
-      This sends exactly the structure
-      expected by backend Task.js
-    */
 
     const taskData = {
       title: formData.title.trim(),
@@ -139,10 +121,6 @@ export default function TaskForm({
       onSubmit(taskData);
     }
   };
-
-  // ==========================================
-  // RESET
-  // ==========================================
 
   const handleReset = () => {
     setFormData({
@@ -162,275 +140,252 @@ export default function TaskForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm"
+      className="bg-white rounded-2xl border border-slate-200/60 shadow-sm"
     >
-      {/* ======================================
-          FORM HEADER
-      ====================================== */}
-
-      <div className="px-6 py-5 border-b border-gray-100">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Task Information
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1">
-          Enter the details of the task assignment
-        </p>
-      </div>
-
-      {/* ======================================
-          FORM BODY
-      ====================================== */}
-
-      <div className="p-6 space-y-6">
-        {/* --------------------------------------
-            TASK TITLE
-        -------------------------------------- */}
-
+      <div className="p-8 space-y-8">
+        {/* Section 1: Task Details */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Task Title <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center gap-2 pb-3 mb-5 border-b border-slate-100 text-slate-800">
+            <ClipboardList size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Task Specifications</h3>
+          </div>
+          <div className="space-y-5">
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Task Title <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter task title"
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition ${
+                  errors.title
+                    ? "border-rose-300 focus:ring-4 focus:ring-rose-50/50 bg-rose-50/30"
+                    : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                }`}
+              />
+              {errors.title && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.title}</p>
+              )}
+            </div>
 
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Enter task title"
-            className={`w-full px-4 py-3 rounded-xl border outline-none transition ${
-              errors.title
-                ? "border-red-400 focus:ring-2 focus:ring-red-100"
-                : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            }`}
-          />
-
-          {errors.title && (
-            <p className="text-xs text-red-500 mt-1">{errors.title}</p>
-          )}
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Description <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                placeholder="Describe the task details..."
+                className={`w-full px-4 py-3 rounded-xl border outline-none resize-none transition ${
+                  errors.description
+                    ? "border-rose-300 focus:ring-4 focus:ring-rose-50/50 bg-rose-50/30"
+                    : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                }`}
+              />
+              {errors.description && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.description}</p>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* --------------------------------------
-            DESCRIPTION
-        -------------------------------------- */}
-
+        {/* Section 2: Task Assignment */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description <span className="text-red-500">*</span>
-          </label>
-
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={5}
-            placeholder="Describe the task..."
-            className={`w-full px-4 py-3 rounded-xl border outline-none resize-none transition ${
-              errors.description
-                ? "border-red-400 focus:ring-2 focus:ring-red-100"
-                : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            }`}
-          />
-
-          {errors.description && (
-            <p className="text-xs text-red-500 mt-1">{errors.description}</p>
-          )}
-        </div>
-
-        {/* --------------------------------------
-            ASSIGNED TO + ASSIGNED BY
-        -------------------------------------- */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Assigned To */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Assign To <span className="text-red-500">*</span>
-            </label>
-
-            <select
-              name="assignedTo"
-              value={formData.assignedTo}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl border bg-white outline-none transition ${
-                errors.assignedTo
-                  ? "border-red-400"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              }`}
-            >
-              <option value="">Select team member</option>
-              {users.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.fullName} ({u.role || "User"})
-                </option>
-              ))}
-            </select>
-
-            {errors.assignedTo && (
-              <p className="text-xs text-red-500 mt-1">{errors.assignedTo}</p>
-            )}
+          <div className="flex items-center gap-2 pb-3 mb-5 border-b border-slate-100 text-slate-800">
+            <User size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Assignment & Ownership</h3>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Assign To <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  name="assignedTo"
+                  value={formData.assignedTo}
+                  onChange={handleChange}
+                  className={`w-full py-3 pl-4 pr-10 rounded-xl border bg-white outline-none transition appearance-none cursor-pointer ${
+                    errors.assignedTo
+                      ? "border-rose-300 bg-rose-50/30"
+                      : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  }`}
+                >
+                  <option value="">Select team member</option>
+                  {users.map((u) => (
+                    <option key={u._id} value={u._id}>
+                      {u.fullName} ({u.role || "User"})
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+              {errors.assignedTo && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.assignedTo}</p>
+              )}
+            </div>
 
-          {/* Assigned By */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Assigned By <span className="text-red-500">*</span>
-            </label>
-
-            <select
-              name="assignedBy"
-              value={formData.assignedBy}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl border bg-white outline-none transition ${
-                errors.assignedBy
-                  ? "border-red-400"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              }`}
-            >
-              <option value="">Select admin / manager</option>
-              {users.map((u) => (
-                <option key={u._id} value={u._id}>
-                  {u.fullName} ({u.role || "User"})
-                </option>
-              ))}
-            </select>
-
-            {errors.assignedBy && (
-              <p className="text-xs text-red-500 mt-1">{errors.assignedBy}</p>
-            )}
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Assigned By <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  name="assignedBy"
+                  value={formData.assignedBy}
+                  onChange={handleChange}
+                  className={`w-full py-3 pl-4 pr-10 rounded-xl border bg-white outline-none transition appearance-none cursor-pointer ${
+                    errors.assignedBy
+                      ? "border-rose-300 bg-rose-50/30"
+                      : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                  }`}
+                >
+                  <option value="">Select admin / manager</option>
+                  {users.map((u) => (
+                    <option key={u._id} value={u._id}>
+                      {u.fullName} ({u.role || "User"})
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+              {errors.assignedBy && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.assignedBy}</p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* --------------------------------------
-            PRIORITY + STATUS
-        -------------------------------------- */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Priority */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Priority
-            </label>
-
-            <select
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-            </select>
+        {/* Section 3: Parameters & Schedule */}
+        <div>
+          <div className="flex items-center gap-2 pb-3 mb-5 border-b border-slate-100 text-slate-800">
+            <Calendar size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Parameters & Deadlines</h3>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Priority
+              </label>
+              <div className="relative">
+                <select
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
+                  className="w-full py-3 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 appearance-none cursor-pointer text-sm text-slate-800"
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
-          {/* Status */}
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Status
+              </label>
+              <div className="relative">
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full py-3 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 appearance-none cursor-pointer text-sm text-slate-800"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Overdue">Overdue</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Start Date <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition text-sm text-slate-800 ${
+                  errors.startDate
+                    ? "border-rose-300 bg-rose-50/30"
+                    : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                }`}
+              />
+              {errors.startDate && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.startDate}</p>
+              )}
+            </div>
 
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="Pending">Pending</option>
-
-              <option value="In Progress">In Progress</option>
-
-              <option value="Completed">Completed</option>
-
-              <option value="Overdue">Overdue</option>
-
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-
-        {/* --------------------------------------
-            START DATE + DUE DATE
-        -------------------------------------- */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Start Date */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Start Date <span className="text-red-500">*</span>
-            </label>
-
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl border outline-none transition ${
-                errors.startDate
-                  ? "border-red-400"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              }`}
-            />
-
-            {errors.startDate && (
-              <p className="text-xs text-red-500 mt-1">{errors.startDate}</p>
-            )}
-          </div>
-
-          {/* Due Date */}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Due Date <span className="text-red-500">*</span>
-            </label>
-
-            <input
-              type="date"
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleChange}
-              className={`w-full px-4 py-3 rounded-xl border outline-none transition ${
-                errors.dueDate
-                  ? "border-red-400"
-                  : "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              }`}
-            />
-
-            {errors.dueDate && (
-              <p className="text-xs text-red-500 mt-1">{errors.dueDate}</p>
-            )}
+            <div>
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Due Date <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="dueDate"
+                value={formData.dueDate}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-xl border outline-none transition text-sm text-slate-800 ${
+                  errors.dueDate
+                    ? "border-rose-300 bg-rose-50/30"
+                    : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                }`}
+              />
+              {errors.dueDate && (
+                <p className="text-xs text-rose-500 mt-1 font-semibold">{errors.dueDate}</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ======================================
-          FORM FOOTER
-      ====================================== */}
-
-      <div className="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3">
+      {/* Buttons */}
+      <div className="px-8 py-5 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/50 rounded-b-2xl">
         <button
           type="button"
           onClick={handleReset}
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-1.5 px-5 py-3 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 transition active:scale-95 disabled:opacity-50 cursor-pointer"
         >
-          <X size={17} />
-          Reset
+          <X size={16} />
+          <span>Reset Form</span>
         </button>
 
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-1.5 px-6 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 shadow-md shadow-blue-500/10 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          <Save size={17} />
-
-          {loading ? "Saving..." : submitText}
+          <Save size={16} />
+          <span>{loading ? "Saving..." : submitText}</span>
         </button>
       </div>
     </form>

@@ -75,14 +75,7 @@ export default function PaymentTable({
 
   const columnDefs = [
     {
-      headerName: "#",
-      valueGetter: "node.rowIndex + 1",
-      width: 60,
-      suppressMenu: true,
-      sortable: false,
-    },
-    {
-      headerName: "Invoice",
+      headerName: "Invoice Details",
       field: "invoiceNumber",
       flex: 2,
       minWidth: 200,
@@ -105,18 +98,17 @@ export default function PaymentTable({
 
         return (
           <div className="flex items-center gap-3 h-full py-1">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-              <FileText size={17} />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <FileText size={14} />
             </div>
 
             <div className="min-w-0 leading-tight">
-              <p className="max-w-[180px] truncate text-sm font-semibold text-gray-800">
+              <p className="truncate text-xs font-bold text-slate-800">
                 {invoiceNumber}
               </p>
-
               {paymentId && (
-                <p className="max-w-[180px] truncate text-xs text-gray-400">
-                  ID: {paymentId}
+                <p className="truncate text-[9px] text-slate-400 font-mono">
+                  #{paymentId}
                 </p>
               )}
             </div>
@@ -134,12 +126,11 @@ export default function PaymentTable({
           params.data?.paymentDate || params.data?.date || params.data?.createdAt;
 
         return (
-          <div className="flex items-center gap-2 text-sm text-gray-600 h-full">
+          <div className="flex items-center gap-2 text-xs text-slate-600 h-full font-semibold">
             <CalendarDays
-              size={16}
-              className="shrink-0 text-gray-400"
+              size={13}
+              className="shrink-0 text-slate-400"
             />
-
             <span>{params.context.formatDate(paymentDate)}</span>
           </div>
         );
@@ -158,12 +149,8 @@ export default function PaymentTable({
           0;
 
         return (
-          <div className="flex items-center gap-1.5 h-full">
-            <IndianRupee size={15} className="text-green-600" />
-
-            <span className="text-sm font-bold text-gray-800">
-              {params.context.formatCurrency(amount)}
-            </span>
+          <div className="flex items-center gap-1.5 h-full font-mono text-xs font-bold text-emerald-600">
+            <span>{params.context.formatCurrency(amount)}</span>
           </div>
         );
       },
@@ -172,16 +159,15 @@ export default function PaymentTable({
       headerName: "Method",
       field: "paymentMethod",
       flex: 1.5,
-      minWidth: 150,
+      minWidth: 140,
       cellRenderer: (params) => {
         const paymentMethod =
           params.data?.paymentMethod || params.data?.method || "-";
 
         return (
-          <div className="flex items-center gap-2 h-full">
-            <CreditCard size={16} className="text-gray-400" />
-
-            <span className="text-sm text-gray-700">
+          <div className="flex items-center gap-2 h-full text-xs text-slate-600 font-semibold">
+            <CreditCard size={13} className="text-slate-400" />
+            <span>
               {params.context.formatPaymentMethod(paymentMethod)}
             </span>
           </div>
@@ -189,7 +175,7 @@ export default function PaymentTable({
       },
     },
     {
-      headerName: "Reference",
+      headerName: "Reference / Transaction ID",
       field: "reference",
       flex: 1.8,
       minWidth: 180,
@@ -203,7 +189,7 @@ export default function PaymentTable({
 
         return (
           <span
-            className="block max-w-[180px] truncate text-sm text-gray-600 self-center"
+            className="block max-w-[180px] truncate text-xs text-slate-500 font-mono self-center font-medium"
             title={reference}
           >
             {params.context.formatReference(reference)}
@@ -215,7 +201,7 @@ export default function PaymentTable({
       headerName: "Status",
       field: "status",
       flex: 1.2,
-      minWidth: 120,
+      minWidth: 110,
       cellRenderer: (params) => {
         const status = params.value || "Pending";
         return (
@@ -237,7 +223,7 @@ export default function PaymentTable({
           />
         </div>
       ),
-      width: 120,
+      width: 100,
       suppressMenu: true,
       sortable: false,
     },
@@ -250,34 +236,16 @@ export default function PaymentTable({
   };
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      {/* ========================================
-          TABLE HEADER
-      ========================================= */}
-
-      <div className="flex flex-col gap-2 border-b border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-base font-bold text-gray-800">Payment Records</h2>
-
-          <p className="text-xs text-gray-500">
-            {payments.length} payment
-            {payments.length !== 1 ? "s" : ""} found
-          </p>
-        </div>
-      </div>
-
-      {/* ========================================
-          RESPONSIVE TABLE (AG GRID)
-      ========================================= */}
-
+    <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      {/* AG Grid Table */}
       <div className="w-full ag-theme-quartz">
         <AgGridReact
           rowData={payments}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           domLayout="autoHeight"
-          rowHeight={60}
-          headerHeight={50}
+          rowHeight={52}
+          headerHeight={44}
           context={{
             onView,
             onEdit,

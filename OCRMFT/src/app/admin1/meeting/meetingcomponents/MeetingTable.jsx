@@ -73,17 +73,17 @@ export default function MeetingTable({
 
   const columnDefs = [
     {
-      headerName: "Meeting",
+      headerName: "Meeting Info",
       field: "title",
       flex: 2,
       minWidth: 200,
       cellRenderer: (params) => (
         <div className="flex flex-col justify-center h-full py-1 leading-tight text-left">
-          <p className="truncate text-sm font-bold text-gray-800">
+          <p className="truncate text-xs font-bold text-slate-800">
             {params.data.title || "Untitled Meeting"}
           </p>
           {params.data.description && (
-            <p className="mt-0.5 truncate text-xs text-gray-500">
+            <p className="mt-0.5 truncate text-[10px] text-slate-400 font-medium">
               {params.data.description}
             </p>
           )}
@@ -91,50 +91,47 @@ export default function MeetingTable({
       ),
     },
     {
-      headerName: "Date & Time",
+      headerName: "Date & Timeline",
       field: "meetingDate",
       flex: 2,
       minWidth: 220,
       cellRenderer: (params) => (
-        <div className="flex flex-col justify-center h-full py-1 leading-tight text-xs">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-            <CalendarDays size={14} className="text-blue-500 shrink-0" />
+        <div className="flex flex-col justify-center h-full py-1 leading-tight text-[10px]">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+            <CalendarDays size={13} className="text-blue-500 shrink-0" />
             {params.context.formatMeetingDate(params.data.meetingDate)}
           </div>
-          <div className="flex items-center gap-1.5 text-gray-500 mt-1">
-            <Clock size={13} className="text-gray-400 shrink-0" />
+          <div className="flex items-center gap-1.5 text-slate-400 mt-1 font-medium">
+            <Clock size={12} className="shrink-0" />
             <span>
               {params.context.formatMeetingTime(params.data.startTime)} - {params.context.formatMeetingTime(params.data.endTime)}
             </span>
           </div>
-          <span className="inline-block rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 mt-1 max-w-max">
-            {params.context.calculateMeetingDuration(params.data.startTime, params.data.endTime)}
-          </span>
         </div>
       ),
     },
     {
-      headerName: "Type",
+      headerName: "Type & Connect",
       field: "meetingType",
       flex: 1.5,
       minWidth: 150,
       cellRenderer: (params) => (
-        <div className="flex flex-col justify-center h-full py-1 leading-tight text-xs items-start gap-1">
+        <div className="flex flex-col justify-center h-full py-1 leading-tight text-[10px] items-start gap-1">
           <MeetingBadge meeting={params.data} />
           {params.data.meetingType === "Online" && params.data.meetingLink && (
             <a
               href={params.data.meetingLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-0.5 font-semibold text-blue-600 hover:text-blue-800"
+              className="inline-flex items-center gap-0.5 font-bold text-blue-600 hover:text-blue-800 text-[10px]"
             >
-              Join Meeting
-              <ExternalLink size={11} />
+              <span>Join Link</span>
+              <ExternalLink size={10} />
             </a>
           )}
           {params.data.meetingType === "Offline" && params.data.location && (
-            <div className="flex max-w-[180px] items-center gap-0.5 text-gray-500">
-              <MapPin size={11} />
+            <div className="flex max-w-[180px] items-center gap-0.5 text-slate-400 font-medium">
+              <MapPin size={10} />
               <span className="truncate">{params.data.location}</span>
             </div>
           )}
@@ -145,44 +142,33 @@ export default function MeetingTable({
       headerName: "Participants",
       field: "participants",
       flex: 1.8,
-      minWidth: 180,
+      minWidth: 185,
       cellRenderer: (params) => {
         const list = Array.isArray(params.value) ? params.value : [];
         return (
-          <div className="flex items-center gap-1.5 h-full py-1 text-xs">
+          <div className="flex items-center gap-1.5 h-full py-1 text-[10px]">
             {list.length > 0 ? (
               <div className="flex max-w-[220px] items-start gap-1.5">
-                <Users size={14} className="mt-0.5 shrink-0 text-gray-400" />
-                <div className="min-w-0">
+                <Users size={13} className="mt-0.5 shrink-0 text-slate-400" />
+                <div className="min-w-0 font-medium">
                   {list.slice(0, 2).map((p, idx) => (
-                    <div key={idx} className="truncate text-gray-700 leading-tight">
+                    <div key={idx} className="truncate text-slate-600 leading-tight">
                       {p?.name || p?.email || "Participant"}
                     </div>
                   ))}
                   {list.length > 2 && (
-                    <p className="text-[10px] font-semibold text-blue-600 mt-0.5">
+                    <p className="text-[9px] font-bold text-blue-600 mt-0.5">
                       +{list.length - 2} more
                     </p>
                   )}
                 </div>
               </div>
             ) : (
-              <span className="text-gray-400">No participants</span>
+              <span className="text-slate-400">No participants</span>
             )}
           </div>
         );
       },
-    },
-    {
-      headerName: "Status",
-      field: "status",
-      flex: 1.2,
-      minWidth: 120,
-      cellRenderer: (params) => (
-        <div className="flex items-center h-full">
-          <MeetingBadge meeting={{ status: params.value, meetingType: undefined }} />
-        </div>
-      ),
     },
     {
       headerName: "Actions",
@@ -191,7 +177,7 @@ export default function MeetingTable({
           <MeetingActions meeting={params.data} onDelete={params.context.onDelete} />
         </div>
       ),
-      width: 120,
+      width: 100,
       suppressMenu: true,
       sortable: false,
     },
@@ -204,34 +190,16 @@ export default function MeetingTable({
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm w-full">
-      {/* ==================================================
-          TABLE HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-2 border-b border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-bold text-gray-800">Meetings</h2>
-
-          <p className="text-xs text-gray-500">
-            {meetings.length} meeting
-            {meetings.length !== 1 ? "s" : ""} found
-          </p>
-        </div>
-      </div>
-
-      {/* ==================================================
-          DESKTOP TABLE (AG GRID)
-      ================================================== */}
-
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm w-full">
+      {/* Desktop Table */}
       <div className="hidden lg:block ag-theme-quartz w-full">
         <AgGridReact
           rowData={meetings}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           domLayout="autoHeight"
-          rowHeight={80}
-          headerHeight={50}
+          rowHeight={60}
+          headerHeight={44}
           context={{
             onDelete,
             formatMeetingDate,

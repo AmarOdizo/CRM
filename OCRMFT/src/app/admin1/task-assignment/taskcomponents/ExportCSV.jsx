@@ -70,16 +70,10 @@ export default function ExportCSV({ tasks = [], fileName = "tasks.csv" }) {
       type="button"
       onClick={exportCSV}
       disabled={!tasks || tasks.length === 0}
-      className="flex items-center gap-2 rounded-lg
-                 bg-emerald-600 px-4 py-2.5
-                 text-sm font-medium text-white
-                 transition hover:bg-emerald-700
-                 disabled:cursor-not-allowed
-                 disabled:bg-gray-300
-                 disabled:text-gray-500"
+      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition duration-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
     >
-      <Download size={18} />
-      Export CSV
+      <Download size={18} className="text-slate-400" />
+      <span>Export CSV</span>
     </button>
   );
 }

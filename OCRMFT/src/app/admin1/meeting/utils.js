@@ -197,16 +197,13 @@ export function getMeetingStatusStyle(status) {
   const normalized = normalizeMeetingStatus(status);
 
   const styles = {
-    scheduled: "bg-blue-100 text-blue-700",
-
-    completed: "bg-green-100 text-green-700",
-
-    cancelled: "bg-red-100 text-red-700",
-
-    rescheduled: "bg-yellow-100 text-yellow-700",
+    scheduled: "bg-blue-50 text-blue-700 border border-blue-100",
+    completed: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+    cancelled: "bg-rose-50 text-rose-700 border border-rose-100",
+    rescheduled: "bg-amber-50 text-amber-700 border border-amber-100",
   };
 
-  return styles[normalized] || "bg-gray-100 text-gray-700";
+  return styles[normalized] || "bg-slate-50 text-slate-600 border border-slate-200/60";
 }
 
 // ======================================================
@@ -237,14 +234,12 @@ export function getMeetingTypeStyle(type) {
   const normalized = normalizeMeetingType(type);
 
   const styles = {
-    online: "bg-purple-100 text-purple-700",
-
-    offline: "bg-orange-100 text-orange-700",
-
-    phone: "bg-green-100 text-green-700",
+    online: "bg-purple-50 text-purple-700 border border-purple-100",
+    offline: "bg-orange-50 text-orange-700 border border-orange-100",
+    phone: "bg-green-50 text-green-700 border border-green-100",
   };
 
-  return styles[normalized] || "bg-gray-100 text-gray-700";
+  return styles[normalized] || "bg-slate-50 text-slate-600 border border-slate-200/60";
 }
 
 // ======================================================

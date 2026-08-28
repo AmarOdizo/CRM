@@ -244,24 +244,13 @@ export default function QuotationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-7xl space-y-6">
-        {/* =================================
-            HEADER
-        ================================= */}
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* HEADER */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-              <FileText className="h-6 w-6 text-blue-600" />
-            </div>
-
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Quotations</h1>
-
-              <p className="text-sm text-gray-500">
-                Manage your customer quotations
-              </p>
-            </div>
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Quotations</h1>
+            <p className="mt-1 text-slate-500 font-medium">Manage and generate customer project estimate proposals.</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -269,39 +258,35 @@ export default function QuotationPage() {
               type="button"
               onClick={fetchQuotations}
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RefreshCw
-                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${loading ? "animate-spin text-blue-600" : ""}`}
               />
-              Refresh
+              <span>Refresh</span>
             </button>
 
             <button
               type="button"
               onClick={handleAdd}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
-              New Quotation
+              <span>New Quotation</span>
             </button>
           </div>
         </div>
 
-        {/* =================================
-            ERROR MESSAGE
-        ================================= */}
+        {/* ERROR MESSAGE */}
         {error && (
-          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
-
+          <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-600" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">{error}</p>
-
+              <p className="text-sm font-semibold text-rose-800">{error}</p>
               <button
                 type="button"
                 onClick={fetchQuotations}
-                className="mt-1 text-sm font-medium text-red-700 underline hover:text-red-900"
+                className="mt-1.5 text-xs font-bold text-rose-700 underline hover:text-rose-950"
               >
                 Try again
               </button>
@@ -309,14 +294,10 @@ export default function QuotationPage() {
           </div>
         )}
 
-        {/* =================================
-            SUMMARY
-        ================================= */}
+        {/* SUMMARY */}
         <QuotationSummary quotations={quotations} />
 
-        {/* =================================
-            SEARCH + FILTER
-        ================================= */}
+        {/* SEARCH + FILTER */}
         <SearchFilter
           search={search}
           setSearch={setSearch}
@@ -325,28 +306,26 @@ export default function QuotationPage() {
           onReset={handleReset}
         />
 
-        {/* =================================
-            RESULT INFO
-        ================================= */}
+        {/* RESULT INFO */}
         {!loading && (
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-500">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Showing{" "}
-              <span className="font-semibold text-gray-800">
+              <span className="font-bold text-slate-600">
                 {filteredQuotations.length}
               </span>{" "}
               of{" "}
-              <span className="font-semibold text-gray-800">
+              <span className="font-bold text-slate-600">
                 {quotations.length}
               </span>{" "}
-              quotations
+              Quotations
             </p>
 
             {(search || status !== "all") && (
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-left text-sm font-medium text-blue-600 hover:text-blue-700 sm:text-right"
+                className="text-xs font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
               >
                 Clear filters
               </button>
@@ -354,9 +333,7 @@ export default function QuotationPage() {
           </div>
         )}
 
-        {/* =================================
-            QUOTATION TABLE
-        ================================= */}
+        {/* QUOTATION TABLE */}
         <QuotationTable
           quotations={filteredQuotations}
           loading={loading}
@@ -365,9 +342,7 @@ export default function QuotationPage() {
           onDelete={handleDelete}
         />
 
-        {/* =================================
-            DELETE MODAL
-        ================================= */}
+        {/* DELETE CONFIRM MODAL */}
         <DeleteModal
           isOpen={deleteModalOpen}
           onClose={() => {
@@ -383,4 +358,5 @@ export default function QuotationPage() {
       </div>
     </div>
   );
+}
 }

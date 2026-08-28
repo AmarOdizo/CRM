@@ -254,544 +254,334 @@ export default function ViewQuotationPage() {
    * ==========================================
    */
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-        <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
-              <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-gray-800">
-              Loading Quotation
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500">Please wait...</p>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Proposal...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve estimation details.</p>
         </div>
       </div>
     );
   }
 
-  /*
-   * ==========================================
-   * ERROR
-   * ==========================================
-   */
-
-  if (error && !quotation) {
+  if (error || !quotation) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-2xl">
-          <div className="rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <AlertCircle className="h-7 w-7 text-red-600" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-gray-900">
-              Quotation Not Found
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-500">{error}</p>
-
-            <button
-              type="button"
-              onClick={() => router.push("/admin1/quotation")}
-              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Quotations
-            </button>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 mb-4">
+            <AlertCircle size={26} />
           </div>
+          <h2 className="text-2xl font-black text-rose-600">Proposal Not Found</h2>
+          <p className="mt-2 text-sm text-slate-500 leading-relaxed mb-6">
+            {error || "The requested quotation proposal could not be found."}
+          </p>
+
+          <button
+            onClick={() => router.push("/admin1/quotation")}
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Quotations</span>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* =====================================
-            HEADER
-        ===================================== */}
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => router.push("/admin1/quotation")}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-600 shadow-sm hover:bg-gray-50"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-
-            <div className="flex items-center gap-3">
-              <div className="hidden h-11 w-11 items-center justify-center rounded-xl bg-blue-100 sm:flex">
-                <FileText className="h-5 w-5 text-blue-600" />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Quotation Details
-                </h1>
-
-                <p className="text-sm text-gray-500">{getQuotationNumber()}</p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-slate-50 p-6 print:bg-white print:p-0">
+      <div className="mx-auto max-w-4xl">
+        {/* PAGE HEADER */}
+        <div className="mb-8 flex items-center justify-between print:hidden">
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Proposal Estimates</h1>
+            <p className="mt-1 text-slate-500 font-medium">Review customer proposals, items, and billing calculations.</p>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2.5">
             <button
-              type="button"
+              onClick={handlePrint}
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
+            >
+              <Printer size={16} />
+              <span>Print Quote</span>
+            </button>
+
+            <button
               onClick={handleEdit}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
             >
-              <Edit className="h-4 w-4" />
-              Edit
+              <Edit size={16} />
+              <span>Edit</span>
             </button>
 
             <button
-              type="button"
               onClick={handleDelete}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-700"
+              className="flex items-center gap-2 rounded-xl bg-rose-600 px-5 py-3 font-semibold text-white shadow-lg shadow-rose-500/10 hover:bg-rose-700 transition active:scale-95 cursor-pointer"
             >
-              <Trash2 className="h-4 w-4" />
-              Delete
+              <Trash2 size={16} />
+              <span>Delete</span>
             </button>
           </div>
         </div>
 
-        {/* =====================================
-            ERROR
-        ===================================== */}
-
-        {error && quotation && (
-          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
-            <AlertCircle className="mt-0.5 h-5 w-5 text-red-600" />
-
-            <p className="text-sm font-medium text-red-700">{error}</p>
-          </div>
-        )}
-
-        {/* =====================================
-            QUOTATION HEADER CARD
-        ===================================== */}
-
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 bg-gray-50 px-5 py-5 sm:px-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* PROPOSAL DOCUMENT */}
+        <div
+          id="quotation-print"
+          className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:rounded-none print:border-0 print:shadow-none"
+        >
+          {/* HEADER BLOCK */}
+          <div className="border-b border-slate-100 p-8 md:p-10 bg-slate-50/50">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Quotation Number
-                </p>
-
-                <h2 className="mt-1 text-2xl font-bold text-gray-900">
-                  {getQuotationNumber()}
-                </h2>
+                <div className="flex items-center gap-2 text-blue-600 font-black tracking-tight text-xl mb-3">
+                  <FileText size={24} />
+                  <span>ODIZO CRM</span>
+                </div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Quotation #{getQuotationNumber()}</h2>
+                <p className="mt-1.5 text-xs text-slate-400 font-semibold uppercase tracking-wider">Estimate Proposal Statement</p>
               </div>
 
-              <QuotationBadge status={quotation?.status || "draft"} />
+              <div className="sm:text-right flex flex-row sm:flex-col gap-3 sm:gap-2 items-center sm:items-end justify-start">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status</span>
+                <QuotationBadge status={quotation.status} />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
-            {/* Quotation Date */}
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100">
-                <CalendarDays className="h-5 w-5 text-blue-600" />
-              </div>
-
-              <div>
-                <p className="text-xs text-gray-500">Quotation Date</p>
-
-                <p className="mt-1 text-sm font-semibold text-gray-800">
-                  {formatDate(quotationDate)}
-                </p>
-              </div>
-            </div>
-
-            {/* Valid Until */}
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-100">
-                <CalendarDays className="h-5 w-5 text-orange-600" />
-              </div>
-
-              <div>
-                <p className="text-xs text-gray-500">Valid Until</p>
-
-                <p className="mt-1 text-sm font-semibold text-gray-800">
-                  {formatDate(validUntil)}
-                </p>
-              </div>
-            </div>
-
-            {/* Customer */}
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100">
-                <User className="h-5 w-5 text-green-600" />
-              </div>
-
-              <div className="min-w-0">
-                <p className="text-xs text-gray-500">Customer</p>
-
-                <p className="mt-1 truncate text-sm font-semibold text-gray-800">
-                  {getCustomerName()}
-                </p>
-              </div>
-            </div>
-
-            {/* Total */}
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100">
-                <IndianRupee className="h-5 w-5 text-indigo-600" />
-              </div>
-
-              <div>
-                <p className="text-xs text-gray-500">Grand Total</p>
-
-                <p className="mt-1 text-sm font-bold text-gray-900">
-                  {formatAmount(grandTotal)}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* =====================================
-            CUSTOMER INFORMATION
-        ===================================== */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              <User className="h-5 w-5 text-blue-600" />
-              Customer Information
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 p-5 sm:grid-cols-2 lg:grid-cols-3 sm:p-6">
-            {/* Name */}
+          {/* CUSTOMER & DETAILS GRID */}
+          <div className="grid grid-cols-1 gap-8 border-b border-slate-100 p-8 md:grid-cols-2 md:p-10">
+            {/* Customer Details */}
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                Customer Name
-              </p>
-
-              <p className="mt-1 text-sm font-semibold text-gray-800">
+              <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Prepared For
+              </span>
+              <h3 className="text-lg font-black text-slate-800 tracking-tight">
                 {getCustomerName()}
-              </p>
-            </div>
-
-            {/* Email */}
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                Email
-              </p>
-
-              <div className="mt-1 flex items-center gap-2">
-                <Mail className="h-4 w-4 text-gray-400" />
-
-                <p className="truncate text-sm text-gray-700">
-                  {getCustomerEmail()}
-                </p>
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                Phone
-              </p>
-
-              <div className="mt-1 flex items-center gap-2">
-                <Phone className="h-4 w-4 text-gray-400" />
-
-                <p className="text-sm text-gray-700">{getCustomerPhone()}</p>
-              </div>
-            </div>
-
-            {/* Address */}
-            <div className="sm:col-span-2 lg:col-span-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                Address
-              </p>
-
-              <div className="mt-1 flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
-
-                <p className="text-sm leading-6 text-gray-700">
-                  {getCustomerAddress()}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* =====================================
-            ITEMS
-        ===================================== */}
-
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-              <FileText className="h-5 w-5 text-blue-600" />
-              Quotation Items
-            </h2>
-          </div>
-
-          {/* Desktop */}
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[700px]">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    #
-                  </th>
-
-                  <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Description
-                  </th>
-
-                  <th className="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Qty
-                  </th>
-
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Rate
-                  </th>
-
-                  <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Amount
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-gray-100">
-                {items.length > 0 ? (
-                  items.map((item, index) => {
-                    const quantity = Number(item?.quantity || 0);
-
-                    const rate = Number(item?.rate || item?.unitPrice || 0);
-
-                    const amount = Number(
-                      item?.amount ?? item?.total ?? quantity * rate,
-                    );
-
-                    return (
-                      <tr
-                        key={item?._id || item?.id || index}
-                        className="hover:bg-gray-50"
-                      >
-                        <td className="px-5 py-4 text-sm text-gray-500">
-                          {index + 1}
-                        </td>
-
-                        <td className="px-5 py-4">
-                          <p className="text-sm font-medium text-gray-800">
-                            {item?.description ||
-                              item?.name ||
-                              item?.itemName ||
-                              "-"}
-                          </p>
-                        </td>
-
-                        <td className="px-5 py-4 text-center text-sm text-gray-700">
-                          {quantity}
-                        </td>
-
-                        <td className="px-5 py-4 text-right text-sm text-gray-700">
-                          {formatAmount(rate)}
-                        </td>
-
-                        <td className="px-5 py-4 text-right text-sm font-semibold text-gray-800">
-                          {formatAmount(amount)}
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="5"
-                      className="px-5 py-10 text-center text-sm text-gray-500"
-                    >
-                      No quotation items found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile */}
-          <div className="divide-y divide-gray-100 md:hidden">
-            {items.length > 0 ? (
-              items.map((item, index) => {
-                const quantity = Number(item?.quantity || 0);
-
-                const rate = Number(item?.rate || item?.unitPrice || 0);
-
-                const amount = Number(
-                  item?.amount ?? item?.total ?? quantity * rate,
-                );
-
-                return (
-                  <div key={item?._id || item?.id || index} className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs text-gray-400">
-                          Item {index + 1}
-                        </p>
-
-                        <p className="mt-1 text-sm font-semibold text-gray-800">
-                          {item?.description ||
-                            item?.name ||
-                            item?.itemName ||
-                            "-"}
-                        </p>
-                      </div>
-
-                      <p className="text-sm font-bold text-gray-800">
-                        {formatAmount(amount)}
-                      </p>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl bg-gray-50 p-3">
-                      <div>
-                        <p className="text-xs text-gray-500">Quantity</p>
-
-                        <p className="mt-1 text-sm font-medium text-gray-700">
-                          {quantity}
-                        </p>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="text-xs text-gray-500">Rate</p>
-
-                        <p className="mt-1 text-sm font-medium text-gray-700">
-                          {formatAmount(rate)}
-                        </p>
-                      </div>
-                    </div>
+              </h3>
+              <div className="mt-3.5 space-y-2 text-sm font-medium text-slate-500">
+                {getCustomerEmail() !== "-" && (
+                  <div className="flex items-center gap-2">
+                    <Mail size={14} className="text-slate-400 shrink-0" />
+                    <span>{getCustomerEmail()}</span>
                   </div>
-                );
-              })
-            ) : (
-              <div className="p-8 text-center text-sm text-gray-500">
-                No quotation items found.
+                )}
+                {getCustomerPhone() !== "-" && (
+                  <div className="flex items-center gap-2">
+                    <Phone size={14} className="text-slate-400 shrink-0" />
+                    <span>{getCustomerPhone()}</span>
+                  </div>
+                )}
+                {getCustomerAddress() !== "-" && (
+                  <div className="flex items-start gap-2">
+                    <MapPin size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                    <span className="leading-relaxed">{getCustomerAddress()}</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {/* =====================================
-            TOTALS
-        ===================================== */}
+            {/* Proposal Metadata */}
+            <div>
+              <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Proposal Details
+              </span>
+              <div className="space-y-3.5 text-sm font-medium">
+                <div className="flex justify-between items-center text-slate-500">
+                  <span>Proposal Reference</span>
+                  <span className="font-bold text-slate-800">{getQuotationNumber()}</span>
+                </div>
 
-        <div className="flex justify-end">
-          <div className="w-full rounded-2xl border border-gray-200 bg-white shadow-sm sm:max-w-md">
-            <div className="space-y-3 p-5 sm:p-6">
-              {/* Subtotal */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Subtotal</span>
-
-                <span className="text-sm font-medium text-gray-800">
-                  {formatAmount(subtotal)}
-                </span>
-              </div>
-
-              {/* Discount */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Discount</span>
-
-                <span className="text-sm font-medium text-red-600">
-                  - {formatAmount(discount)}
-                </span>
-              </div>
-
-              {/* Tax */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Tax</span>
-
-                <span className="text-sm font-medium text-gray-800">
-                  {formatAmount(tax)}
-                </span>
-              </div>
-
-              <div className="border-t border-gray-200 pt-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-base font-semibold text-gray-900">
-                    Grand Total
+                <div className="flex justify-between items-center text-slate-500">
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays size={14} className="text-slate-400" />
+                    Proposal Date
                   </span>
-
-                  <span className="text-xl font-bold text-blue-600">
-                    {formatAmount(grandTotal)}
+                  <span className="font-semibold text-slate-700">
+                    {formatDate(quotationDate)}
                   </span>
+                </div>
+
+                <div className="flex justify-between items-center text-slate-500">
+                  <span className="flex items-center gap-1.5">
+                    <CalendarDays size={14} className="text-slate-400" />
+                    Valid Until
+                  </span>
+                  <span className="font-semibold text-slate-700">
+                    {formatDate(validUntil)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center text-slate-500">
+                  <span>Compiled By</span>
+                  <span className="font-bold text-slate-800">{quotation.createdBy || "Admin"}</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* =====================================
-            NOTES
-        ===================================== */}
+          {/* ESTIMATED ITEMS TABLE */}
+          <div className="p-8 md:p-10">
+            <span className="mb-4 block text-xs font-bold uppercase tracking-wider text-slate-400">
+              Proposal Line Items
+            </span>
 
-        {quotation?.notes && (
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
-              <h2 className="text-lg font-semibold text-gray-900">Notes</h2>
-            </div>
+            <div className="overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[600px] border-collapse text-sm">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-400 w-12">
+                      #
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Description
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-400 w-24">
+                      Qty
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-400 w-32">
+                      Rate
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-400 w-36">
+                      Amount
+                    </th>
+                  </tr>
+                </thead>
 
-            <div className="p-5 sm:p-6">
-              <p className="whitespace-pre-wrap text-sm leading-6 text-gray-600">
-                {quotation.notes}
-              </p>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {items.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                        No estimation details available.
+                      </td>
+                    </tr>
+                  ) : (
+                    items.map((item, index) => {
+                      const quantity = Number(item.quantity || 0);
+                      const rate = Number(item.rate || item.unitPrice || 0);
+                      const amount = Number(item.amount ?? quantity * rate);
+
+                      return (
+                        <tr key={item._id || item.id || index} className="text-slate-600">
+                          <td className="px-4 py-4 text-slate-400">
+                            {index + 1}
+                          </td>
+                          <td className="px-4 py-4 text-slate-800 font-semibold">
+                            {item.productName || item.description || item.name || "-"}
+                          </td>
+                          <td className="px-4 py-4 text-center">
+                            {quantity}
+                          </td>
+                          <td className="px-4 py-4 text-right">
+                            {formatAmount(rate)}
+                          </td>
+                          <td className="px-4 py-4 text-right text-slate-800 font-bold font-mono">
+                            {formatAmount(amount)}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-        )}
 
-        {/* =====================================
-            FOOTER ACTIONS
-        ===================================== */}
+          {/* ESTIMATION SUMMARY SPLIT */}
+          <div className="border-t border-slate-100 p-8 md:p-10 flex flex-col md:flex-row gap-6 md:justify-between items-start">
+            {/* Notes Section */}
+            <div className="w-full md:max-w-md space-y-4">
+              {quotation.notes && (
+                <div>
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Additional Notes
+                  </span>
+                  <p className="whitespace-pre-wrap text-xs leading-relaxed text-slate-500 font-medium p-4 bg-slate-50/50 rounded-xl border border-slate-200/40">
+                    {quotation.notes}
+                  </p>
+                </div>
+              )}
 
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button
-            type="button"
-            onClick={() => router.push("/admin1/quotation")}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </button>
+              {quotation.termsAndConditions && (
+                <div>
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Terms & Conditions
+                  </span>
+                  <p className="whitespace-pre-wrap text-xs leading-relaxed text-slate-500 font-medium p-4 bg-slate-50/50 rounded-xl border border-slate-200/40">
+                    {quotation.termsAndConditions}
+                  </p>
+                </div>
+              )}
+            </div>
 
-          <button
-            type="button"
-            onClick={handleEdit}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            <Edit className="h-4 w-4" />
-            Edit Quotation
-          </button>
+            {/* Calculations Summary */}
+            <div className="w-full md:max-w-xs space-y-3 text-sm font-medium">
+              <div className="flex justify-between text-slate-500">
+                <span>Subtotal</span>
+                <span className="font-semibold text-slate-700">{formatAmount(subtotal)}</span>
+              </div>
+
+              <div className="flex justify-between text-slate-500">
+                <span>Tax</span>
+                <span className="font-semibold text-slate-700">{formatAmount(tax)}</span>
+              </div>
+
+              <div className="flex justify-between text-slate-500">
+                <span>Discount</span>
+                <span className="font-semibold text-rose-600">-{formatAmount(discount)}</span>
+              </div>
+
+              <div className="border-t border-slate-100 pt-4 mt-2">
+                <div className="flex items-center justify-between text-base font-black text-slate-800 tracking-tight">
+                  <span>Grand Total</span>
+                  <span className="text-xl text-blue-600 font-mono">{formatAmount(grandTotal)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer remarks */}
+          <div className="border-t border-slate-100 py-6 text-center text-xs text-slate-400 font-medium">
+            This is a system generated estimate proposal. Valid till due date.
+          </div>
         </div>
-
-        {/* =====================================
-            DELETE MODAL
-        ===================================== */}
-
-        <DeleteModal
-          isOpen={deleteModalOpen}
-          onClose={() => {
-            if (!deleteLoading) {
-              setDeleteModalOpen(false);
-            }
-          }}
-          onConfirm={handleConfirmDelete}
-          quotation={quotation}
-          loading={deleteLoading}
-        />
       </div>
+
+      {/* PRINT STYLE OVERLAYS */}
+      <style jsx global>{`
+        @media print {
+          body {
+            background: white !important;
+          }
+          .print\\:hidden {
+            display: none !important;
+          }
+          @page {
+            size: A4;
+            margin: 15mm;
+          }
+        }
+      `}</style>
+
+      {/* DELETE MODAL */}
+      <DeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          if (!deleteLoading) {
+            setDeleteModalOpen(false);
+          }
+        }}
+        onConfirm={handleConfirmDelete}
+        quotation={quotation}
+        loading={deleteLoading}
+      />
     </div>
   );
+}
 }

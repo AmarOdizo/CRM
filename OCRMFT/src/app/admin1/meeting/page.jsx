@@ -274,94 +274,70 @@ export default function MeetingSchedulingPage() {
   // ==================================================
 
   return (
-    <div className="space-y-6">
-      {/* ==================================================
-          PAGE HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Meeting Scheduling
-          </h1>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Manage, schedule and track your meetings
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {/* REFRESH */}
-
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            Refresh
-          </button>
-
-          {/* ADD */}
-
-          <Link
-            href="/admin1/meeting/add"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            <CalendarPlus size={17} />
-            Schedule Meeting
-          </Link>
-        </div>
-      </div>
-
-      {/* ==================================================
-          SUMMARY
-      ================================================== */}
-
-      <MeetingSummary meetings={meetings} />
-
-      {/* ==================================================
-          SEARCH / FILTER
-      ================================================== */}
-
-      <SearchFilter
-        totalCount={filteredMeetings.length}
-        onFilterChange={handleFilterChange}
-      />
-
-      {/* ==================================================
-          BACKEND ERROR
-          When old data exists but refresh failed
-      ================================================== */}
-
-      {error && meetings.length > 0 && (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={17} className="text-yellow-600" />
-
-            <p className="text-sm text-yellow-800">{error}</p>
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* HEADER */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Meeting Scheduling</h1>
+            <p className="mt-1 text-slate-500 font-medium">Manage, schedule, and track customer meetings and check-ins.</p>
           </div>
 
-          <button
-            type="button"
-            onClick={handleRefresh}
-            className="text-xs font-bold text-yellow-700 hover:underline"
-          >
-            Retry
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <RefreshCw size={16} className={loading ? "animate-spin text-blue-600" : ""} />
+              <span>Refresh</span>
+            </button>
+
+            <Link
+              href="/admin1/meeting/add"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
+            >
+              <CalendarPlus size={16} />
+              <span>Schedule Meeting</span>
+            </Link>
+          </div>
         </div>
-      )}
 
-      {/* ==================================================
-          TABLE
-      ================================================== */}
+        {/* SUMMARY */}
+        <MeetingSummary meetings={meetings} />
 
-      <MeetingTable
-        meetings={filteredMeetings}
-        loading={loading}
-        onDelete={handleDelete}
-      />
+        {/* SEARCH / FILTER */}
+        <SearchFilter
+          totalCount={filteredMeetings.length}
+          onFilterChange={handleFilterChange}
+        />
+
+        {/* ERROR MESSAGE */}
+        {error && (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={17} className="text-rose-600" />
+              <p className="text-sm font-semibold text-rose-850">{error}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleRefresh}
+              className="text-xs font-bold text-rose-700 hover:underline cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* MEETING TABLE */}
+        <MeetingTable
+          meetings={filteredMeetings}
+          loading={loading}
+          onDelete={handleDelete}
+        />
+      </div>
     </div>
   );
 }

@@ -61,35 +61,34 @@ export default function MeetingSummary({ meetings = [] }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-      {cards.map((card) => {
+    <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full">
+      {cards.map((card, idx) => {
         const Icon = card.icon;
+        const colorClass = {
+          "Total Meetings": "text-blue-600 bg-blue-50 border-blue-100",
+          "Today": "text-purple-600 bg-purple-50 border-purple-100",
+          "Upcoming": "text-amber-600 bg-amber-50 border-amber-100",
+          "Completed": "text-emerald-600 bg-emerald-50 border-emerald-100",
+          "Cancelled": "text-rose-600 bg-rose-50 border-rose-100",
+        }[card.title] || "text-slate-600 bg-slate-50 border-slate-100";
 
         return (
           <div
-            key={card.title}
-            className="group rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            key={idx}
+            className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group"
           >
-            <div className="flex items-start justify-between">
-              {/* ICON */}
-
-              <div
-                className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}
-              >
-                <Icon size={21} />
-              </div>
-
-              {/* VALUE */}
-
-              <p className="text-2xl font-bold text-gray-800">{card.value}</p>
+            <div>
+              <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {card.title}
+              </h3>
+              <p className="mt-2 text-2xl font-extrabold text-slate-800 tracking-tight">
+                {card.value}
+              </p>
             </div>
-
-            {/* TEXT */}
-
-            <div className="mt-4">
-              <h3 className="text-sm font-bold text-gray-800">{card.title}</h3>
-
-              <p className="mt-1 text-xs text-gray-500">{card.description}</p>
+            <div
+              className={`h-11 w-11 rounded-xl flex items-center justify-center border transition-all duration-300 group-hover:scale-105 ${colorClass}`}
+            >
+              <Icon size={20} />
             </div>
           </div>
         );

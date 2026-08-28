@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import RoleForm from "../../rolecomponents/RoleForm";
 import { getRoleById, updateRole } from "../../data";
@@ -75,34 +76,31 @@ export default function EditRole() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100">
-        <div className="rounded-2xl bg-white p-8 shadow-xl">
-          <h2 className="text-xl font-semibold text-slate-700">
-            Loading Role...
-          </h2>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Role...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve role permissions.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="min-h-screen bg-slate-50 p-6">
       {/* Header */}
-
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Edit Role</h1>
-
-          <p className="mt-2 text-slate-500">
-            Update role information and permissions.
-          </p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Edit Role</h1>
+          <p className="mt-1 text-slate-500 font-medium font-medium font-medium">Update system role permissions and settings.</p>
         </div>
 
         <Link
           href="/admin1/role-management"
-          className="rounded-xl bg-gray-700 px-5 py-3 text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 

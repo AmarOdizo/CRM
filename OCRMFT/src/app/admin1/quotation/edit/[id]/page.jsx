@@ -144,122 +144,78 @@ export default function EditQuotationPage() {
    */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto flex min-h-[60vh] max-w-6xl items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
-              <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-gray-800">
-              Loading Quotation
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Please wait while quotation details are loading...
-            </p>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Quotation...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve quotation parameters.</p>
         </div>
       </div>
     );
   }
 
-  /*
-   * ==========================================
-   * ERROR / NOT FOUND
-   * ==========================================
-   */
   if (error && !quotation) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-        <div className="mx-auto max-w-2xl">
-          <div className="rounded-2xl border border-red-200 bg-white p-6 text-center shadow-sm">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <AlertCircle className="h-7 w-7 text-red-600" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold text-gray-900">
-              Unable to Load Quotation
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-500">{error}</p>
-
-            <button
-              type="button"
-              onClick={handleBack}
-              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Quotations
-            </button>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 mb-4">
+            <AlertCircle size={26} />
           </div>
+          <h2 className="text-2xl font-black text-rose-600">Quotation Not Found</h2>
+          <p className="mt-2 text-sm text-slate-500 leading-relaxed mb-6">
+            {error || "The requested proposal parameters could not be found."}
+          </p>
+
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 cursor-pointer"
+          >
+            <ArrowLeft size={16} />
+            <span>Back to Quotations</span>
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* =====================================
-            HEADER
-        ===================================== */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-5xl space-y-6">
+        {/* HEADER */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleBack}
               disabled={saving}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-600 shadow-sm transition hover:bg-gray-50 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Back to quotations"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-slate-950 disabled:cursor-not-allowed cursor-pointer"
+              aria-label="Back"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden h-11 w-11 items-center justify-center rounded-xl bg-orange-100 sm:flex">
-                <FileText className="h-5 w-5 text-orange-600" />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Edit Quotation
-                </h1>
-
-                <p className="text-sm text-gray-500">
-                  Update quotation details
-                </p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-black text-slate-800 tracking-tight">Edit Quotation</h1>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-0.5">Modify Proposal Estimates</p>
             </div>
           </div>
         </div>
 
-        {/* =====================================
-            ERROR
-        ===================================== */}
+        {/* ERROR */}
         {error && quotation && (
-          <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
-
-            <p className="text-sm font-medium text-red-700">{error}</p>
+          <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
+            <p className="text-sm font-semibold text-rose-700">{error}</p>
           </div>
         )}
 
-        {/* =====================================
-            FORM
-        ===================================== */}
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Quotation Details
-            </h2>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Modify the quotation information below.
-            </p>
+        {/* FORM CONTAINER */}
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="border-b border-slate-100 p-6 bg-slate-50/50">
+            <h2 className="text-base font-bold text-slate-800 tracking-tight">Quotation Statement</h2>
+            <p className="mt-1 text-xs font-medium text-slate-400">Update estimate specifications or line item rates.</p>
           </div>
 
-          <div className="p-5 sm:p-6">
+          <div className="p-6">
             <QuotationForm
               initialData={quotation}
               quotation={quotation}
@@ -271,13 +227,11 @@ export default function EditQuotationPage() {
           </div>
         </div>
 
-        {/* =====================================
-            SAVING
-        ===================================== */}
+        {/* LOADING SUBMIT */}
         {saving && (
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Updating quotation...
+          <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-400 uppercase tracking-widest">
+            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+            <span>Updating Proposal...</span>
           </div>
         )}
       </div>

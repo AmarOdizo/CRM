@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import UserForm from "../usercomponents/UserForm";
 import { addUser } from "../data";
@@ -54,28 +55,26 @@ export default function AddUser() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="min-h-screen bg-slate-50 p-6">
       {/* Header */}
-
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Add New User</h1>
-
-          <p className="mt-2 text-slate-500">
-            Fill in the information below to create a new user.
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Add New User</h1>
+          <p className="mt-1 text-slate-500 font-medium">
+            Fill in the information below to create a new user profile.
           </p>
         </div>
 
         <Link
           href="/admin1/user-management"
-          className="rounded-xl bg-gray-700 px-5 py-3 font-medium text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 
       {/* Form */}
-
       <UserForm
         formData={formData}
         handleChange={handleChange}

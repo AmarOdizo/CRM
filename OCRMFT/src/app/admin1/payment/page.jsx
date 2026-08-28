@@ -313,99 +313,67 @@ export default function PaymentTrackingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="mx-auto w-full max-w-[1600px]">
-        {/* ====================================
-            PAGE HEADER
-        ===================================== */}
-
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
-              <CreditCard size={23} />
-            </div>
-
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">
-                Payment Tracking
-              </h1>
-
-              <p className="mt-1 text-sm text-gray-500">
-                Manage and track invoice payments
-              </p>
-            </div>
+    <div className="min-h-screen bg-slate-50 p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        {/* HEADER */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Payment Tracking</h1>
+            <p className="mt-1 text-slate-500 font-medium">Record client transactions, trace pending invoices, and log receipts.</p>
           </div>
 
-          {/* =================================
-              HEADER ACTIONS
-          ================================== */}
-
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={getPaymentsData}
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <RefreshCw size={17} className={loading ? "animate-spin" : ""} />
-              Refresh
+              <RefreshCw size={16} className={loading ? "animate-spin text-blue-600" : ""} />
+              <span>Refresh</span>
             </button>
 
             <button
               type="button"
               onClick={handleAddPayment}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+              className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
             >
-              <Plus size={18} />
-              Add Payment
+              <Plus size={16} />
+              <span>Add Payment</span>
             </button>
           </div>
         </div>
 
-        {/* ====================================
-            ERROR
-        ===================================== */}
-
+        {/* ERROR */}
         {error && (
-          <div className="mb-5 flex flex-col gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm font-medium text-red-700">{error}</p>
-
-            <button
-              type="button"
-              onClick={getPaymentsData}
-              className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100"
-            >
-              Try Again
-            </button>
+          <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-600" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-rose-800">{error}</p>
+              <button
+                type="button"
+                onClick={getPaymentsData}
+                className="mt-1.5 text-xs font-bold text-rose-700 underline hover:text-rose-950"
+              >
+                Try again
+              </button>
+            </div>
           </div>
         )}
 
-        {/* ====================================
-            SUMMARY
-        ===================================== */}
+        {/* SUMMARY */}
+        <PaymentSummary
+          invoiceAmount={totalInvoiceAmount}
+          payments={payments}
+        />
 
-        <div className="mb-6">
-          <PaymentSummary
-            invoiceAmount={totalInvoiceAmount}
-            payments={payments}
-          />
-        </div>
+        {/* SEARCH & FILTER */}
+        <SearchFilter
+          totalResults={filteredPayments.length}
+          onFilterChange={handleFilterChange}
+        />
 
-        {/* ====================================
-            SEARCH & FILTER
-        ===================================== */}
-
-        <div className="mb-6">
-          <SearchFilter
-            totalResults={filteredPayments.length}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
-
-        {/* ====================================
-            PAYMENT TABLE
-        ===================================== */}
-
+        {/* PAYMENT TABLE */}
         <PaymentTable
           payments={filteredPayments}
           loading={loading}
@@ -414,10 +382,7 @@ export default function PaymentTrackingPage() {
           onDelete={handleDelete}
         />
 
-        {/* ====================================
-            DELETE MODAL
-        ===================================== */}
-
+        {/* DELETE MODAL */}
         <DeleteModal
           payment={selectedPayment}
           isOpen={deleteModalOpen}

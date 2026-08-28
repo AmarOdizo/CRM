@@ -14,36 +14,28 @@ export default function PaymentActions({ payment, onView, onEdit, onDelete }) {
       <button
         type="button"
         onClick={() => onView?.(payment)}
-        title="View Payment"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-blue-200 bg-blue-50 text-blue-600 transition hover:bg-blue-100"
+        title="View details"
+        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100/50 rounded-lg transition cursor-pointer"
       >
-        <Eye size={17} />
+        <Eye size={15} />
       </button>
-
-      {/* =====================================
-          EDIT
-      ====================================== */}
 
       <button
         type="button"
         onClick={() => onEdit?.(payment)}
-        title="Edit Payment"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-amber-200 bg-amber-50 text-amber-600 transition hover:bg-amber-100"
+        title="Edit payment"
+        className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-slate-100/50 rounded-lg transition cursor-pointer"
       >
-        <Pencil size={17} />
+        <Pencil size={15} />
       </button>
-
-      {/* =====================================
-          DELETE
-      ====================================== */}
 
       <button
         type="button"
         onClick={() => onDelete?.(payment)}
-        title="Delete Payment"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
+        title="Delete record"
+        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100/50 rounded-lg transition cursor-pointer"
       >
-        <Trash2 size={17} />
+        <Trash2 size={15} />
       </button>
     </div>
   );
