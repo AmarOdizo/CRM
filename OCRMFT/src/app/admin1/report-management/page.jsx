@@ -22,7 +22,7 @@ export default function ReportManagement() {
   const [search, setSearch] = useState("");
   const [reportType, setReportType] = useState("All");
   const [loading, setLoading] = useState(true);
-  
+
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -104,7 +104,7 @@ export default function ReportManagement() {
           ...payload,
         };
         setReports((prev) => [fallbackReport, ...prev]);
-        
+
         // Also update local summary stats dynamically for a seamless UX
         setSummary((prev) => ({
           ...prev,
@@ -112,14 +112,14 @@ export default function ReportManagement() {
           generatedReports: (prev.generatedReports || 0) + 1,
         }));
       }
-      
+
       // Reset & Close
       setNewReportName("");
       setNewReportType("Sales");
       setFromDate("");
       setToDate("");
       setModalOpen(false);
-      
+
       alert("New Report generated successfully!");
     } catch (err) {
       console.error(err);
@@ -143,7 +143,7 @@ export default function ReportManagement() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-10">
       {/* HEADER SECTION */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
@@ -158,7 +158,7 @@ export default function ReportManagement() {
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV />
           <ExportPDF />
-          
+
           <button
             onClick={() => setModalOpen(true)}
             className="flex items-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 px-5 py-3 font-semibold text-white shadow-sm hover:shadow transition"

@@ -1,12 +1,5 @@
-import Image from "next/image";
-import Sidebar from "@/componenets/sidebar";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return (
-    <>
-      <div className="flex">
-        <Sidebar />
-      </div>
-    </>
-  );
+  redirect("/login");
 }
