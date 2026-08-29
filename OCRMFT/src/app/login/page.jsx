@@ -53,7 +53,7 @@ export default function Login() {
         {/* Header with Logo */}
         <div className="text-center mb-8 relative z-10">
           <div className="mb-4 inline-block p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md shadow-inner">
-            <img src="/Logo.png" alt="Logo" className="h-12 w-auto object-contain" />
+            <img src="/Logo.png" alt="Logo" className="h-16 w-auto object-contain" />
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight">
             Client & Project
@@ -71,7 +71,7 @@ export default function Login() {
             onClick={() => setRole("user")}
             className={`group cursor-pointer rounded-2xl border p-5 transition-all duration-300 flex items-center justify-between ${
               role === "user"
-                ? "border-sky-500 bg-sky-550/15 shadow-[0_0_20px_rgba(14,165,233,0.15)] scale-[1.02]"
+                ? "border-sky-500 bg-sky-500/15 shadow-[0_0_20px_rgba(14,165,233,0.15)] scale-[1.02]"
                 : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15"
             }`}
           >
@@ -100,7 +100,7 @@ export default function Login() {
             onClick={() => setRole("admin")}
             className={`group cursor-pointer rounded-2xl border p-5 transition-all duration-300 flex items-center justify-between ${
               role === "admin"
-                ? "border-emerald-500 bg-emerald-550/15 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
+                ? "border-emerald-500 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
                 : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15"
             }`}
           >

@@ -32,7 +32,7 @@ const defaultItem = {
 // COMPONENT
 // ============================================================
 
-export default function QuotationForm({ initialData = null, mode = "create" }) {
+export default function QuotationForm({ initialData = null, mode = "create", onSuccess, onCancel }) {
   const router = useRouter();
 
   const isEdit = mode === "edit";
@@ -251,14 +251,18 @@ export default function QuotationForm({ initialData = null, mode = "create" }) {
 
         setSuccess(result?.message || "Quotation created successfully.");
 
-        // Redirect after creation
-        setTimeout(() => {
-          if (result?.data?._id) {
-            router.push(`/admin1/quotation/view/${result.data._id}`);
-          } else {
-            router.push("/admin1/quotation");
-          }
-        }, 700);
+        if (onSuccess) {
+          onSuccess(result?.data?._id || result?.data?.id);
+        } else {
+          // Redirect after creation
+          setTimeout(() => {
+            if (result?.data?._id) {
+              router.push(`/admin1/quotation/view/${result.data._id}`);
+            } else {
+              router.push("/admin1/quotation");
+            }
+          }, 700);
+        }
       }
 
       // ------------------------------------------------------
@@ -269,9 +273,13 @@ export default function QuotationForm({ initialData = null, mode = "create" }) {
 
         setSuccess(result?.message || "Quotation updated successfully.");
 
-        setTimeout(() => {
-          router.push(`/admin1/quotation/view/${initialData._id}`);
-        }, 700);
+        if (onSuccess) {
+          onSuccess(initialData._id);
+        } else {
+          setTimeout(() => {
+            router.push(`/admin1/quotation/view/${initialData._id}`);
+          }, 700);
+        }
       }
     } catch (err) {
       console.error("Quotation Submit Error:", err);
@@ -287,7 +295,11 @@ export default function QuotationForm({ initialData = null, mode = "create" }) {
   // ==========================================================
 
   const handleCancel = () => {
-    router.push("/admin1/quotation");
+    if (onCancel) {
+      onCancel();
+    } else {
+      router.push("/admin1/quotation");
+    }
   };
 
   return (

@@ -8,6 +8,7 @@ import { getTasks, deleteTask } from "./data";
 import { filterTasks } from "./utils";
 import TaskTable from "./taskcomponents/TaskTable";
 import SearchFilter from "./taskcomponents/SearchFilter";
+import TaskFormModal from "./taskcomponents/TaskFormModal";
 
 export default function TaskAssignmentPage() {
   const [tasks, setTasks] = useState([]);
@@ -16,6 +17,8 @@ export default function TaskAssignmentPage() {
   const [priority, setPriority] = useState("All");
   const [loading, setLoading] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
   const fetchTasks = async () => {
     try {
@@ -67,13 +70,16 @@ export default function TaskAssignmentPage() {
           </p>
         </div>
 
-        <Link
-          href="/admin1/task-assignment/add"
+        <button
+          onClick={() => {
+            setSelectedTaskId(null);
+            setModalOpen(true);
+          }}
           className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer w-fit"
         >
           <Plus size={18} />
           <span>Add Task</span>
-        </Link>
+        </button>
       </div>
 
       {/* Stats Cards */}
@@ -150,8 +156,22 @@ export default function TaskAssignmentPage() {
           tasks={filteredTasks}
           onDelete={handleDelete}
           deleteLoading={deleteLoading}
+          onEdit={(task) => {
+            setSelectedTaskId(task.id);
+            setModalOpen(true);
+          }}
         />
       )}
+
+      <TaskFormModal
+        open={modalOpen}
+        taskId={selectedTaskId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          fetchTasks();
+        }}
+      />
     </div>
   );
 }

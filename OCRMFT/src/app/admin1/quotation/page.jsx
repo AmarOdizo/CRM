@@ -8,6 +8,7 @@ import QuotationSummary from "./quotationcomponents/QuotationSummary";
 import SearchFilter from "./quotationcomponents/SearchFilter";
 import QuotationTable from "./quotationcomponents/QuotationTable";
 import DeleteModal from "./quotationcomponents/DeleteModal";
+import QuotationFormModal from "./quotationcomponents/QuotationFormModal";
 
 const API_URL = "http://localhost:5000/api/Quotation";
 
@@ -20,6 +21,8 @@ export default function QuotationPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedQuotation, setSelectedQuotation] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedQuotationId, setSelectedQuotationId] = useState(null);
 
   const [error, setError] = useState("");
 
@@ -141,7 +144,8 @@ export default function QuotationPage() {
    * ================================
    */
   const handleAdd = () => {
-    router.push("/admin1/quotation/add");
+    setSelectedQuotationId(null);
+    setModalOpen(true);
   };
 
   /*
@@ -167,7 +171,8 @@ export default function QuotationPage() {
 
     if (!id) return;
 
-    router.push(`/admin1/quotation/edit/${id}`);
+    setSelectedQuotationId(id);
+    setModalOpen(true);
   };
 
   /*
@@ -354,6 +359,17 @@ export default function QuotationPage() {
           onConfirm={handleConfirmDelete}
           quotation={selectedQuotation}
           loading={deleteLoading}
+        />
+
+        {/* FORM DIALOG MODAL */}
+        <QuotationFormModal
+          open={modalOpen}
+          quotationId={selectedQuotationId}
+          onClose={() => setModalOpen(false)}
+          onSuccess={() => {
+            setModalOpen(false);
+            fetchQuotations();
+          }}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, Input, Button, Checkbox } from "antd";
-import { UserOutlined, LockOutlined, LoginOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined, LoginOutlined, ArrowLeftOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -94,7 +94,7 @@ export default function UserLogin() {
         {/* Header */}
         <div className="text-center mb-8 relative z-10">
           <div className="mb-4 inline-block p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md shadow-inner">
-            <img src="/Logo.png" alt="Logo" className="h-10 w-auto object-contain" />
+            <img src="/Logo.png" alt="Logo" className="h-14 w-auto object-contain" />
           </div>
 
           <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight flex items-center justify-center gap-2">
@@ -129,6 +129,13 @@ export default function UserLogin() {
               placeholder="••••••••"
               prefix={<LockOutlined className="text-slate-500" />}
               onChange={handlePassword}
+              iconRender={(visible) =>
+                visible ? (
+                  <EyeOutlined className="text-slate-200 hover:text-white transition-colors cursor-pointer text-base" />
+                ) : (
+                  <EyeInvisibleOutlined className="text-slate-400 hover:text-slate-300 transition-colors cursor-pointer text-base" />
+                )
+              }
               className="h-12 rounded-xl !bg-slate-900/50 !border-white/10 !text-white hover:!border-sky-500/50 focus:!border-sky-500 placeholder-slate-600"
             />
           </div>

@@ -9,12 +9,15 @@ import { getProjects, deleteProject } from "./data";
 import ProjectTable from "./projectcomponents/ProjectTable";
 import SearchFilter from "./projectcomponents/SearchFilter";
 import ExportCSV from "./projectcomponents/ExportCSV";
+import ProjectFormModal from "./projectcomponents/ProjectFormModal";
 
 export default function ProjectManagement() {
   const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   useEffect(() => {
     fetchProjects();
@@ -71,13 +74,16 @@ export default function ProjectManagement() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV projects={filteredProjects} />
-          <Link
-            href="/admin1/project-management/add"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95"
+          <button
+            onClick={() => {
+              setSelectedProjectId(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
             <Plus size={18} />
             <span>Add Project</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -149,8 +155,25 @@ export default function ProjectManagement() {
           Loading Projects...
         </div>
       ) : (
-        <ProjectTable projects={filteredProjects} onDelete={handleDelete} />
+        <ProjectTable
+          projects={filteredProjects}
+          onDelete={handleDelete}
+          onEdit={(project) => {
+            setSelectedProjectId(project.id);
+            setModalOpen(true);
+          }}
+        />
       )}
+
+      <ProjectFormModal
+        open={modalOpen}
+        projectId={selectedProjectId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          fetchProjects();
+        }}
+      />
     </div>
   );
 }

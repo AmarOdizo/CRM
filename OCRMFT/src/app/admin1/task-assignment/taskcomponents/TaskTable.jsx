@@ -19,6 +19,7 @@ export default function TaskTable({
   tasks = [],
   onDelete,
   deleteLoading = false,
+  onEdit,
 }) {
   const [selectedTask, setSelectedTask] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -133,13 +134,13 @@ export default function TaskTable({
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/task-assignment/edit/${task.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(task)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit Task"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => handleDeleteClick(task)}
               className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 border border-transparent hover:border-rose-100 cursor-pointer"

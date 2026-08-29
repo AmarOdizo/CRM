@@ -30,6 +30,7 @@ export default function MeetingTable({
   meetings = [],
   loading = false,
   onDelete,
+  onEdit,
 }) {
   // ==================================================
   // LOADING
@@ -174,7 +175,7 @@ export default function MeetingTable({
       headerName: "Actions",
       cellRenderer: (params) => (
         <div className="flex items-center justify-end h-full py-1">
-          <MeetingActions meeting={params.data} onDelete={params.context.onDelete} />
+          <MeetingActions meeting={params.data} onDelete={params.context.onDelete} onEdit={params.context.onEdit} />
         </div>
       ),
       width: 100,
@@ -202,6 +203,7 @@ export default function MeetingTable({
           headerHeight={44}
           context={{
             onDelete,
+            onEdit,
             formatMeetingDate,
             formatMeetingTime,
             calculateMeetingDuration,
@@ -240,7 +242,7 @@ export default function MeetingTable({
                   )}
                 </div>
 
-                <MeetingActions meeting={meeting} onDelete={onDelete} />
+                <MeetingActions meeting={meeting} onDelete={onDelete} onEdit={onEdit} />
               </div>
 
               {/* ==================================

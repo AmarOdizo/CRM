@@ -9,12 +9,15 @@ import { getUsers, deleteUser } from "./data";
 import UserTable from "./usercomponents/UserTable";
 import SearchFilter from "./usercomponents/SearchFilter";
 import ExportCSV from "./usercomponents/ExportCSV";
+import UserFormModal from "./usercomponents/UserFormModal";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const fetchUsers = async () => {
     try {
@@ -72,13 +75,16 @@ export default function UserManagement() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV users={filteredUsers} />
-          <Link
-            href="/admin1/user-management/add"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95"
+          <button
+            onClick={() => {
+              setSelectedUserId(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
             <Plus size={18} />
             <span>Add User</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -150,8 +156,25 @@ export default function UserManagement() {
           Loading Users...
         </div>
       ) : (
-        <UserTable users={filteredUsers} onDelete={handleDelete} />
+        <UserTable
+          users={filteredUsers}
+          onDelete={handleDelete}
+          onEdit={(user) => {
+            setSelectedUserId(user.id);
+            setModalOpen(true);
+          }}
+        />
       )}
+
+      <UserFormModal
+        open={modalOpen}
+        userId={selectedUserId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          fetchUsers();
+        }}
+      />
     </div>
   );
 }

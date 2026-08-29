@@ -9,12 +9,15 @@ import { getLeads, deleteLead } from "./data";
 import LeadTable from "./leadcomponents/LeadTable";
 import SearchFilter from "./leadcomponents/SearchFilter";
 import ExportCSV from "./leadcomponents/ExportCSV";
+import LeadFormModal from "./leadcomponents/LeadFormModal";
 
 export default function LeadManagement() {
   const [leads, setLeads] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedLeadId, setSelectedLeadId] = useState(null);
 
   useEffect(() => {
     const loadLeads = async () => {
@@ -73,13 +76,16 @@ export default function LeadManagement() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV leads={filteredLeads} />
-          <Link
-            href="/admin1/lead-management/add"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95"
+          <button
+            onClick={() => {
+              setSelectedLeadId(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
             <Plus size={18} />
             <span>Add Lead</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -150,9 +156,35 @@ export default function LeadManagement() {
             Loading Leads...
           </div>
         ) : (
-          <LeadTable leads={filteredLeads} onDelete={handleDelete} />
+          <LeadTable
+            leads={filteredLeads}
+            onDelete={handleDelete}
+            onEdit={(lead) => {
+              setSelectedLeadId(lead.id);
+              setModalOpen(true);
+            }}
+          />
         )}
       </div>
+
+      <LeadFormModal
+        open={modalOpen}
+        leadId={selectedLeadId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          // Reload leads
+          const fetchLeads = async () => {
+            try {
+              const data = await getLeads();
+              setLeads(data || []);
+            } catch (e) {
+              console.log(e);
+            }
+          };
+          fetchLeads();
+        }}
+      />
     </div>
   );
 }

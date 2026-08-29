@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import StatusBadge from "./StatusBadge";
 import DeleteModal from "./DeleteModal";
 
-export default function LeadTable({ leads, onDelete }) {
+export default function LeadTable({ leads, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
 
@@ -118,13 +118,13 @@ export default function LeadTable({ leads, onDelete }) {
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/lead-management/edit/${lead.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(lead)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit Lead"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => {
                 setSelectedLead(lead);

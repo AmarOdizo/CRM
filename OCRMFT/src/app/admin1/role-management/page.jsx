@@ -9,12 +9,15 @@ import { getRoles, deleteRole } from "./data";
 import RoleTable from "./rolecomponents/RoleTable";
 import SearchFilter from "./rolecomponents/SearchFilter";
 import ExportCSV from "./rolecomponents/ExportCSV";
+import RoleFormModal from "./rolecomponents/RoleFormModal";
 
 export default function RoleManagement() {
   const [roles, setRoles] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
 
   useEffect(() => {
     fetchRoles();
@@ -71,13 +74,16 @@ export default function RoleManagement() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV roles={filteredRoles} />
-          <Link
-            href="/admin1/role-management/add"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95"
+          <button
+            onClick={() => {
+              setSelectedRoleId(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
             <Plus size={18} />
             <span>Add Role</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -149,8 +155,25 @@ export default function RoleManagement() {
           Loading Roles...
         </div>
       ) : (
-        <RoleTable roles={filteredRoles} onDelete={handleDelete} />
+        <RoleTable
+          roles={filteredRoles}
+          onDelete={handleDelete}
+          onEdit={(role) => {
+            setSelectedRoleId(role.id);
+            setModalOpen(true);
+          }}
+        />
       )}
+
+      <RoleFormModal
+        open={modalOpen}
+        roleId={selectedRoleId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          fetchRoles();
+        }}
+      />
     </div>
   );
 }

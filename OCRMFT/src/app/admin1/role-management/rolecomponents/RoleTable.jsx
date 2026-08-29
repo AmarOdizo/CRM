@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import DeleteModal from "./DeleteModal";
 import StatusBadge from "./StatusBadge";
 
-export default function RoleTable({ roles, onDelete }) {
+export default function RoleTable({ roles, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
@@ -117,13 +117,13 @@ export default function RoleTable({ roles, onDelete }) {
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/role-management/edit/${role.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(role)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit Role"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => {
                 setSelectedRole(role);

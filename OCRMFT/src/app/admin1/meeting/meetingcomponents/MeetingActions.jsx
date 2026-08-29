@@ -9,7 +9,7 @@ import { useState } from "react";
 import DeleteModal from "./DeleteModal";
 import { deleteMeeting } from "../data";
 
-export default function MeetingActions({ meeting, onDelete }) {
+export default function MeetingActions({ meeting, onDelete, onEdit }) {
   const router = useRouter();
 
   // ==================================================
@@ -49,7 +49,11 @@ export default function MeetingActions({ meeting, onDelete }) {
       return;
     }
 
-    router.push(`/admin1/meeting/edit/${meetingId}`);
+    if (onEdit) {
+      onEdit(meeting);
+    } else {
+      router.push(`/admin1/meeting/edit/${meetingId}`);
+    }
   };
 
   // ==================================================

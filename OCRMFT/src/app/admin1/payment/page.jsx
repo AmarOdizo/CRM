@@ -10,6 +10,8 @@ import PaymentSummary from "./paymentcomponents/PaymentSummary";
 import SearchFilter from "./paymentcomponents/SearchFilter";
 import PaymentTable from "./paymentcomponents/PaymentTable";
 import DeleteModal from "./paymentcomponents/DeleteModal";
+import PaymentForm from "./paymentcomponents/PaymentForm";
+import { Modal } from "antd";
 
 import { calculatePaidAmount, toNumber } from "./utils";
 
@@ -21,9 +23,7 @@ export default function PaymentTrackingPage() {
   // ==========================================
 
   const [payments, setPayments] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
 
   const [filters, setFilters] = useState({
@@ -34,8 +34,9 @@ export default function PaymentTrackingPage() {
   });
 
   const [selectedPayment, setSelectedPayment] = useState(null);
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const isEditMode = Boolean(selectedPayment);
 
   // ==========================================
   // LOAD PAYMENTS
@@ -259,13 +260,8 @@ export default function PaymentTrackingPage() {
   // ==========================================
 
   const handleEdit = (payment) => {
-    const paymentId = payment?._id || payment?.id;
-
-    if (!paymentId) {
-      return;
-    }
-
-    router.push(`/admin1/payment/edit/${paymentId}`);
+    setSelectedPayment(payment);
+    setFormModalOpen(true);
   };
 
   // ==========================================
@@ -309,7 +305,8 @@ export default function PaymentTrackingPage() {
   // ==========================================
 
   const handleAddPayment = () => {
-    router.push("/admin1/payment/add");
+    setSelectedPayment(null);
+    setFormModalOpen(true);
   };
 
   return (
@@ -389,6 +386,36 @@ export default function PaymentTrackingPage() {
           onClose={handleCloseDeleteModal}
           onSuccess={handleDeleteSuccess}
         />
+
+        {/* FORM DIALOG MODAL */}
+        <Modal
+          title={
+            <div className="flex items-center gap-2 text-slate-800 pb-2 border-b border-slate-100">
+              <CreditCard className="text-blue-500 animate-pulse" size={18} />
+              <span className="font-extrabold text-lg">{isEditMode ? "Edit Payment Details" : "Record Client Payment"}</span>
+            </div>
+          }
+          open={formModalOpen}
+          onCancel={() => setFormModalOpen(false)}
+          footer={null}
+          width={700}
+          destroyOnClose
+          centered
+          className="payment-form-modal"
+          maskStyle={{ backdropFilter: "blur(4px)" }}
+        >
+          <div className="mt-4 max-h-[80vh] overflow-y-auto px-1">
+            <PaymentForm
+              payment={selectedPayment}
+              onSuccess={() => {
+                setFormModalOpen(false);
+                setSelectedPayment(null);
+                getPaymentsData();
+              }}
+              onCancel={() => setFormModalOpen(false)}
+            />
+          </div>
+        </Modal>
       </div>
     </div>
   );

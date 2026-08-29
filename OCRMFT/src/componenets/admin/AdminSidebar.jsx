@@ -88,13 +88,13 @@ export default function AdminSidebar({ collapsed }) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white flex flex-col transition-all duration-300 z-50 border-r border-slate-800/40 shadow-2xl md:translate-x-0
+      className={`fixed left-0 top-0 h-screen bg-white text-slate-800 flex flex-col transition-all duration-300 z-50 border-r border-slate-200 shadow-lg md:translate-x-0
       ${collapsed ? "-translate-x-full md:w-16" : "translate-x-0 w-64"}`}
     >
       {/* LOGO */}
-      <div className="h-16 flex items-center justify-center border-b border-slate-800/40 overflow-hidden px-4">
+      <div className="h-16 flex items-center justify-center border-b border-slate-100 overflow-hidden px-4">
         {collapsed ? (
-          <span className="text-base font-black text-cyan-400 bg-slate-900 px-2.5 py-1 rounded-xl border border-slate-800 shadow-inner select-none">
+          <span className="text-base font-black text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-xl border border-cyan-100 shadow-inner select-none">
             O
           </span>
         ) : (
@@ -116,18 +116,18 @@ export default function AdminSidebar({ collapsed }) {
               ${collapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5 mx-2"}
               ${
                 isActive
-                  ? "bg-cyan-950/40 text-cyan-400 border border-cyan-500/20 shadow-sm shadow-cyan-500/5 " +
+                  ? "bg-cyan-50 text-cyan-600 border border-cyan-100 shadow-xs " +
                     (collapsed
                       ? ""
-                      : "before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-1 before:bg-cyan-400 before:rounded-r")
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent"
+                      : "before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-1 before:bg-cyan-500 before:rounded-r")
+                  : "text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent"
               }`}
             >
               <Icon
                 size={20}
                 className={
                   isActive
-                    ? "scale-110 shrink-0 text-cyan-400"
+                    ? "scale-110 shrink-0 text-cyan-600"
                     : "group-hover:scale-105 transition-transform shrink-0"
                 }
               />
@@ -139,7 +139,7 @@ export default function AdminSidebar({ collapsed }) {
               {/* COLLAPSED TOOLTIP */}
               {collapsed && (
                 <div
-                  className="pointer-events-none absolute left-full ml-4 rounded-lg bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-slate-800"
+                  className="pointer-events-none absolute left-full ml-4 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-slate-800"
                 >
                   {item.title}
                 </div>
@@ -150,16 +150,16 @@ export default function AdminSidebar({ collapsed }) {
       </div>
 
       {/* FOOTER LOGOUT */}
-      <div className="border-t border-slate-800/40 p-4">
+      <div className="border-t border-slate-100 p-4">
         {collapsed ? (
           <button
             onClick={() => router.push("/")}
-            className="w-full flex items-center justify-center rounded-xl bg-red-500/10 hover:bg-red-500 p-3 text-red-400 hover:text-white transition-all duration-200 group relative border border-transparent hover:border-red-500/20"
+            className="w-full flex items-center justify-center rounded-xl bg-red-50/10 hover:bg-red-500 p-3 text-red-600 hover:text-white transition-all duration-200 group relative border border-red-100/50 hover:border-transparent"
           >
             <LogOut size={18} className="shrink-0" />
 
             <div
-              className="pointer-events-none absolute left-full ml-4 rounded-lg bg-red-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-red-500/20"
+              className="pointer-events-none absolute left-full ml-4 rounded-lg bg-red-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-red-800"
             >
               Logout
             </div>
@@ -167,7 +167,7 @@ export default function AdminSidebar({ collapsed }) {
         ) : (
           <button
             onClick={() => router.push("/")}
-            className="w-full flex items-center gap-3 rounded-xl bg-red-500/10 hover:bg-red-650 hover:bg-red-600/90 py-3 justify-center text-red-400 hover:text-white font-semibold transition border border-red-500/20 hover:border-transparent shadow-sm"
+            className="w-full flex items-center gap-3 rounded-xl bg-red-50 hover:bg-red-500 py-3 justify-center text-red-600 hover:text-white font-semibold transition border border-red-100 hover:border-transparent shadow-xs"
           >
             <LogOut size={18} className="shrink-0" />
             <span className="select-none">Logout</span>

@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import StatusBadge from "./StatusBadge";
 import DeleteModal from "./DeleteModal";
 
-export default function UserTable({ users, onDelete }) {
+export default function UserTable({ users, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -126,13 +126,13 @@ export default function UserTable({ users, onDelete }) {
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/user-management/edit/${user.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(user)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit User"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => {
                 setSelectedUser(user);

@@ -20,7 +20,7 @@ const priorityColors = {
   Critical: "bg-rose-50 border-rose-100 text-rose-700",
 };
 
-export default function ProjectTable({ projects, onDelete }) {
+export default function ProjectTable({ projects, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -121,13 +121,13 @@ export default function ProjectTable({ projects, onDelete }) {
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/project-management/edit/${project.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(project)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit Project"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => {
                 setSelectedProject(project);

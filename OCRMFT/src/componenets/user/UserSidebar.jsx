@@ -63,11 +63,11 @@ export default function UserSidebar({ collapsed }) {
   const router = useRouter();
 
   return (
-    <aside className={`fixed left-0 top-0 h-screen bg-slate-900 text-white shadow-xl flex flex-col transition-all duration-300 z-50 border-r border-slate-850 md:translate-x-0 ${collapsed ? "-translate-x-full md:w-16" : "translate-x-0 w-72"}`}>
+    <aside className={`fixed left-0 top-0 h-screen bg-white text-slate-800 shadow-lg flex flex-col transition-all duration-300 z-50 border-r border-slate-200 md:translate-x-0 ${collapsed ? "-translate-x-full md:w-16" : "translate-x-0 w-72"}`}>
       {/* Logo */}
-      <div className="h-16 flex items-center justify-center border-b border-slate-700 px-4 shrink-0">
+      <div className="h-16 flex items-center justify-center border-b border-slate-100 px-4 shrink-0">
         {collapsed ? (
-          <span className="text-base font-black text-cyan-400 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-850 shadow-inner select-none">
+          <span className="text-base font-black text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-xl border border-cyan-100 shadow-inner select-none">
             O
           </span>
         ) : (
@@ -89,14 +89,14 @@ export default function UserSidebar({ collapsed }) {
               ${collapsed ? "justify-center p-2.5 mx-3" : "gap-3 px-4 py-3 mx-3 mb-2"}
               ${
                 isActive
-                  ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/10"
-                  : "text-slate-350 hover:text-slate-200 hover:bg-slate-800"
+                  ? "bg-cyan-50 text-cyan-600 border border-cyan-100/60 shadow-xs"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
-              <Icon size={20} className="shrink-0" />
+              <Icon size={20} className={`shrink-0 ${isActive ? "text-cyan-600" : ""}`} />
               {!collapsed && <span className="font-semibold text-sm select-none">{item.title}</span>}
               {collapsed && (
-                <div className="pointer-events-none absolute left-full ml-4 rounded-lg bg-slate-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-slate-800">
+                <div className="pointer-events-none absolute left-full ml-4 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-slate-800">
                   {item.title}
                 </div>
               )}
@@ -106,20 +106,20 @@ export default function UserSidebar({ collapsed }) {
       </div>
 
       {/* Logout */}
-      <div className="border-t border-slate-700 p-4">
+      <div className="border-t border-slate-100 p-4">
         {collapsed ? (
           <button
-            className="w-full bg-red-500 hover:bg-red-600 rounded-xl p-3 flex items-center justify-center gap-2 transition relative group"
+            className="w-full bg-red-50/10 hover:bg-red-500 text-red-600 hover:text-white rounded-xl p-3 flex items-center justify-center gap-2 transition relative group border border-red-100/50 hover:border-transparent"
             onClick={() => router.push("/")}
           >
             <LogOut size={18} />
-            <div className="pointer-events-none absolute left-full ml-4 rounded-lg bg-red-950 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-red-500/20">
+            <div className="pointer-events-none absolute left-full ml-4 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 translate-x-[-10px] z-50 whitespace-nowrap border border-slate-800">
               Logout
             </div>
           </button>
         ) : (
           <button
-            className="w-full bg-red-50 hover:bg-red-500 border border-red-500/20 hover:border-transparent text-red-500 hover:text-white rounded-xl py-3 flex items-center justify-center gap-2 transition font-semibold shadow-sm"
+            className="w-full bg-red-50 hover:bg-red-500 border border-red-100 hover:border-transparent text-red-600 hover:text-white rounded-xl py-3 flex items-center justify-center gap-2 transition font-semibold shadow-xs"
             onClick={() => router.push("/")}
           >
             <LogOut size={18} />

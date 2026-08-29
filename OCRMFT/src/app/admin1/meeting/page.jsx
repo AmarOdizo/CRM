@@ -1,16 +1,14 @@
 "use client";
 
-import { CalendarPlus, RefreshCw, AlertCircle } from "lucide-react";
-
+import { CalendarPlus, RefreshCw, AlertCircle, CalendarRange } from "lucide-react";
 import Link from "next/link";
-
 import { useCallback, useEffect, useState } from "react";
-
 import { getMeetings } from "./data";
-
 import MeetingSummary from "./meetingcomponents/MeetingSummary";
 import SearchFilter from "./meetingcomponents/SearchFilter";
 import MeetingTable from "./meetingcomponents/MeetingTable";
+import MeetingForm from "./meetingcomponents/MeetingForm";
+import { Modal } from "antd";
 
 // ======================================================
 // MAIN PAGE
@@ -22,12 +20,12 @@ export default function MeetingSchedulingPage() {
   // ==================================================
 
   const [meetings, setMeetings] = useState([]);
-
   const [filteredMeetings, setFilteredMeetings] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState(null);
+  const isEditMode = Boolean(selectedMeeting?._id || selectedMeeting?.id);
 
   const [filters, setFilters] = useState({
     search: "",
@@ -294,13 +292,16 @@ export default function MeetingSchedulingPage() {
               <span>Refresh</span>
             </button>
 
-            <Link
-              href="/admin1/meeting/add"
+            <button
+              onClick={() => {
+                setSelectedMeeting(null);
+                setModalOpen(true);
+              }}
               className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
             >
               <CalendarPlus size={16} />
               <span>Schedule Meeting</span>
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -336,7 +337,40 @@ export default function MeetingSchedulingPage() {
           meetings={filteredMeetings}
           loading={loading}
           onDelete={handleDelete}
+          onEdit={(meeting) => {
+            setSelectedMeeting(meeting);
+            setModalOpen(true);
+          }}
         />
+
+        {/* DIALOG FORM MODAL */}
+        <Modal
+          title={
+            <div className="flex items-center gap-2 text-slate-800 pb-2 border-b border-slate-100">
+              <CalendarRange className="text-blue-500 animate-pulse" size={18} />
+              <span className="font-extrabold text-lg">{isEditMode ? "Edit Meeting Details" : "Schedule New Meeting"}</span>
+            </div>
+          }
+          open={modalOpen}
+          onCancel={() => setModalOpen(false)}
+          footer={null}
+          width={700}
+          destroyOnClose
+          centered
+          className="meeting-form-modal"
+          maskStyle={{ backdropFilter: "blur(4px)" }}
+        >
+          <div className="mt-4 max-h-[80vh] overflow-y-auto px-1">
+            <MeetingForm
+              meeting={selectedMeeting}
+              onSuccess={() => {
+                setModalOpen(false);
+                fetchMeetings();
+              }}
+              onCancel={() => setModalOpen(false)}
+            />
+          </div>
+        </Modal>
       </div>
     </div>
   );

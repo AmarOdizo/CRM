@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import DeleteModal from "./DeleteModal";
 import StatusBadge from "./StatusBadge";
 
-export default function ClientTable({ clients, onDelete }) {
+export default function ClientTable({ clients, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
@@ -126,13 +126,13 @@ export default function ClientTable({ clients, onDelete }) {
             >
               <Eye size={16} />
             </Link>
-            <Link
-              href={`/admin1/client-management/edit/${client.id}`}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+            <button
+              onClick={() => onEdit(client)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
               title="Edit Client"
             >
               <Edit2 size={16} />
-            </Link>
+            </button>
             <button
               onClick={() => {
                 setSelectedClient(client);

@@ -9,12 +9,15 @@ import { getClients, deleteClient } from "./data";
 import ClientTable from "./clientcomponents/ClientTable";
 import SearchFilter from "./clientcomponents/SearchFilter";
 import ExportCSV from "./clientcomponents/ExportCSV";
+import ClientFormModal from "./clientcomponents/ClientFormModal";
 
 export default function ClientManagement() {
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState(null);
 
   useEffect(() => {
     fetchClients();
@@ -72,13 +75,16 @@ export default function ClientManagement() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <ExportCSV clients={filteredClients} />
-          <Link
-            href="/admin1/client-management/add"
-            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95"
+          <button
+            onClick={() => {
+              setSelectedClientId(null);
+              setModalOpen(true);
+            }}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
             <Plus size={18} />
             <span>Add Client</span>
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -150,8 +156,25 @@ export default function ClientManagement() {
           Loading Clients...
         </div>
       ) : (
-        <ClientTable clients={filteredClients} onDelete={handleDelete} />
+        <ClientTable
+          clients={filteredClients}
+          onDelete={handleDelete}
+          onEdit={(client) => {
+            setSelectedClientId(client.id);
+            setModalOpen(true);
+          }}
+        />
       )}
+
+      <ClientFormModal
+        open={modalOpen}
+        clientId={selectedClientId}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          setModalOpen(false);
+          fetchClients();
+        }}
+      />
     </div>
   );
 }

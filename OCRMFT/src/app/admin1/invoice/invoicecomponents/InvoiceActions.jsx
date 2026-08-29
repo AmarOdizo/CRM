@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
-export default function InvoiceActions({ invoice, onDelete }) {
+export default function InvoiceActions({ invoice, onDelete, onEdit }) {
   if (!invoice) return null;
 
   const invoiceId = invoice._id || invoice.id;
@@ -20,13 +20,24 @@ export default function InvoiceActions({ invoice, onDelete }) {
       </Link>
 
       {/* Edit */}
-      <Link
-        href={`/admin1/invoice/edit/${invoiceId}`}
-        title="Edit Invoice"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 transition hover:bg-yellow-100"
-      >
-        <Pencil size={17} />
-      </Link>
+      {onEdit ? (
+        <button
+          type="button"
+          onClick={() => onEdit(invoice)}
+          title="Edit Invoice"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 transition hover:bg-yellow-100 cursor-pointer"
+        >
+          <Pencil size={17} />
+        </button>
+      ) : (
+        <Link
+          href={`/admin1/invoice/edit/${invoiceId}`}
+          title="Edit Invoice"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600 transition hover:bg-yellow-100"
+        >
+          <Pencil size={17} />
+        </Link>
+      )}
 
       {/* Delete */}
       <button
