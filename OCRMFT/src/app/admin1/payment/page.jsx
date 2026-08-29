@@ -399,10 +399,10 @@ export default function PaymentTrackingPage() {
           onCancel={() => setFormModalOpen(false)}
           footer={null}
           width={700}
-          destroyOnClose
+          destroyOnHidden
           centered
           className="payment-form-modal"
-          maskStyle={{ backdropFilter: "blur(4px)" }}
+          styles={{ mask: { backdropFilter: "blur(4px)" } }}
         >
           <div className="mt-4 max-h-[80vh] overflow-y-auto px-1">
             <PaymentForm

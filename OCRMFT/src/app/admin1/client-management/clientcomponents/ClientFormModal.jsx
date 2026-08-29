@@ -115,10 +115,10 @@ export default function ClientFormModal({ open, clientId, onClose, onSuccess }) 
       onCancel={onClose}
       footer={null}
       width={800}
-      destroyOnClose
+      destroyOnHidden
       centered
       className="client-form-modal"
-      maskStyle={{ backdropFilter: "blur(4px)" }}
+      styles={{ mask: { backdropFilter: "blur(4px)" } }}
     >
       <div className="mt-4 max-h-[75vh] overflow-y-auto px-1">
         {loading ? (

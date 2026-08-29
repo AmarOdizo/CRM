@@ -52,10 +52,10 @@ export default function QuotationFormModal({ open, quotationId, onClose, onSucce
       onCancel={onClose}
       footer={null}
       width={950}
-      destroyOnClose
+      destroyOnHidden
       centered
       className="quotation-form-modal"
-      maskStyle={{ backdropFilter: "blur(4px)" }}
+      styles={{ mask: { backdropFilter: "blur(4px)" } }}
     >
       <div className="mt-4 max-h-[75vh] overflow-y-auto px-1">
         {loading ? (

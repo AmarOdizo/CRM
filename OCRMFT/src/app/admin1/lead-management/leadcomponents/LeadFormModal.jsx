@@ -100,10 +100,10 @@ export default function LeadFormModal({ open, leadId, onClose, onSuccess }) {
       onCancel={onClose}
       footer={null}
       width={800}
-      destroyOnClose
+      destroyOnHidden
       centered
       className="lead-form-modal"
-      maskStyle={{ backdropFilter: "blur(4px)" }}
+      styles={{ mask: { backdropFilter: "blur(4px)" } }}
     >
       <div className="mt-4 max-h-[75vh] overflow-y-auto px-1">
         {loading ? (

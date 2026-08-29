@@ -355,10 +355,10 @@ export default function MeetingSchedulingPage() {
           onCancel={() => setModalOpen(false)}
           footer={null}
           width={700}
-          destroyOnClose
+          destroyOnHidden
           centered
           className="meeting-form-modal"
-          maskStyle={{ backdropFilter: "blur(4px)" }}
+          styles={{ mask: { backdropFilter: "blur(4px)" } }}
         >
           <div className="mt-4 max-h-[80vh] overflow-y-auto px-1">
             <MeetingForm

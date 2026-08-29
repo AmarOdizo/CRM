@@ -94,10 +94,10 @@ export default function RoleFormModal({ open, roleId, onClose, onSuccess }) {
       onCancel={onClose}
       footer={null}
       width={700}
-      destroyOnClose
+      destroyOnHidden
       centered
       className="role-form-modal"
-      maskStyle={{ backdropFilter: "blur(4px)" }}
+      styles={{ mask: { backdropFilter: "blur(4px)" } }}
     >
       <div className="mt-4 max-h-[75vh] overflow-y-auto px-1">
         {loading ? (
