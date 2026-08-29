@@ -97,25 +97,25 @@ export default function QuotationPage() {
     return quotations.filter((quotation) => {
       const quotationNumber = String(
         quotation?.quotationNumber ||
-          quotation?.quotationNo ||
-          quotation?.quoteNumber ||
-          quotation?.number ||
-          "",
+        quotation?.quotationNo ||
+        quotation?.quoteNumber ||
+        quotation?.number ||
+        "",
       ).toLowerCase();
 
       const customerName = String(
         quotation?.customerName ||
-          quotation?.customer?.name ||
-          quotation?.customer?.customerName ||
-          quotation?.customer?.companyName ||
-          "",
+        quotation?.customer?.name ||
+        quotation?.customer?.customerName ||
+        quotation?.customer?.companyName ||
+        "",
       ).toLowerCase();
 
       const customerEmail = String(
         quotation?.customerEmail ||
-          quotation?.customer?.email ||
-          quotation?.email ||
-          "",
+        quotation?.customer?.email ||
+        quotation?.email ||
+        "",
       ).toLowerCase();
 
       const quotationStatus = String(
@@ -359,4 +359,4 @@ export default function QuotationPage() {
     </div>
   );
 }
-}
+

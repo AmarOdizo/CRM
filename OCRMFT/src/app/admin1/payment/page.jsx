@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Plus, RefreshCw } from "lucide-react";
+import { AlertCircle, CreditCard, Plus, RefreshCw } from "lucide-react";
 
 import { getPayments } from "./data";
 

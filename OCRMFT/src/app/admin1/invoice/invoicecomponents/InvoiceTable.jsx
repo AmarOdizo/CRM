@@ -447,7 +447,7 @@ export default function InvoiceTable() {
       />
 
       {/* TABLE */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ag-theme-quartz w-full">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm w-full">
         {filteredInvoices.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <div className="mx-auto max-w-sm">
@@ -481,157 +481,167 @@ export default function InvoiceTable() {
             </div>
           </div>
         ) : (
-          <AgGridReact
-            rowData={filteredInvoices}
-            columnDefs={[
-              {
-                headerName: "Invoice Number",
-                field: "invoiceNumber",
-                flex: 1.5,
-                minWidth: 150,
-                cellRenderer: (params) => {
-                  const invoiceId = params.data._id || params.data.id;
-                  const invoiceNumber =
-                    params.data.invoiceNumber ||
-                    params.data.invoiceNo ||
-                    params.data.invoiceId ||
-                    `INV-${invoiceId}`;
-                  return (
-                    <div className="flex items-center h-full">
-                      <Link
-                        href={`/admin1/invoice/view/${invoiceId}`}
-                        className="font-bold text-blue-600 hover:text-blue-700 hover:underline"
-                      >
-                        {invoiceNumber}
-                      </Link>
-                    </div>
-                  );
-                },
-              },
-              {
-                headerName: "Customer Details",
-                field: "customerName",
-                flex: 2,
-                minWidth: 200,
-                cellRenderer: (params) => (
-                  <div className="flex flex-col justify-center h-full py-1 leading-tight text-left">
-                    <p className="font-bold text-slate-700">
-                      {params.data.customerName || "-"}
-                    </p>
-                    {params.data.customerEmail && (
-                      <p className="mt-0.5 text-xs text-slate-400 font-medium">
-                        {params.data.customerEmail}
-                      </p>
-                    )}
-                  </div>
-                ),
-              },
-              {
-                headerName: "Invoice Date",
-                field: "invoiceDate",
-                flex: 1.2,
-                minWidth: 120,
-                cellRenderer: (params) => (
-                  <div className="flex items-center h-full text-xs font-semibold text-slate-600">
-                    {formatDate(params.value)}
-                  </div>
-                ),
-              },
-              {
-                headerName: "Due Date",
-                field: "dueDate",
-                flex: 1.2,
-                minWidth: 120,
-                cellRenderer: (params) => (
-                  <div className="flex items-center h-full text-xs font-semibold text-slate-600">
-                    {formatDate(params.value)}
-                  </div>
-                ),
-              },
-              {
-                headerName: "Grand Total",
-                field: "totalAmount",
-                flex: 1.2,
-                minWidth: 120,
-                valueGetter: (params) =>
-                  params.data.totalAmount ??
-                  params.data.grandTotal ??
-                  params.data.total ??
-                  0,
-                cellRenderer: (params) => (
-                  <div className="flex items-center h-full text-sm font-bold text-slate-700 font-mono">
-                    {formatCurrency(params.value)}
-                  </div>
-                ),
-              },
-              {
-                headerName: "Status",
-                field: "status",
-                flex: 1,
-                minWidth: 110,
-                cellRenderer: (params) => (
-                  <div className="flex items-center h-full">
-                    <StatusBadge status={params.value} />
-                  </div>
-                ),
-              },
-              {
-                headerName: "Payment Status",
-                field: "paymentStatus",
-                flex: 1.2,
-                minWidth: 130,
-                cellRenderer: (params) => (
-                  <div className="flex items-center h-full">
-                    <PaymentBadge paymentStatus={params.value} />
-                  </div>
-                ),
-              },
-              {
-                headerName: "Actions",
-                cellRenderer: (params) => {
-                  const invoiceId = params.data._id || params.data.id;
-                  return (
-                    <div className="flex items-center gap-1.5 h-full py-1">
-                      <Link
-                        href={`/admin1/invoice/view/${invoiceId}`}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200 border border-transparent hover:border-emerald-100"
-                        title="View Details"
-                      >
-                        <Eye size={16} />
-                      </Link>
-                      <Link
-                        href={`/admin1/invoice/edit/${invoiceId}`}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
-                        title="Edit Invoice"
-                      >
-                        <Edit2 size={16} />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(params.data)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 border border-transparent hover:border-rose-100 cursor-pointer"
-                        title="Delete Invoice"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  );
-                },
-                width: 140,
-                suppressMenu: true,
-                sortable: false,
-              },
-            ]}
-            defaultColDef={{
-              sortable: true,
-              filter: true,
-              resizable: true,
-            }}
-            pagination={true}
-            paginationPageSize={10}
-            domLayout="autoHeight"
-            rowHeight={65}
-            headerHeight={48}
-          />
+          <div className="w-full overflow-x-auto">
+            <div className="ag-theme-quartz min-w-[1000px] w-full">
+              <AgGridReact
+                rowData={filteredInvoices}
+                columnDefs={[
+                  {
+                    headerName: "Invoice Number",
+                    field: "invoiceNumber",
+                    flex: 1.5,
+                    minWidth: 150,
+                    cellRenderer: (params) => {
+                      const invoiceId = params.data._id || params.data.id;
+                      const invoiceNumber =
+                        params.data.invoiceNumber ||
+                        params.data.invoiceNo ||
+                        params.data.invoiceId ||
+                        `INV-${invoiceId}`;
+                      return (
+                        <div className="flex items-center h-full">
+                          <Link
+                            href={`/admin1/invoice/view/${invoiceId}`}
+                            className="font-bold text-blue-600 hover:text-blue-700 hover:underline"
+                          >
+                            {invoiceNumber}
+                          </Link>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    headerName: "Customer Details",
+                    field: "customerName",
+                    flex: 2,
+                    minWidth: 200,
+                    cellRenderer: (params) => (
+                      <div className="flex flex-col justify-center h-full py-1 leading-tight text-left">
+                        <p className="font-bold text-slate-700">
+                          {params.data.customerName || "-"}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {params.data.customerEmail || ""}
+                        </p>
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Project Details",
+                    field: "projectName",
+                    flex: 1.5,
+                    minWidth: 150,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm font-semibold text-slate-600">
+                        {params.value || "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Invoice Date",
+                    field: "invoiceDate",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm text-slate-500">
+                        {params.value ? formatDate(params.value) : "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Due Date",
+                    field: "dueDate",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm text-slate-500">
+                        {params.value ? formatDate(params.value) : "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Grand Total",
+                    field: "grandTotal",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm font-bold text-slate-800">
+                        {formatCurrency(params.value)}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Status",
+                    field: "status",
+                    flex: 1,
+                    minWidth: 110,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold leading-none
+                          ${
+                            params.value === "Sent"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : params.value === "Paid"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : params.value === "Overdue"
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : "bg-slate-50 text-slate-700 border border-slate-200"
+                          }`}
+                        >
+                          {params.value}
+                        </span>
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Actions",
+                    cellRenderer: (params) => {
+                      const invoiceId = params.data._id || params.data.id;
+                      return (
+                        <div className="flex items-center gap-1.5 h-full py-1">
+                          <Link
+                            href={`/admin1/invoice/view/${invoiceId}`}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200 border border-transparent hover:border-emerald-100"
+                            title="View Statement"
+                          >
+                            <Eye size={16} />
+                          </Link>
+                          <Link
+                            href={`/admin1/invoice/edit/${invoiceId}`}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+                            title="Edit Invoice"
+                          >
+                            <Edit2 size={16} />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(params.data)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 border border-transparent hover:border-rose-100 cursor-pointer"
+                            title="Delete Invoice"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      );
+                    },
+                    width: 140,
+                    suppressMenu: true,
+                    sortable: false,
+                  },
+                ]}
+                defaultColDef={{
+                  sortable: true,
+                  filter: true,
+                  resizable: true,
+                }}
+                pagination={true}
+                paginationPageSize={10}
+                domLayout="autoHeight"
+                rowHeight={65}
+                headerHeight={48}
+              />
+            </div>
+          </div>
         )}
       </div>
 

@@ -160,15 +160,17 @@ export default function UserTable({ users, onDelete }) {
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ag-theme-quartz w-full">
-        <AgGridReact
-          rowData={users}
-          columnDefs={columnDefs}
-          defaultColDef={defaultColDef}
-          domLayout="autoHeight"
-          rowHeight={65}
-          headerHeight={48}
-        />
+      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="ag-theme-quartz min-w-[800px] w-full">
+          <AgGridReact
+            rowData={users}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            domLayout="autoHeight"
+            rowHeight={65}
+            headerHeight={48}
+          />
+        </div>
       </div>
 
       <DeleteModal

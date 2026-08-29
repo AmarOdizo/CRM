@@ -78,15 +78,17 @@ export default function ReportTable({ reports }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-xl ag-theme-quartz w-full">
-      <AgGridReact
-        rowData={reports}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        domLayout="autoHeight"
-        rowHeight={50}
-        headerHeight={50}
-      />
+    <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="ag-theme-quartz min-w-[1000px] w-full">
+        <AgGridReact
+          rowData={reports}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          domLayout="autoHeight"
+          rowHeight={50}
+          headerHeight={50}
+        />
+      </div>
     </div>
   );
 }

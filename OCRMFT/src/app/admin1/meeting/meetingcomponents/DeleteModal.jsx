@@ -125,7 +125,7 @@ export default function DeleteModal({ isOpen, meeting, onClose, onDeleted }) {
 
                 {meeting?.title && (
                   <p className="mt-2 truncate text-xs font-extrabold text-rose-900 bg-white/70 border border-rose-100/50 rounded-lg px-2.5 py-1.5 font-mono">
-                    "{meeting.title}"
+                    {"\""}{meeting.title}{"\""}
                   </p>
                 )}
 

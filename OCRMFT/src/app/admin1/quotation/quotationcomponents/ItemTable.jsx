@@ -327,22 +327,24 @@ export default function ItemTable({ items = [], onChange }) {
           </button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-gray-200 ag-theme-quartz w-full">
-          <AgGridReact
-            rowData={items}
-            columnDefs={columnDefs}
-            defaultColDef={defaultColDef}
-            domLayout="autoHeight"
-            rowHeight={70}
-            headerHeight={50}
-            singleClickEdit={true}
-            onCellValueChanged={onCellValueChanged}
-            context={{
-              items,
-              getItemDetails,
-              handleRemoveItem,
-            }}
-          />
+        <div className="w-full overflow-x-auto rounded-xl border border-gray-205 border-gray-200 bg-white shadow-sm">
+          <div className="ag-theme-quartz min-w-[800px] w-full">
+            <AgGridReact
+              rowData={items}
+              columnDefs={columnDefs}
+              defaultColDef={defaultColDef}
+              domLayout="autoHeight"
+              rowHeight={70}
+              headerHeight={50}
+              singleClickEdit={true}
+              onCellValueChanged={onCellValueChanged}
+              context={{
+                items,
+                getItemDetails,
+                handleRemoveItem,
+              }}
+            />
+          </div>
         </div>
       )}
 

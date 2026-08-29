@@ -236,9 +236,9 @@ export default function PaymentTable({
   };
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* AG Grid Table */}
-      <div className="w-full ag-theme-quartz">
+      <div className="ag-theme-quartz min-w-[1000px] w-full">
         <AgGridReact
           rowData={payments}
           columnDefs={columnDefs}

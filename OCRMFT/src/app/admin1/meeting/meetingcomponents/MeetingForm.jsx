@@ -217,9 +217,9 @@ export default function MeetingForm({ meeting = null, onSuccess, onCancel }) {
       prev.map((participant, i) =>
         i === index
           ? {
-              ...participant,
-              [field]: value,
-            }
+            ...participant,
+            [field]: value,
+          }
           : participant,
       ),
     );
@@ -357,11 +357,10 @@ export default function MeetingForm({ meeting = null, onSuccess, onCancel }) {
             onChange={handleChange}
             placeholder="Enter descriptive meeting subject..."
             disabled={loading}
-            className={`w-full rounded-xl border py-3 pl-11 pr-4 text-xs font-semibold text-slate-700 outline-none transition focus:bg-white focus:ring-4 ${
-              errors.title
-                ? "border-rose-300 bg-rose-50/20 focus:ring-rose-100"
-                : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:ring-blue-100"
-            }`}
+            className={`w-full rounded-xl border py-3 pl-11 pr-4 text-xs font-semibold text-slate-700 outline-none transition focus:bg-white focus:ring-4 ${errors.title
+              ? "border-rose-300 bg-rose-50/20 focus:ring-rose-100"
+              : "border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:ring-blue-100"
+              }`}
           />
         </div>
         {errors.title && (
@@ -516,7 +515,7 @@ export default function MeetingForm({ meeting = null, onSuccess, onCancel }) {
         </div>
       </div>
 
-        {/* ==================================================
+      {/* ==================================================
             MEETING TYPE + STATUS
         ================================================== */}
 
@@ -729,7 +728,9 @@ export default function MeetingForm({ meeting = null, onSuccess, onCancel }) {
           )}
         </button>
       </div>
-      </div>
+
     </form>
+
+
   );
 }

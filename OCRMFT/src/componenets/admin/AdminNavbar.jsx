@@ -116,7 +116,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
   return (
     <header
       className={`fixed top-0 right-0 h-16 bg-white/85 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-6 z-40 transition-all duration-300
-      ${collapsed ? "left-16" : "left-64"}`}
+      ${collapsed ? "left-0 md:left-16" : "left-0 md:left-64"}`}
     >
       {/* LEFT SECTION */}
       <div className="flex items-center gap-4">

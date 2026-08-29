@@ -88,8 +88,8 @@ export default function AdminSidebar({ collapsed }) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white flex flex-col transition-all duration-300 z-50 border-r border-slate-800/40 shadow-2xl
-      ${collapsed ? "w-16" : "w-64"}`}
+      className={`fixed left-0 top-0 h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white flex flex-col transition-all duration-300 z-50 border-r border-slate-800/40 shadow-2xl md:translate-x-0
+      ${collapsed ? "-translate-x-full md:w-16" : "translate-x-0 w-64"}`}
     >
       {/* LOGO */}
       <div className="h-16 flex items-center justify-center border-b border-slate-800/40 overflow-hidden px-4">

@@ -15,6 +15,7 @@ import {
   Loader2,
   AlertCircle,
   IndianRupee,
+  Printer,
 } from "lucide-react";
 
 import QuotationBadge from "../../quotationcomponents/QuotationBadge";
@@ -583,5 +584,4 @@ export default function ViewQuotationPage() {
       />
     </div>
   );
-}
 }
