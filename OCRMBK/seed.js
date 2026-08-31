@@ -15,6 +15,7 @@ const Invoice = require("./models/Invoice");
 const Payment = require("./models/Payment");
 const Meeting = require("./models/Meeting");
 const Quotation = require("./models/Quotation");
+const Report = require("./models/Report");
 
 // Import Counters
 const Counter = require("./models/Counter");
@@ -49,6 +50,7 @@ const seedDatabase = async () => {
       Payment.deleteMany({}),
       Meeting.deleteMany({}),
       Quotation.deleteMany({}),
+      Report.deleteMany({}),
       
       Counter.deleteMany({}),
       UserCounter.deleteMany({}),
@@ -338,6 +340,33 @@ const seedDatabase = async () => {
       createdBy: "Kamal Kumar"
     });
     console.log(`✅ Quotation seeded: ${quotation.quotationNumber}`);
+
+    // ==========================================
+    // 13. SEED REPORT
+    // ==========================================
+    console.log("Seeding Report...");
+    const report = await Report.create({
+      reportName: "Sales Q3 Audit Log",
+      reportType: "Project Report",
+      generatedBy: "Amar Admin",
+      fromDate: new Date("2026-08-01"),
+      toDate: new Date("2026-08-30"),
+      totalRecords: 12,
+      status: "Generated",
+      summary: "This report details the activity metrics for the Project module during the period from 2026-08-01 to 2026-08-30. All transaction histories and operational logs were successfully audited and compiled.",
+      preview: [
+        {
+          generationTimestamp: new Date().toISOString(),
+          dateRange: "2026-08-01 to 2026-08-30",
+          generatedBy: "Amar Admin",
+          statusSummary: "Data compilation succeeded with zero integrity errors."
+        }
+      ],
+      fileName: "sales_q3_audit_log_report.csv",
+      fileType: "CSV",
+      generatedTime: "1.25s"
+    });
+    console.log(`✅ Report seeded: ${report.reportName}`);
 
     console.log("\n⭐️ DATABASE SEEDING COMPLETED SUCCESSFULY! ⭐️");
     process.exit(0);

@@ -42,47 +42,6 @@ import { getPayments } from "../payment/data";
 import { getLeads } from "../lead-management/data";
 import { getMeetings } from "../meeting/data";
 
-// Fallback high-fidelity mock data if database is empty/down
-const mockClients = [
-  { id: 1, clientName: "Acme Corp", email: "contact@acme.com", industry: "Technology", status: "Active" },
-  { id: 2, clientName: "Globex Corp", email: "billing@globex.org", industry: "Finance", status: "Active" },
-  { id: 3, clientName: "Initech LLC", email: "info@initech.com", industry: "Software", status: "Inactive" },
-  { id: 4, clientName: "Umbrella Corp", email: "info@umbrella.co", industry: "Biotech", status: "Active" },
-  { id: 5, clientName: "Hooli Inc", email: "support@hooli.com", industry: "Media", status: "Active" },
-];
-
-const mockProjects = [
-  { id: 1, projectName: "CRM Portal Overhaul", status: "In Progress", priority: "High", clientName: "Acme Corp" },
-  { id: 2, projectName: "E-Commerce Integration", status: "Completed", priority: "Medium", clientName: "Globex Corp" },
-  { id: 3, projectName: "Security Audit", status: "On Hold", priority: "Critical", clientName: "Umbrella Corp" },
-  { id: 4, projectName: "HR Automation Tool", status: "In Progress", priority: "Low", clientName: "Hooli Inc" },
-];
-
-const mockInvoices = [
-  { id: 1, invoiceNumber: "INV-2026-001", customerName: "Acme Corp", totalAmount: 45000, status: "Paid", invoiceDate: "2026-08-10" },
-  { id: 2, invoiceNumber: "INV-2026-002", customerName: "Globex Corp", totalAmount: 32000, status: "Paid", invoiceDate: "2026-08-12" },
-  { id: 3, invoiceNumber: "INV-2026-003", customerName: "Umbrella Corp", totalAmount: 58000, status: "Sent", invoiceDate: "2026-08-20" },
-  { id: 4, invoiceNumber: "INV-2026-044", customerName: "Hooli Inc", totalAmount: 18000, status: "Overdue", invoiceDate: "2026-08-05" },
-];
-
-const mockPayments = [
-  { id: 1, amount: 45000, paymentDate: "2026-08-11", paymentMethod: "Bank Transfer" },
-  { id: 2, amount: 32000, paymentDate: "2026-08-13", paymentMethod: "Credit Card" },
-];
-
-const mockLeads = [
-  { id: 1, clientName: "Wayne Enterprises", email: "bruce@wayne.com", status: "Contacted", companyName: "Wayne Ent." },
-  { id: 2, clientName: "Stark Industries", email: "tony@stark.com", status: "Converted", companyName: "Stark Ind." },
-  { id: 3, clientName: "LexCorp", email: "lex@lexcorp.com", status: "Nurturing", companyName: "LexCorp" },
-  { id: 4, clientName: "Tyrell Corp", email: "elden@tyrell.io", status: "Lost", companyName: "Tyrell Corp" },
-];
-
-const mockMeetings = [
-  { id: 1, title: "Acme Project Kickoff", meetingDate: "2026-08-28", startTime: "10:00", meetingType: "Online", status: "Scheduled" },
-  { id: 2, title: "Globex Billing Sync", meetingDate: "2026-08-28", startTime: "14:30", meetingType: "Offline", status: "Scheduled" },
-  { id: 3, title: "Hooli Feedback Review", meetingDate: "2026-08-29", startTime: "11:00", meetingType: "Online", status: "Scheduled" },
-];
-
 const COLORS = ["#06b6d4", "#10b981", "#f59e0b", "#ef4444"];
 
 export default function Dashboard() {
@@ -121,43 +80,28 @@ export default function Dashboard() {
           getMeetings(),
         ]);
 
-        // Extract values
-        const clients =
-          clientsRes.status === "fulfilled" && Array.isArray(clientsRes.value) && clientsRes.value.length > 0
-            ? clientsRes.value
-            : mockClients;
+        // Extract values using robust array-extraction utility
+        const extractArray = (resVal, key) => {
+          if (!resVal) return [];
+          if (Array.isArray(resVal)) return resVal;
+          if (resVal.data && Array.isArray(resVal.data)) return resVal.data;
+          if (key && resVal[key] && Array.isArray(resVal[key])) return resVal[key];
+          return [];
+        };
 
-        const projects =
-          projectsRes.status === "fulfilled" && Array.isArray(projectsRes.value) && projectsRes.value.length > 0
-            ? projectsRes.value
-            : mockProjects;
-
-        const invoices =
-          invoicesRes.status === "fulfilled" && Array.isArray(invoicesRes.value) && invoicesRes.value.length > 0
-            ? invoicesRes.value
-            : mockInvoices;
-
-        const payments =
-          paymentsRes.status === "fulfilled" && Array.isArray(paymentsRes.value) && paymentsRes.value.length > 0
-            ? paymentsRes.value
-            : mockPayments;
-
-        const leads =
-          leadsRes.status === "fulfilled" && Array.isArray(leadsRes.value) && leadsRes.value.length > 0
-            ? leadsRes.value
-            : mockLeads;
-
-        const meetings =
-          meetingsRes.status === "fulfilled" && Array.isArray(meetingsRes.value) && meetingsRes.value.length > 0
-            ? meetingsRes.value
-            : mockMeetings;
+        const clients = clientsRes.status === "fulfilled" ? extractArray(clientsRes.value, "clients") : [];
+        const projects = projectsRes.status === "fulfilled" ? extractArray(projectsRes.value, "projects") : [];
+        const invoices = invoicesRes.status === "fulfilled" ? extractArray(invoicesRes.value, "invoices") : [];
+        const payments = paymentsRes.status === "fulfilled" ? extractArray(paymentsRes.value, "payments") : [];
+        const leads = leadsRes.status === "fulfilled" ? extractArray(leadsRes.value, "leads") : [];
+        const meetings = meetingsRes.status === "fulfilled" ? extractArray(meetingsRes.value, "meetings") : [];
 
         // 1. Calculate KPI Metrics
         // Total Paid invoices/payments
         const totalRev = payments.reduce((sum, p) => sum + (Number(p.amount || p.paidAmount) || 0), 0);
 
         // Active Clients
-        const activeClients = clients.filter((c) => c.status === "Active" || c.status === "active").length || clients.length;
+        const activeClients = clients.filter((c) => c.status === "Active" || c.status === "active").length;
 
         // In Progress Projects
         const activeProjs = projects.filter(
@@ -167,7 +111,7 @@ export default function Dashboard() {
         // Lead Conversion Rate
         const totalLeads = leads.length;
         const convertedLeads = leads.filter((l) => l.status === "Converted" || l.status === "converted").length;
-        const convRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 45; // default fallback rate if empty
+        const convRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
 
         setMetrics({
           totalRevenue: totalRev,
@@ -181,16 +125,37 @@ export default function Dashboard() {
         setRecentLeads(leads.slice(0, 4));
         setUpcomingMeetings(meetings.slice(0, 4));
 
-        // 3. Prepare Revenue Chart Data (aggregate payments & invoices)
-        // For visual analytics, compile a billing trend chart
-        const monthlyBilling = [
-          { name: "Mar", Invoiced: 25000, Paid: 20000 },
-          { name: "Apr", Invoiced: 40000, Paid: 35000 },
-          { name: "May", Invoiced: 35000, Paid: 30000 },
-          { name: "Jun", Invoiced: 62000, Paid: 55000 },
-          { name: "Jul", Invoiced: 48000, Paid: 45000 },
-          { name: "Aug", Invoiced: totalRev ? totalRev * 1.2 : 72000, Paid: totalRev || 67000 },
-        ];
+        // 3. Prepare Revenue Chart Data (aggregate payments & invoices dynamically by month)
+        const getMonthName = (dateStr) => {
+          if (!dateStr) return "";
+          const d = new Date(dateStr);
+          return d.toLocaleString("default", { month: "short" });
+        };
+
+        const monthMap = {};
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const currentMonthIdx = new Date().getMonth();
+        for (let i = 5; i >= 0; i--) {
+          let idx = currentMonthIdx - i;
+          if (idx < 0) idx += 12;
+          monthMap[months[idx]] = { name: months[idx], Invoiced: 0, Paid: 0 };
+        }
+
+        invoices.forEach(inv => {
+          const m = getMonthName(inv.invoiceDate || inv.createdAt);
+          if (monthMap[m]) {
+            monthMap[m].Invoiced += Number(inv.totalAmount) || 0;
+          }
+        });
+
+        payments.forEach(p => {
+          const m = getMonthName(p.paymentDate || p.createdAt);
+          if (monthMap[m]) {
+            monthMap[m].Paid += Number(p.amount) || 0;
+          }
+        });
+
+        const monthlyBilling = Object.values(monthMap);
         setChartData(monthlyBilling);
 
         // 4. Project Stage Distribution
@@ -204,11 +169,7 @@ export default function Dashboard() {
           name,
           value,
         }));
-        setProjectChartData(projectStages.length > 0 ? projectStages : [
-          { name: "In Progress", value: 3 },
-          { name: "Completed", value: 4 },
-          { name: "On Hold", value: 1 },
-        ]);
+        setProjectChartData(projectStages);
 
       } catch (err) {
         console.error("Dashboard calculation error:", err);
