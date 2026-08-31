@@ -21,6 +21,7 @@ import {
   formatMeetingDate,
   formatMeetingTime,
   getMeetingLocation,
+  isMeetingExpired,
 } from "../utils";
 
 import MeetingBadge from "./MeetingBadge";
@@ -120,15 +121,21 @@ export default function MeetingTable({
         <div className="flex flex-col justify-center h-full py-1 leading-tight text-[10px] items-start gap-1">
           <MeetingBadge meeting={params.data} />
           {params.data.meetingType === "Online" && params.data.meetingLink && (
-            <a
-              href={params.data.meetingLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-0.5 font-bold text-blue-600 hover:text-blue-800 text-[10px]"
-            >
-              <span>Join Link</span>
-              <ExternalLink size={10} />
-            </a>
+            params.context.isMeetingExpired(params.data.meetingDate, params.data.endTime) ? (
+              <span className="inline-flex items-center gap-0.5 font-bold text-slate-400 text-[10px]">
+                Link Expired
+              </span>
+            ) : (
+              <a
+                href={params.data.meetingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-bold text-blue-600 hover:text-blue-800 text-[10px]"
+              >
+                <span>Join Link</span>
+                <ExternalLink size={10} />
+              </a>
+            )
           )}
           {params.data.meetingType === "Offline" && params.data.location && (
             <div className="flex max-w-[180px] items-center gap-0.5 text-slate-400 font-medium">
@@ -207,6 +214,7 @@ export default function MeetingTable({
             formatMeetingDate,
             formatMeetingTime,
             calculateMeetingDuration,
+            isMeetingExpired,
           }}
         />
       </div>

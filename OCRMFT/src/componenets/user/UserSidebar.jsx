@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -9,11 +9,9 @@ import {
   Upload,
   ClipboardList,
   CalendarDays,
-  Bell,
   UserCircle,
   LogOut,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 const menuItems = [
   {
@@ -45,11 +43,6 @@ const menuItems = [
     title: "Meetings",
     href: "/User1/meetings",
     icon: CalendarDays,
-  },
-  {
-    title: "Notifications",
-    href: "/User1/notifications",
-    icon: Bell,
   },
   {
     title: "Profile",

@@ -560,3 +560,56 @@ export function getMeetingSummary(meetings = []) {
 
   return summary;
 }
+
+// ======================================================
+// 30. CHECK IF MEETING HAS EXPIRED (AFTER END TIME)
+// ======================================================
+
+export function isMeetingExpired(meetingDate, endTime) {
+  if (!meetingDate) {
+    return false;
+  }
+
+  try {
+    const parsedDate = new Date(meetingDate);
+
+    if (isNaN(parsedDate.getTime())) {
+      return false;
+    }
+
+    let hours = 23;
+    let minutes = 59;
+
+    if (endTime && typeof endTime === "string") {
+      const timeMatch = endTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (timeMatch) {
+        let h = parseInt(timeMatch[1], 10);
+        const m = parseInt(timeMatch[2], 10);
+        const period = timeMatch[3];
+
+        if (period) {
+          if (period.toUpperCase() === "PM" && h < 12) h += 12;
+          if (period.toUpperCase() === "AM" && h === 12) h = 0;
+        }
+        hours = h;
+        minutes = m;
+      }
+    }
+
+    const expirationDate = new Date(
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate(),
+      hours,
+      minutes,
+      59
+    );
+
+    const now = new Date();
+
+    return now > expirationDate;
+  } catch {
+    return false;
+  }
+}
+

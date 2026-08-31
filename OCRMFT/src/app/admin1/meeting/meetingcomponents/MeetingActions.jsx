@@ -1,53 +1,24 @@
 "use client";
 
 import { Eye, Pencil, Trash2 } from "lucide-react";
-
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
-
 import DeleteModal from "./DeleteModal";
-import { deleteMeeting } from "../data";
 
 export default function MeetingActions({ meeting, onDelete, onEdit }) {
   const router = useRouter();
 
-  // ==================================================
-  // STATE
-  // ==================================================
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-
-  const [deleting, setDeleting] = useState(false);
-
-  const [deleteError, setDeleteError] = useState("");
-
-  // ==================================================
-  // GET ID
-  // ==================================================
 
   const meetingId = meeting?._id || meeting?.id;
 
-  // ==================================================
-  // VIEW
-  // ==================================================
-
   const handleView = () => {
-    if (!meetingId) {
-      return;
-    }
-
+    if (!meetingId) return;
     router.push(`/admin1/meeting/view/${meetingId}`);
   };
 
-  // ==================================================
-  // EDIT
-  // ==================================================
-
   const handleEdit = () => {
-    if (!meetingId) {
-      return;
-    }
+    if (!meetingId) return;
 
     if (onEdit) {
       onEdit(meeting);
@@ -56,66 +27,10 @@ export default function MeetingActions({ meeting, onDelete, onEdit }) {
     }
   };
 
-  // ==================================================
-  // OPEN DELETE MODAL
-  // ==================================================
-
-  const handleDeleteClick = () => {
-    setDeleteError("");
-
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
     setDeleteModalOpen(true);
   };
-
-  // ==================================================
-  // CLOSE DELETE MODAL
-  // ==================================================
-
-  const handleDeleteCancel = () => {
-    if (deleting) {
-      return;
-    }
-
-    setDeleteModalOpen(false);
-
-    setDeleteError("");
-  };
-
-  // ==================================================
-  // CONFIRM DELETE
-  // ==================================================
-
-  const handleDeleteConfirm = async () => {
-    if (!meetingId) {
-      setDeleteError("Meeting ID is missing.");
-
-      return;
-    }
-
-    try {
-      setDeleting(true);
-
-      setDeleteError("");
-
-      await deleteMeeting(meetingId);
-
-      setDeleteModalOpen(false);
-
-      // Parent table refresh
-      if (onDelete) {
-        onDelete(meetingId);
-      }
-    } catch (error) {
-      console.error("Delete Meeting Error:", error);
-
-      setDeleteError(error?.message || "Failed to delete meeting.");
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  // ==================================================
-  // INVALID MEETING
-  // ==================================================
 
   if (!meetingId) {
     return null;
@@ -123,10 +38,6 @@ export default function MeetingActions({ meeting, onDelete, onEdit }) {
 
   return (
     <>
-      {/* ==================================================
-          ACTION BUTTONS
-      ================================================== */}
-
       <div className="flex items-center justify-end gap-1">
         {/* VIEW */}
         <button
@@ -159,17 +70,17 @@ export default function MeetingActions({ meeting, onDelete, onEdit }) {
         </button>
       </div>
 
-      {/* ==================================================
-          DELETE MODAL
-      ================================================== */}
-
+      {/* DELETE CONFIRMATION MODAL */}
       <DeleteModal
-        open={deleteModalOpen}
+        isOpen={deleteModalOpen}
         meeting={meeting}
-        loading={deleting}
-        error={deleteError}
-        onCancel={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
+        onClose={() => setDeleteModalOpen(false)}
+        onDeleted={(deletedId) => {
+          setDeleteModalOpen(false);
+          if (onDelete) {
+            onDelete(deletedId);
+          }
+        }}
       />
     </>
   );

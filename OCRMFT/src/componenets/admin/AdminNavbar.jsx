@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 import {
   Bell,
   Search,
-  UserCircle2,
   Menu,
   LogOut,
   User,
@@ -22,57 +22,94 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  // Admin User details
+  // Admin User details state
   const [adminUser, setAdminUser] = useState({
-    fullName: "Admin User",
-    email: "admin@crm.com",
+    fullName: "Amar Admin",
+    email: "admin@odizocrm.com",
     role: "Super Admin",
   });
 
-  // Mock Notifications
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Upcoming Project Kickoff",
-      desc: "Acme Sync scheduled at 10:00 AM tomorrow",
-      time: "10 mins ago",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "Payment Received",
-      desc: "₹45,000 cleared for Acme Corp INV-2026-001",
-      time: "1 hour ago",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "New Lead Inbound",
-      desc: "Stark Industries requested quote integration",
-      time: "4 hours ago",
-      read: true,
-    },
-  ]);
+  // Live Notifications State (from real database)
+  const [notifications, setNotifications] = useState([]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // Load admin data from localStorage
+  // Load live admin session & database activity notifications
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedAdmin = localStorage.getItem("admin");
-      if (storedAdmin) {
-        try {
-          const parsed = JSON.parse(storedAdmin);
-          setAdminUser({
-            fullName: parsed.fullName || parsed.name || "Admin User",
-            email: parsed.email || "admin@crm.com",
-            role: parsed.role || "Super Admin",
-          });
-        } catch (e) {
-          console.error("Failed to parse admin session:", e);
+    async function loadAdminData() {
+      try {
+        let currentAdmin = null;
+
+        // 1. Load from localStorage session
+        if (typeof window !== "undefined") {
+          const storedAdmin = localStorage.getItem("admin");
+          if (storedAdmin) {
+            try {
+              currentAdmin = JSON.parse(storedAdmin);
+            } catch (e) {
+              console.error("Failed to parse admin session:", e);
+            }
+          }
         }
+
+        // 2. Fallback to Admin API if session missing
+        if (!currentAdmin || !currentAdmin.name) {
+          const adminRes = await axios.get("http://localhost:5000/api/Admin");
+          if (adminRes.data && adminRes.data.data && adminRes.data.data.length > 0) {
+            currentAdmin = adminRes.data.data[0];
+          }
+        }
+
+        if (currentAdmin) {
+          setAdminUser({
+            fullName: currentAdmin.name || currentAdmin.fullName || "Amar Admin",
+            email: currentAdmin.email || "admin@odizocrm.com",
+            role: currentAdmin.adminrole || currentAdmin.role || "Super Admin",
+          });
+        }
+
+        // 3. Fetch real notifications from Payments & Invoices database
+        const [paymentRes, invoiceRes, leadRes] = await Promise.allSettled([
+          axios.get("http://localhost:5000/api/Payment"),
+          axios.get("http://localhost:5000/api/Invoice"),
+          axios.get("http://localhost:5000/api/Lead"),
+        ]);
+
+        const liveNotifications = [];
+
+        if (paymentRes.status === "fulfilled" && paymentRes.value?.data?.data) {
+          const payments = paymentRes.value.data.data;
+          payments.slice(0, 2).forEach((p, idx) => {
+            liveNotifications.push({
+              id: `pay-${p._id || idx}`,
+              title: "Payment Received",
+              desc: `₹${(Number(p.amount) || 0).toLocaleString("en-IN")} cleared (TXN: ${p.transactionId || "Ref"})`,
+              time: p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : "Recent",
+              read: false,
+            });
+          });
+        }
+
+        if (leadRes.status === "fulfilled" && leadRes.value?.data?.data) {
+          const leads = leadRes.value.data.data;
+          leads.slice(0, 2).forEach((l, idx) => {
+            liveNotifications.push({
+              id: `lead-${l._id || idx}`,
+              title: "Inbound Lead",
+              desc: `${l.companyName || l.clientName} requested quote`,
+              time: l.createdAt ? new Date(l.createdAt).toLocaleDateString() : "New",
+              read: false,
+            });
+          });
+        }
+
+        setNotifications(liveNotifications);
+      } catch (err) {
+        console.error("Error loading admin navbar data:", err);
       }
     }
+
+    loadAdminData();
   }, []);
 
   // Click Outside to Close Dropdowns
@@ -93,8 +130,10 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
 
   // Handle Logout
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("admin");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("admin");
+    }
     router.push("/");
   };
 
@@ -106,7 +145,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
   // Get initials for Avatar
   const getInitials = (name) => {
     if (!name) return "A";
-    const parts = name.split(" ");
+    const parts = name.trim().split(" ");
     if (parts.length >= 2) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
@@ -122,7 +161,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
       <div className="flex items-center gap-4">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all border border-slate-200 bg-white shadow-sm shrink-0"
+          className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all border border-slate-200 bg-white shadow-sm shrink-0 active:scale-95 cursor-pointer"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <Menu
@@ -154,28 +193,28 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
         <div id="notifications-dropdown-container" className="relative">
           <button
             onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className={`relative p-2.5 rounded-xl border transition-all shrink-0
+            className={`relative p-2.5 rounded-xl border transition-all shrink-0 active:scale-95 cursor-pointer
             ${
               notificationsOpen
                 ? "bg-slate-100 border-slate-300 text-slate-800"
-                : "border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-slate-850"
+                : "border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-850 shadow-xs"
             }`}
           >
             <Bell size={18} />
             {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse" />
+              <span className="absolute top-1.5 right-1.5 h-2.5 w-2.5 rounded-full bg-cyan-500 ring-2 ring-white animate-pulse" />
             )}
           </button>
 
           {/* NOTIFICATIONS LIST POPOVER */}
           {notificationsOpen && (
-            <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-slate-200 bg-white shadow-xl py-2 z-50">
+            <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-slate-200 bg-white shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex items-center justify-between px-4 py-2 border-b border-slate-100">
-                <span className="text-xs font-bold text-slate-800">Notifications</span>
+                <span className="text-xs font-bold text-slate-800">System Activity</span>
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-[10px] font-bold text-cyan-600 hover:underline"
+                    className="text-[10px] font-bold text-cyan-600 hover:underline cursor-pointer"
                   >
                     Mark all read
                   </button>
@@ -183,20 +222,31 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
               </div>
 
               <div className="max-h-64 overflow-y-auto divide-y divide-slate-100 scrollbar-thin">
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    className={`px-4 py-3 flex gap-2.5 items-start hover:bg-slate-50 transition-colors
-                    ${!n.read ? "bg-cyan-50/20" : ""}`}
-                  >
-                    <div className={`h-2 w-2 rounded-full mt-1.5 shrink-0 ${!n.read ? "bg-cyan-500" : "bg-transparent"}`} />
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-800">{n.title}</p>
-                      <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{n.desc}</p>
-                      <span className="text-[9px] text-slate-400 block mt-1">{n.time}</span>
-                    </div>
+                {notifications.length === 0 ? (
+                  <div className="p-6 text-center text-xs text-slate-400 font-medium">
+                    No recent activity notifications.
                   </div>
-                ))}
+                ) : (
+                  notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`px-4 py-3 flex gap-2.5 items-start hover:bg-slate-50 transition-colors ${
+                        !n.read ? "bg-cyan-50/20" : ""
+                      }`}
+                    >
+                      <div
+                        className={`h-2 w-2 rounded-full mt-1.5 shrink-0 ${
+                          !n.read ? "bg-cyan-500" : "bg-transparent"
+                        }`}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-800">{n.title}</p>
+                        <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{n.desc}</p>
+                        <span className="text-[9px] text-slate-400 block mt-1">{n.time}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
               <div className="px-4 pt-2 border-t border-slate-100 text-center">
@@ -216,7 +266,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
         <div id="profile-dropdown-container" className="relative">
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className={`flex items-center gap-2.5 pl-3 border-l border-slate-200 shrink-0 transition-opacity hover:opacity-90`}
+            className="flex items-center gap-2.5 pl-3 border-l border-slate-200 shrink-0 transition-opacity hover:opacity-90 active:scale-95 cursor-pointer"
           >
             {/* Initials Avatar */}
             <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-xs font-black text-white shadow-md border border-cyan-400/20 select-none">
@@ -230,7 +280,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
 
           {/* USER CARD DROPDOWN */}
           {profileOpen && (
-            <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-slate-200 bg-white shadow-xl py-3 z-50">
+            <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-slate-200 bg-white shadow-xl py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="px-4 py-2 border-b border-slate-100 flex flex-col gap-0.5">
                 <h4 className="text-xs font-bold text-slate-800">{adminUser.fullName}</h4>
                 <div className="flex items-center gap-1 text-[10px] text-slate-500">
@@ -257,7 +307,7 @@ export default function AdminNavbar({ collapsed, setCollapsed }) {
               <div className="px-2 pt-2 border-t border-slate-100">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-bold transition"
+                  className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-red-600 hover:bg-red-50 font-bold transition cursor-pointer"
                 >
                   <LogOut size={14} className="text-red-400" />
                   <span>Log Out</span>
