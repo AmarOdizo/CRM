@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ClipboardList, Eye, Edit2, Trash2, CheckCircle2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ClipboardList, Eye, Edit2, Trash2, CheckCircle2, FolderKanban } from "lucide-react";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import Link from "next/link";
@@ -23,6 +23,42 @@ export default function TaskTable({
 }) {
   const [selectedTask, setSelectedTask] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [usersMap, setUsersMap] = useState({});
+
+  useEffect(() => {
+    async function loadUsersMap() {
+      try {
+        const [uRes, eRes] = await Promise.allSettled([
+          fetch("http://localhost:5000/api/User").then((r) => r.json()),
+          fetch("http://localhost:5000/api/Employee").then((r) => r.json()),
+        ]);
+
+        const map = {};
+        if (uRes.status === "fulfilled" && Array.isArray(uRes.value?.data)) {
+          uRes.value.data.forEach((u) => {
+            if (u._id || u.id) map[u._id || u.id] = u;
+          });
+        }
+
+        if (eRes.status === "fulfilled" && Array.isArray(eRes.value?.data)) {
+          eRes.value.data.forEach((e) => {
+            const key = e._id || e.id;
+            if (key) {
+              map[key] = {
+                ...e,
+                fullName: e.name || e.fullName || "Employee",
+              };
+            }
+          });
+        }
+
+        setUsersMap(map);
+      } catch (err) {
+        console.error("Error loading users map for TaskTable:", err);
+      }
+    }
+    loadUsersMap();
+  }, []);
 
   const handleDeleteClick = (task) => {
     setSelectedTask(task);
@@ -31,18 +67,34 @@ export default function TaskTable({
 
   const handleCloseDeleteModal = () => {
     if (deleteLoading) return;
-
     setDeleteModalOpen(false);
     setSelectedTask(null);
   };
 
   const handleConfirmDelete = async () => {
     if (!selectedTask || !onDelete) return;
-
     await onDelete(selectedTask);
-
     setDeleteModalOpen(false);
     setSelectedTask(null);
+  };
+
+  const resolveMemberName = (val, storedName = "") => {
+    if (storedName && typeof storedName === "string" && storedName.trim()) {
+      return storedName.trim();
+    }
+    if (!val) return "-";
+    if (typeof val === "object" && val !== null) {
+      return val.fullName || val.name || val.email || "-";
+    }
+    if (typeof val === "string" && val.trim()) {
+      const cleanVal = val.trim();
+      if (usersMap[cleanVal]) {
+        const match = usersMap[cleanVal];
+        return match.fullName || match.name || match.email || cleanVal;
+      }
+      return cleanVal;
+    }
+    return "-";
   };
 
   const columnDefs = [
@@ -50,7 +102,7 @@ export default function TaskTable({
       headerName: "Task Description",
       field: "title",
       flex: 2,
-      minWidth: 220,
+      minWidth: 200,
       cellRenderer: (params) => (
         <div className="flex items-center gap-3 h-full py-2">
           <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-white text-xs shadow-sm overflow-hidden border border-white/20">
@@ -70,15 +122,51 @@ export default function TaskTable({
       ),
     },
     {
-      headerName: "Assigned To",
-      field: "assignedTo.fullName",
-      flex: 1.2,
+      headerName: "Project",
+      field: "projectName",
+      flex: 1.1,
       minWidth: 140,
       cellRenderer: (params) => {
-        const val = params.data.assignedTo?.fullName || params.data.assignedTo || "-";
+        const proj = params.data.projectName || params.data.project || "-";
         return (
-          <div className="flex items-center h-full text-sm font-semibold text-slate-700">
-            {val}
+          <div className="flex items-center h-full">
+            <span className="truncate bg-blue-50/80 text-blue-700 font-bold px-2.5 py-1 rounded-lg text-xs border border-blue-100 flex items-center gap-1">
+              <FolderKanban size={12} /> {proj}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Assigned To",
+      field: "assignedTo",
+      flex: 1.2,
+      minWidth: 150,
+      cellRenderer: (params) => {
+        const displayName = resolveMemberName(params.data.assignedTo, params.data.assignedToName);
+        return (
+          <div className="flex items-center gap-2 h-full text-sm font-bold text-slate-700">
+            <div className="h-6 w-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-black shrink-0 border border-blue-200">
+              {displayName !== "-" ? displayName[0].toUpperCase() : "U"}
+            </div>
+            <span className="truncate">{displayName}</span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Assigned By",
+      field: "assignedBy",
+      flex: 1.2,
+      minWidth: 150,
+      cellRenderer: (params) => {
+        const displayName = resolveMemberName(params.data.assignedBy, params.data.assignedByName);
+        return (
+          <div className="flex items-center gap-2 h-full text-sm font-bold text-slate-700">
+            <div className="h-6 w-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-[10px] font-black shrink-0 border border-cyan-200">
+              {displayName !== "-" ? displayName[0].toUpperCase() : "A"}
+            </div>
+            <span className="truncate">{displayName}</span>
           </div>
         );
       },
@@ -87,7 +175,7 @@ export default function TaskTable({
       headerName: "Priority",
       field: "priority",
       flex: 1,
-      minWidth: 110,
+      minWidth: 100,
       cellRenderer: (params) => (
         <div className="flex items-center h-full">
           <PriorityBadge priority={params.value} />
@@ -97,8 +185,8 @@ export default function TaskTable({
     {
       headerName: "Status",
       field: "status",
-      flex: 1.2,
-      minWidth: 120,
+      flex: 1.1,
+      minWidth: 110,
       cellRenderer: (params) => (
         <div className="flex items-center h-full">
           <StatusBadge status={params.value} />
@@ -108,8 +196,8 @@ export default function TaskTable({
     {
       headerName: "Due Date",
       field: "dueDate",
-      flex: 1.2,
-      minWidth: 130,
+      flex: 1,
+      minWidth: 110,
       cellRenderer: (params) => {
         const val = params.data.dueDate
           ? new Date(params.data.dueDate).toLocaleDateString()
@@ -128,7 +216,7 @@ export default function TaskTable({
         return (
           <div className="flex items-center gap-1.5 h-full py-1">
             <Link
-              href={`/admin1/task-assignment/view/${task.id}`}
+              href={`/admin1/task-assignment/view/${task.id || task._id}`}
               className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200 border border-transparent hover:border-emerald-100"
               title="View Details"
             >
@@ -151,69 +239,48 @@ export default function TaskTable({
           </div>
         );
       },
-      width: 140,
-      suppressMenu: true,
-      sortable: false,
     },
   ];
 
-  const defaultColDef = {
-    sortable: true,
-    filter: true,
-    resizable: true,
-  };
-
   return (
-    <>
-      <div className="w-full rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {/* Table Header */}
-        <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between bg-slate-50/50">
-          <div>
-            <h2 className="text-lg font-bold text-slate-800">Task Deliverables</h2>
-            <p className="mt-0.5 text-xs font-semibold text-slate-400">
-              {tasks.length} task{tasks.length !== 1 ? "s" : ""} active
-            </p>
-          </div>
-
-          <ExportCSV tasks={tasks} fileName="tasks.csv" />
+    <div className="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-black text-slate-800 tracking-tight">Task Deliverables</h2>
+          <p className="text-xs text-slate-500 font-medium">
+            Showing {tasks.length} total tasks assigned.
+          </p>
         </div>
 
-        {/* Table */}
-        {tasks.length === 0 ? (
-          <div className="flex min-h-[300px] flex-col items-center justify-center p-8 text-center bg-white">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-50 text-slate-400 border border-slate-100">
-              <ClipboardList size={26} />
-            </div>
-
-            <h3 className="text-base font-bold text-slate-700">No Tasks Found</h3>
-            <p className="mt-1 text-sm text-slate-400 font-medium">
-              There are no tasks matching your current filters.
-            </p>
-          </div>
-        ) : (
-          <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="ag-theme-quartz min-w-[1000px] w-full">
-              <AgGridReact
-                rowData={tasks}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                domLayout="autoHeight"
-                rowHeight={65}
-                headerHeight={48}
-              />
-            </div>
-          </div>
-        )}
+        <ExportCSV tasks={tasks} />
       </div>
 
-      {/* Delete Modal */}
-      <DeleteModal
-        isOpen={deleteModalOpen}
-        task={selectedTask}
-        onClose={handleCloseDeleteModal}
-        onConfirm={handleConfirmDelete}
-        loading={deleteLoading}
-      />
-    </>
+      <div className="ag-theme-quartz h-[500px] w-full">
+        <AgGridReact
+          rowData={tasks}
+          columnDefs={columnDefs}
+          defaultColDef={{
+            sortable: true,
+            filter: true,
+            resizable: true,
+          }}
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[10, 20, 50]}
+          rowHeight={60}
+          headerHeight={48}
+        />
+      </div>
+
+      {deleteModalOpen && selectedTask && (
+        <DeleteModal
+          open={deleteModalOpen}
+          task={selectedTask}
+          onClose={handleCloseDeleteModal}
+          onConfirm={handleConfirmDelete}
+          loading={deleteLoading}
+        />
+      )}
+    </div>
   );
 }

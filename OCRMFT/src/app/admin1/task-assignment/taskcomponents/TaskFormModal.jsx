@@ -14,9 +14,14 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
     title: "",
     description: "",
     assignedTo: "",
+    assignedToName: "",
+    assignedBy: "",
+    assignedByName: "",
     projectId: "",
+    projectName: "",
     priority: "Medium",
     status: "Pending",
+    startDate: "",
     dueDate: "",
     notes: "",
   });
@@ -26,15 +31,19 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
       try {
         setLoading(true);
         const data = await getTaskById(taskId);
-        // data contains .data
         const taskData = data?.data || data;
         setFormData({
           title: taskData?.title || "",
           description: taskData?.description || "",
           assignedTo: taskData?.assignedTo?._id || taskData?.assignedTo || "",
-          projectId: taskData?.projectId || "",
+          assignedToName: taskData?.assignedToName || taskData?.assignedTo?.fullName || taskData?.assignedTo?.name || "",
+          assignedBy: taskData?.assignedBy?._id || taskData?.assignedBy || "",
+          assignedByName: taskData?.assignedByName || taskData?.assignedBy?.fullName || taskData?.assignedBy?.name || "",
+          projectId: taskData?.projectId || taskData?.project || "",
+          projectName: taskData?.projectName || "",
           priority: taskData?.priority || "Medium",
           status: taskData?.status || "Pending",
+          startDate: taskData?.startDate ? taskData.startDate.slice(0, 10) : "",
           dueDate: taskData?.dueDate ? taskData.dueDate.slice(0, 10) : "",
           notes: taskData?.notes || "",
         });
@@ -53,9 +62,14 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
         title: "",
         description: "",
         assignedTo: "",
+        assignedToName: "",
+        assignedBy: "",
+        assignedByName: "",
         projectId: "",
+        projectName: "",
         priority: "Medium",
         status: "Pending",
+        startDate: "",
         dueDate: "",
         notes: "",
       });
@@ -64,9 +78,10 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
   }, [open, taskId, isEditMode]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
@@ -83,8 +98,8 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
       }
       if (onSuccess) onSuccess();
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      console.error("Submit task error:", error);
+      alert(error?.message || "Failed to save task assignment.");
     } finally {
       setSaving(false);
     }
@@ -107,7 +122,7 @@ export default function TaskFormModal({ open, taskId, onClose, onSuccess }) {
       open={open}
       onCancel={onClose}
       footer={null}
-      width={700}
+      width={750}
       destroyOnHidden
       centered
       className="task-form-modal"
