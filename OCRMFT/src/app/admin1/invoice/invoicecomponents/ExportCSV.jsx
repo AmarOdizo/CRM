@@ -107,10 +107,10 @@ export default function ExportCSV({
       type="button"
       onClick={exportCSV}
       disabled={!invoices || invoices.length === 0}
-      className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 active:scale-95 cursor-pointer"
     >
-      <Download size={17} />
-      Export CSV
+      <Download size={16} />
+      <span>Export CSV</span>
     </button>
   );
 }

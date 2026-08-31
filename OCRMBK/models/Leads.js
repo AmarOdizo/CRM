@@ -9,51 +9,60 @@ const LeadSchema = new mongoose.Schema(
     client: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Client",
-      required: true,
+      default: null,
+    },
+    clientName: {
+      type: String,
+      default: "",
     },
     companyName: {
       type: String,
-      required: true,
+      default: "",
     },
     email: {
       type: String,
-      required: true,
+      default: "",
     },
     phone: {
       type: String,
-      required: true,
+      default: "",
     },
     address: {
       type: String,
-      required: true,
+      default: "",
     },
     businessRequirement: {
       type: String,
-      required: true,
+      default: "",
     },
     leadSource: {
       type: String,
-      required: true,
+      default: "",
     },
     estimatedBudget: {
       type: String,
-      required: true,
+      default: "",
     },
     status: {
       type: String,
-      required: true,
+      default: "New",
     },
     followUpDate: {
       type: String,
-      required: true,
+      default: "",
     },
     assignedEmployee: {
       type: String,
-      required: true,
+      default: "",
+    },
+    assignedEmployeeRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     notes: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   {

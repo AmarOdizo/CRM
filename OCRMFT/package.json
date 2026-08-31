@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.2",
+    "ag-grid-community": "^36.1.0",
+    "ag-grid-react": "^36.1.0",
     "antd": "^6.5.1",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
@@ -25,6 +27,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^6.0.3"
   }
 }

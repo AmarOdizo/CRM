@@ -2,17 +2,27 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 import {
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
-  FilePlus,
   RefreshCw,
+  Plus,
+  FileText,
+  IndianRupee,
+  Clock,
+  CheckCircle2,
+  Eye,
+  Edit2,
+  Trash2
 } from "lucide-react";
 
 import StatusBadge from "./StatusBadge";
 import PaymentBadge from "./PaymentBadge";
-import InvoiceActions from "./InvoiceActions";
 import SearchFilter from "./SearchFilter";
 import DeleteModal from "./DeleteModal";
 import ExportCSV from "./ExportCSV";
@@ -289,37 +299,37 @@ export default function InvoiceTable() {
   };
 
   // --------------------------------------------------
-  // LOADING
+  // STATS CALCULATIONS
   // --------------------------------------------------
+  const totalInvoices = invoices.length;
+  const totalAmountVal = invoices.reduce((acc, curr) => acc + Number(curr.totalAmount || curr.grandTotal || curr.total || 0), 0);
+  const paidAmountVal = invoices
+    .filter((i) => (i.paymentStatus || "").toLowerCase() === "paid")
+    .reduce((acc, curr) => acc + Number(curr.totalAmount || curr.grandTotal || curr.total || 0), 0);
+  const unpaidAmountVal = invoices
+    .filter((i) => (i.paymentStatus || "").toLowerCase() !== "paid")
+    .reduce((acc, curr) => acc + Number(curr.totalAmount || curr.grandTotal || curr.total || 0), 0);
 
   if (loading) {
     return (
-      <div className="rounded-xl border bg-white shadow-sm">
-        <div className="flex min-h-[350px] items-center justify-center">
-          <div className="text-center">
-            <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-
-            <p className="mt-4 text-sm text-gray-500">Loading invoices...</p>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Invoices...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve invoice statements.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-5">
-      {/* -------------------------------------------- */}
+    <div className="space-y-6">
       {/* HEADER */}
-      {/* -------------------------------------------- */}
-
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Invoice Management
-          </h1>
-
-          <p className="mt-1 text-sm text-gray-500">
-            Manage, view, edit and track all invoices.
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Invoice Management</h1>
+          <p className="mt-1 text-slate-500 font-medium font-medium">
+            Manage your company invoice statements, receipts, outstanding bills, and payments.
           </p>
         </div>
 
@@ -328,10 +338,10 @@ export default function InvoiceTable() {
             type="button"
             onClick={() => fetchInvoices(true)}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             <RefreshCw size={17} className={refreshing ? "animate-spin" : ""} />
-            Refresh
+            <span>Refresh</span>
           </button>
 
           <ExportCSV
@@ -341,42 +351,87 @@ export default function InvoiceTable() {
 
           <Link
             href="/admin1/invoice/add"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition duration-300 hover:shadow-xl active:scale-95 cursor-pointer"
           >
-            <FilePlus size={17} />
-            Add Invoice
+            <Plus size={18} />
+            <span>Add Invoice</span>
           </Link>
         </div>
       </div>
 
-      {/* -------------------------------------------- */}
-      {/* ERROR */}
-      {/* -------------------------------------------- */}
+      {/* STATS BANNER */}
+      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          {
+            title: "Total Invoices",
+            val: totalInvoices,
+            icon: FileText,
+            color: "text-blue-600 bg-blue-50/50 border-blue-200/50",
+          },
+          {
+            title: "Outstanding Bills",
+            val: formatCurrency(unpaidAmountVal),
+            icon: Clock,
+            color: "text-amber-600 bg-amber-50/50 border-amber-200/50",
+          },
+          {
+            title: "Paid Invoices",
+            val: formatCurrency(paidAmountVal),
+            icon: CheckCircle2,
+            color: "text-emerald-600 bg-emerald-50/50 border-emerald-200/50",
+          },
+          {
+            title: "Total Volume",
+            val: formatCurrency(totalAmountVal),
+            icon: IndianRupee,
+            color: "text-purple-600 bg-purple-50/50 border-purple-200/50",
+          },
+        ].map((card, idx) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={idx}
+              className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group"
+            >
+              <div>
+                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  {card.title}
+                </h3>
+                <p className="mt-2 text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">
+                  {loading ? "..." : card.val}
+                </p>
+              </div>
+              <div
+                className={`h-12 w-12 rounded-xl flex items-center justify-center border transition-all duration-300 group-hover:scale-105 ${card.color}`}
+              >
+                <Icon size={22} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
+      {/* ERROR */}
       {error && (
-        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">
           <AlertCircle size={20} className="mt-0.5 shrink-0" />
 
           <div className="flex-1">
-            <p className="font-medium">Something went wrong</p>
-
-            <p className="mt-1 text-sm">{error}</p>
+            <p className="font-semibold text-sm">Something went wrong</p>
+            <p className="mt-1 text-xs">{error}</p>
           </div>
 
           <button
             type="button"
             onClick={() => fetchInvoices(true)}
-            className="text-sm font-semibold underline"
+            className="text-sm font-semibold underline hover:text-rose-800"
           >
             Retry
           </button>
         </div>
       )}
 
-      {/* -------------------------------------------- */}
       {/* SEARCH FILTER */}
-      {/* -------------------------------------------- */}
-
       <SearchFilter
         search={search}
         setSearch={setSearch}
@@ -391,269 +446,206 @@ export default function InvoiceTable() {
         onClear={clearFilters}
       />
 
-      {/* -------------------------------------------- */}
-      {/* RESULT SUMMARY */}
-      {/* -------------------------------------------- */}
-
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-gray-500">
-          Showing{" "}
-          <span className="font-semibold text-gray-700">
-            {filteredInvoices.length === 0 ? 0 : startIndex + 1}
-            {" - "}
-            {Math.min(endIndex, filteredInvoices.length)}
-          </span>{" "}
-          of{" "}
-          <span className="font-semibold text-gray-700">
-            {filteredInvoices.length}
-          </span>{" "}
-          invoices
-        </p>
-
-        {(search || status || paymentStatus || dateFrom || dateTo) && (
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="text-sm font-medium text-blue-600 hover:underline"
-          >
-            Clear active filters
-          </button>
-        )}
-      </div>
-
-      {/* -------------------------------------------- */}
       {/* TABLE */}
-      {/* -------------------------------------------- */}
-
-      <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px]">
-            <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Invoice
-                </th>
-
-                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Customer
-                </th>
-
-                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Invoice Date
-                </th>
-
-                <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Due Date
-                </th>
-
-                <th className="px-5 py-4 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Amount
-                </th>
-
-                <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Status
-                </th>
-
-                <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Payment
-                </th>
-
-                <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-gray-100">
-              {currentInvoices.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center">
-                    <div className="mx-auto max-w-sm">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                        <FilePlus size={25} className="text-gray-400" />
-                      </div>
-
-                      <h3 className="mt-4 text-base font-semibold text-gray-800">
-                        No invoices found
-                      </h3>
-
-                      <p className="mt-1 text-sm text-gray-500">
-                        {search || status || paymentStatus || dateFrom || dateTo
-                          ? "Try changing your search or filters."
-                          : "Create your first invoice to get started."}
-                      </p>
-
-                      {(search ||
-                        status ||
-                        paymentStatus ||
-                        dateFrom ||
-                        dateTo) && (
-                        <button
-                          type="button"
-                          onClick={clearFilters}
-                          className="mt-4 text-sm font-semibold text-blue-600 hover:underline"
-                        >
-                          Clear Filters
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                currentInvoices.map((invoice) => {
-                  const invoiceId = invoice._id || invoice.id;
-
-                  const invoiceNumber =
-                    invoice.invoiceNumber ||
-                    invoice.invoiceNo ||
-                    invoice.invoiceId ||
-                    `INV-${invoiceId}`;
-
-                  const customerName = invoice.customerName || "-";
-
-                  const customerEmail = invoice.customerEmail || "";
-
-                  const totalAmount =
-                    invoice.totalAmount ??
-                    invoice.grandTotal ??
-                    invoice.total ??
-                    0;
-
-                  return (
-                    <tr key={invoiceId} className="transition hover:bg-gray-50">
-                      {/* Invoice */}
-                      <td className="px-5 py-4">
-                        <Link
-                          href={`/admin1/invoice/view/${invoiceId}`}
-                          className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
-                        >
-                          {invoiceNumber}
-                        </Link>
-                      </td>
-
-                      {/* Customer */}
-                      <td className="px-5 py-4">
-                        <div>
-                          <p className="font-medium text-gray-800">
-                            {customerName}
-                          </p>
-
-                          {customerEmail && (
-                            <p className="mt-0.5 text-xs text-gray-500">
-                              {customerEmail}
-                            </p>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Invoice Date */}
-                      <td className="px-5 py-4 text-sm text-gray-600">
-                        {formatDate(invoice.invoiceDate)}
-                      </td>
-
-                      {/* Due Date */}
-                      <td className="px-5 py-4 text-sm text-gray-600">
-                        {formatDate(invoice.dueDate)}
-                      </td>
-
-                      {/* Amount */}
-                      <td className="px-5 py-4 text-right">
-                        <span className="font-semibold text-gray-800">
-                          {formatCurrency(totalAmount)}
-                        </span>
-                      </td>
-
-                      {/* Status */}
-                      <td className="px-5 py-4 text-center">
-                        <StatusBadge status={invoice.status} />
-                      </td>
-
-                      {/* Payment */}
-                      <td className="px-5 py-4 text-center">
-                        <PaymentBadge paymentStatus={invoice.paymentStatus} />
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-5 py-4">
-                        <div className="flex justify-center">
-                          <InvoiceActions
-                            invoice={invoice}
-                            onDelete={handleDelete}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* ------------------------------------------ */}
-        {/* PAGINATION */}
-        {/* ------------------------------------------ */}
-
-        {filteredInvoices.length > 0 && (
-          <div className="flex flex-col gap-4 border-t bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-500">
-              Page{" "}
-              <span className="font-semibold text-gray-700">{currentPage}</span>{" "}
-              of{" "}
-              <span className="font-semibold text-gray-700">{totalPages}</span>
-            </p>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronLeft size={16} />
-                Previous
-              </button>
-
-              <div className="hidden items-center gap-1 sm:flex">
-                {Array.from({ length: totalPages }, (_, index) => index + 1)
-                  .slice(
-                    Math.max(0, currentPage - 3),
-                    Math.min(totalPages, currentPage + 2),
-                  )
-                  .map((page) => (
-                    <button
-                      key={page}
-                      type="button"
-                      onClick={() => setCurrentPage(page)}
-                      className={`h-9 min-w-9 rounded-lg px-3 text-sm font-medium transition ${
-                        currentPage === page
-                          ? "bg-blue-600 text-white"
-                          : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm w-full">
+        {filteredInvoices.length === 0 ? (
+          <div className="px-6 py-16 text-center">
+            <div className="mx-auto max-w-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-50 border border-slate-100 text-slate-400">
+                <FileText size={25} />
               </div>
 
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Next
-                <ChevronRight size={16} />
-              </button>
+              <h3 className="mt-4 text-base font-bold text-slate-800">
+                No invoices found
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-400 font-medium">
+                {search || status || paymentStatus || dateFrom || dateTo
+                  ? "Try changing your search or filters."
+                  : "Create your first invoice statement to get started."}
+              </p>
+
+              {(search ||
+                status ||
+                paymentStatus ||
+                dateFrom ||
+                dateTo) && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="mt-4 text-sm font-semibold text-blue-600 hover:underline cursor-pointer"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="w-full overflow-x-auto">
+            <div className="ag-theme-quartz min-w-[1000px] w-full">
+              <AgGridReact
+                rowData={filteredInvoices}
+                columnDefs={[
+                  {
+                    headerName: "Invoice Number",
+                    field: "invoiceNumber",
+                    flex: 1.5,
+                    minWidth: 150,
+                    cellRenderer: (params) => {
+                      const invoiceId = params.data._id || params.data.id;
+                      const invoiceNumber =
+                        params.data.invoiceNumber ||
+                        params.data.invoiceNo ||
+                        params.data.invoiceId ||
+                        `INV-${invoiceId}`;
+                      return (
+                        <div className="flex items-center h-full">
+                          <Link
+                            href={`/admin1/invoice/view/${invoiceId}`}
+                            className="font-bold text-blue-600 hover:text-blue-700 hover:underline"
+                          >
+                            {invoiceNumber}
+                          </Link>
+                        </div>
+                      );
+                    },
+                  },
+                  {
+                    headerName: "Customer Details",
+                    field: "customerName",
+                    flex: 2,
+                    minWidth: 200,
+                    cellRenderer: (params) => (
+                      <div className="flex flex-col justify-center h-full py-1 leading-tight text-left">
+                        <p className="font-bold text-slate-700">
+                          {params.data.customerName || "-"}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {params.data.customerEmail || ""}
+                        </p>
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Project Details",
+                    field: "projectName",
+                    flex: 1.5,
+                    minWidth: 150,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm font-semibold text-slate-600">
+                        {params.value || "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Invoice Date",
+                    field: "invoiceDate",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm text-slate-500">
+                        {params.value ? formatDate(params.value) : "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Due Date",
+                    field: "dueDate",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm text-slate-500">
+                        {params.value ? formatDate(params.value) : "-"}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Grand Total",
+                    field: "grandTotal",
+                    flex: 1.2,
+                    minWidth: 120,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full text-sm font-bold text-slate-800">
+                        {formatCurrency(params.value)}
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Status",
+                    field: "status",
+                    flex: 1,
+                    minWidth: 110,
+                    cellRenderer: (params) => (
+                      <div className="flex items-center h-full">
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold leading-none
+                          ${
+                            params.value === "Sent"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : params.value === "Paid"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : params.value === "Overdue"
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : "bg-slate-50 text-slate-700 border border-slate-200"
+                          }`}
+                        >
+                          {params.value}
+                        </span>
+                      </div>
+                    ),
+                  },
+                  {
+                    headerName: "Actions",
+                    cellRenderer: (params) => {
+                      const invoiceId = params.data._id || params.data.id;
+                      return (
+                        <div className="flex items-center gap-1.5 h-full py-1">
+                          <Link
+                            href={`/admin1/invoice/view/${invoiceId}`}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200 border border-transparent hover:border-emerald-100"
+                            title="View Statement"
+                          >
+                            <Eye size={16} />
+                          </Link>
+                          <Link
+                            href={`/admin1/invoice/edit/${invoiceId}`}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100"
+                            title="Edit Invoice"
+                          >
+                            <Edit2 size={16} />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(params.data)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 border border-transparent hover:border-rose-100 cursor-pointer"
+                            title="Delete Invoice"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      );
+                    },
+                    width: 140,
+                    suppressMenu: true,
+                    sortable: false,
+                  },
+                ]}
+                defaultColDef={{
+                  sortable: true,
+                  filter: true,
+                  resizable: true,
+                }}
+                pagination={true}
+                paginationPageSize={10}
+                domLayout="autoHeight"
+                rowHeight={65}
+                headerHeight={48}
+              />
             </div>
           </div>
         )}
       </div>
 
-      {/* -------------------------------------------- */}
       {/* DELETE MODAL */}
-      {/* -------------------------------------------- */}
-
       <DeleteModal
         isOpen={deleteModalOpen}
         invoice={selectedInvoice}

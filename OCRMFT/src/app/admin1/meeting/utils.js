@@ -197,16 +197,13 @@ export function getMeetingStatusStyle(status) {
   const normalized = normalizeMeetingStatus(status);
 
   const styles = {
-    scheduled: "bg-blue-100 text-blue-700",
-
-    completed: "bg-green-100 text-green-700",
-
-    cancelled: "bg-red-100 text-red-700",
-
-    rescheduled: "bg-yellow-100 text-yellow-700",
+    scheduled: "bg-blue-50 text-blue-700 border border-blue-100",
+    completed: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+    cancelled: "bg-rose-50 text-rose-700 border border-rose-100",
+    rescheduled: "bg-amber-50 text-amber-700 border border-amber-100",
   };
 
-  return styles[normalized] || "bg-gray-100 text-gray-700";
+  return styles[normalized] || "bg-slate-50 text-slate-600 border border-slate-200/60";
 }
 
 // ======================================================
@@ -237,14 +234,12 @@ export function getMeetingTypeStyle(type) {
   const normalized = normalizeMeetingType(type);
 
   const styles = {
-    online: "bg-purple-100 text-purple-700",
-
-    offline: "bg-orange-100 text-orange-700",
-
-    phone: "bg-green-100 text-green-700",
+    online: "bg-purple-50 text-purple-700 border border-purple-100",
+    offline: "bg-orange-50 text-orange-700 border border-orange-100",
+    phone: "bg-green-50 text-green-700 border border-green-100",
   };
 
-  return styles[normalized] || "bg-gray-100 text-gray-700";
+  return styles[normalized] || "bg-slate-50 text-slate-600 border border-slate-200/60";
 }
 
 // ======================================================
@@ -565,3 +560,56 @@ export function getMeetingSummary(meetings = []) {
 
   return summary;
 }
+
+// ======================================================
+// 30. CHECK IF MEETING HAS EXPIRED (AFTER END TIME)
+// ======================================================
+
+export function isMeetingExpired(meetingDate, endTime) {
+  if (!meetingDate) {
+    return false;
+  }
+
+  try {
+    const parsedDate = new Date(meetingDate);
+
+    if (isNaN(parsedDate.getTime())) {
+      return false;
+    }
+
+    let hours = 23;
+    let minutes = 59;
+
+    if (endTime && typeof endTime === "string") {
+      const timeMatch = endTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (timeMatch) {
+        let h = parseInt(timeMatch[1], 10);
+        const m = parseInt(timeMatch[2], 10);
+        const period = timeMatch[3];
+
+        if (period) {
+          if (period.toUpperCase() === "PM" && h < 12) h += 12;
+          if (period.toUpperCase() === "AM" && h === 12) h = 0;
+        }
+        hours = h;
+        minutes = m;
+      }
+    }
+
+    const expirationDate = new Date(
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate(),
+      hours,
+      minutes,
+      59
+    );
+
+    const now = new Date();
+
+    return now > expirationDate;
+  } catch {
+    return false;
+  }
+}
+

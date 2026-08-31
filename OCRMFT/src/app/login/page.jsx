@@ -23,98 +23,128 @@ export default function Login() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="relative min-h-screen flex items-center justify-center p-6 bg-cover bg-center overflow-hidden"
       style={{
-        backgroundImage: "url('/loginbg.jpg')",
+        backgroundImage: "url('/Loginbg.jpg')",
       }}
     >
+      {/* Premium Dark Overlay */}
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[3px] z-0"></div>
+
       <Card
-        className="w-full max-w-md rounded-3xl border border-white/20 shadow-2xl"
+        className="relative z-10 w-full max-w-md border border-white/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700"
         style={{
-          background: "rgba(0, 0, 0, 0.45)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderRadius: "24px",
+          background: "rgba(15, 23, 42, 0.55)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderRadius: "28px",
         }}
         styles={{
           body: {
-            padding: "35px",
+            padding: "40px 32px",
             background: "transparent",
           },
         }}
       >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
-            <TeamOutlined className="text-4xl text-blue-600" />
-          </div>
+        {/* Glowing Decorative Element */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/25 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-          <h1 className="text-3xl font-bold mt-5 text-gray-900">
+        {/* Header with Logo */}
+        <div className="text-center mb-8 relative z-10">
+          <div className="mb-4 inline-block p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md shadow-inner">
+            <img src="/Logo.png" alt="Logo" className="h-16 w-auto object-contain" />
+          </div>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight">
             Client & Project
           </h1>
-
-          <h2 className="text-xl font-semibold text-blue-600">
+          <h2 className="text-base font-bold text-sky-400 mt-0.5 tracking-wide uppercase text-[11px]">
             Management System
           </h2>
-
-          <p className="text-gray-500 mt-2">Select your account type</p>
+          <p className="text-slate-400 text-xs mt-2">Select your account type to sign in</p>
         </div>
 
-        {/* User Card */}
-        <div
-          onClick={() => setRole("user")}
-          className={`mb-4 cursor-pointer rounded-2xl border p-5 transition-all duration-300 ${
-            role === "user"
-              ? "border-blue-600 bg-blue-50 shadow-lg"
-              : "border-gray-200 hover:border-blue-500 hover:shadow-md"
-          }`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center">
-              <UserOutlined className="text-2xl text-blue-600" />
+        {/* Selection Cards */}
+        <div className="space-y-4 relative z-10">
+          {/* User Card */}
+          <div
+            onClick={() => setRole("user")}
+            className={`group cursor-pointer rounded-2xl border p-5 transition-all duration-300 flex items-center justify-between ${
+              role === "user"
+                ? "border-sky-500 bg-sky-500/15 shadow-[0_0_20px_rgba(14,165,233,0.15)] scale-[1.02]"
+                : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15"
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${
+                role === "user" ? "bg-sky-500 text-white" : "bg-white/5 text-slate-400 group-hover:text-slate-200"
+              }`}>
+                <UserOutlined className="text-xl" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-base font-bold text-white leading-snug">User</h3>
+                <p className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors mt-0.5">
+                  Access projects & daily updates
+                </p>
+              </div>
             </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">User</h3>
-              <p className="text-sm text-gray-500">
-                Access your projects and dashboard
-              </p>
+            <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+              role === "user" ? "border-sky-500 bg-sky-500 scale-110" : "border-white/20"
+            }`}>
+              {role === "user" && <div className="w-2 h-2 bg-white rounded-full"></div>}
             </div>
           </div>
-        </div>
 
-        {/* Admin Card */}
-        <div
-          onClick={() => setRole("admin")}
-          className={`cursor-pointer rounded-2xl border p-5 transition-all duration-300 ${
-            role === "admin"
-              ? "border-green-600 bg-green-50 shadow-lg"
-              : "border-gray-200 hover:border-green-500 hover:shadow-md"
-          }`}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center">
-              <TeamOutlined className="text-2xl text-green-600" />
+          {/* Admin Card */}
+          <div
+            onClick={() => setRole("admin")}
+            className={`group cursor-pointer rounded-2xl border p-5 transition-all duration-300 flex items-center justify-between ${
+              role === "admin"
+                ? "border-emerald-500 bg-emerald-500/15 shadow-[0_0_20px_rgba(16,185,129,0.15)] scale-[1.02]"
+                : "border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/15"
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${
+                role === "admin" ? "bg-emerald-500 text-white" : "bg-white/5 text-slate-400 group-hover:text-slate-200"
+              }`}>
+                <TeamOutlined className="text-xl" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-base font-bold text-white leading-snug">Admin</h3>
+                <p className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors mt-0.5">
+                  Manage operations & team members
+                </p>
+              </div>
             </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Admin</h3>
-              <p className="text-sm text-gray-500">Manage users and projects</p>
+            <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+              role === "admin" ? "border-emerald-500 bg-emerald-500 scale-110" : "border-white/20"
+            }`}>
+              {role === "admin" && <div className="w-2 h-2 bg-white rounded-full"></div>}
             </div>
           </div>
         </div>
 
         {/* Continue Button */}
-        <Button
-          type="primary"
-          block
-          size="large"
-          disabled={!role}
-          onClick={handleContinue}
-          className="!mt-8 !h-12 !rounded-xl !font-semibold !text-orange-500"
-        >
-          Continue <ArrowRightOutlined />
-        </Button>
+        <div className="mt-8 relative z-10">
+          <Button
+            type="primary"
+            block
+            size="large"
+            disabled={!role}
+            onClick={handleContinue}
+            className={`!h-12 !rounded-xl !font-bold transition-all duration-300 flex items-center justify-center gap-2 border-0 ${
+              role === "user"
+                ? "!bg-sky-500 hover:!bg-sky-600 hover:!shadow-[0_0_15px_rgba(14,165,233,0.3)] !text-white"
+                : role === "admin"
+                ? "!bg-emerald-500 hover:!bg-emerald-600 hover:!shadow-[0_0_15px_rgba(16,185,129,0.3)] !text-white"
+                : "!bg-slate-800 !text-slate-500 cursor-not-allowed"
+            }`}
+          >
+            <span>Continue to Sign In</span>
+            <ArrowRightOutlined className="text-sm mt-0.5" />
+          </Button>
+        </div>
       </Card>
     </div>
   );

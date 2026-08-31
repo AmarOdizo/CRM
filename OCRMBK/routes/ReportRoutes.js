@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const Report = require("../models/Report");
+const Leads = require("../models/Leads");
+const Client = require("../models/Client");
+const User = require("../models/User");
+const Project = require("../models/Project");
+const Invoice = require("../models/Invoice");
+const Task = require("../models/Task");
 
 // ================= Dashboard Summary =================
 router.get("/dashboard", async (req, res) => {
@@ -117,13 +123,7 @@ router.post("/generate", async (req, res) => {
       generatedBy,
       fromDate,
       toDate,
-      totalRecords,
-      status,
-      summary,
-      preview,
-      fileName,
       fileType,
-      generatedTime,
     } = req.body;
 
     // Validation
@@ -135,19 +135,64 @@ router.post("/generate", async (req, res) => {
       });
     }
 
+    const queryStartTime = Date.now();
+
+    // Map the report type to a Mongoose model
+    let Model = null;
+    let normalizedType = reportType;
+
+    if (reportType === "Lead Report" || reportType === "Leads") {
+      Model = Leads;
+      normalizedType = "Lead Report";
+    } else if (reportType === "Client Report" || reportType === "Clients") {
+      Model = Client;
+      normalizedType = "Client Report";
+    } else if (reportType === "Employee Report" || reportType === "Employees" || reportType === "Users") {
+      Model = User;
+      normalizedType = "Employee Report";
+    } else if (reportType === "Project Report" || reportType === "Projects") {
+      Model = Project;
+      normalizedType = "Project Report";
+    } else if (reportType === "Revenue Report" || reportType === "Invoices" || reportType === "Sales") {
+      Model = Invoice;
+      normalizedType = "Revenue Report";
+    } else if (reportType === "Task Report" || reportType === "Tasks") {
+      Model = Task;
+      normalizedType = "Task Report";
+    }
+
+    let matchingRecords = [];
+    if (Model) {
+      const start = new Date(fromDate);
+      const end = new Date(toDate);
+      end.setHours(23, 59, 59, 999);
+
+      // Query database based on createdAt timestamps within dates range
+      matchingRecords = await Model.find({
+        createdAt: { $gte: start, $lte: end },
+      }).lean();
+    }
+
+    const totalRecords = matchingRecords.length;
+    const preview = matchingRecords.slice(0, 20); // Save the first 20 records as preview
+    const queryDuration = ((Date.now() - queryStartTime) / 1000).toFixed(2) + "s";
+
+    const summary = `This report details the activity metrics for the ${normalizedType} module during the period from ${fromDate} to ${toDate}. A total of ${totalRecords} record(s) were found and compiled successfully.`;
+    const finalFileName = `${reportName.toLowerCase().replace(/\s+/g, "_")}_report.${(fileType || "CSV").toLowerCase()}`;
+
     const report = new Report({
       reportName,
-      reportType,
+      reportType: normalizedType,
       generatedBy,
       fromDate,
       toDate,
       totalRecords,
-      status,
+      status: "Generated",
       summary,
       preview,
-      fileName,
-      fileType,
-      generatedTime,
+      fileName: finalFileName,
+      fileType: fileType || "CSV",
+      generatedTime: queryDuration,
     });
 
     await report.save();

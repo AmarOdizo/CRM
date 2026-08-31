@@ -37,6 +37,11 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
     },
+    roleRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+      default: null,
+    },
     status: {
       type: String,
     },

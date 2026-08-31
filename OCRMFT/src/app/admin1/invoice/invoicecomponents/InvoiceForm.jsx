@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Save, X, Plus, Trash2, User, Calendar, ClipboardList, IndianRupee, FileText } from "lucide-react";
 import { formatDateForInput } from "../utils";
 
 const initialFormData = {
@@ -103,11 +104,8 @@ export default function InvoiceForm({
   };
 
   const subtotal = calculateSubtotal();
-
   const taxAmount = (subtotal * Number(formData.tax || 0)) / 100;
-
   const discountAmount = (subtotal * Number(formData.discount || 0)) / 100;
-
   const totalAmount = subtotal + taxAmount - discountAmount;
 
   const handleSubmit = async (e) => {
@@ -136,18 +134,18 @@ export default function InvoiceForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Customer Information */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <h2 className="mb-5 text-lg font-semibold text-gray-800">
-          Customer Information
-        </h2>
+      {/* 1. Customer Information */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
+          <User size={18} className="text-blue-500" />
+          <h3 className="text-base font-bold">Customer Details</h3>
+        </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Customer Name *
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+              Customer Name <span className="text-rose-500">*</span>
             </label>
-
             <input
               type="text"
               name="customerName"
@@ -155,144 +153,156 @@ export default function InvoiceForm({
               onChange={handleChange}
               required
               placeholder="Enter customer name"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
               Customer Email
             </label>
-
             <input
               type="email"
               name="customerEmail"
               value={formData.customerEmail}
               onChange={handleChange}
               placeholder="customer@example.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
               Phone
             </label>
-
             <input
               type="text"
               name="customerPhone"
               value={formData.customerPhone}
               onChange={handleChange}
               placeholder="Enter phone number"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
               Address
             </label>
-
             <input
               type="text"
               name="customerAddress"
               value={formData.customerAddress}
               onChange={handleChange}
               placeholder="Enter customer address"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
         </div>
       </div>
 
-      {/* Invoice Information */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <h2 className="mb-5 text-lg font-semibold text-gray-800">
-          Invoice Information
-        </h2>
+      {/* 2. Invoice Information */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
+          <Calendar size={18} className="text-blue-500" />
+          <h3 className="text-base font-bold">Invoice Parameters</h3>
+        </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Invoice Date *
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+              Invoice Date <span className="text-rose-500">*</span>
             </label>
-
             <input
               type="date"
               name="invoiceDate"
               value={formData.invoiceDate}
               onChange={handleChange}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Due Date *
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+              Due Date <span className="text-rose-500">*</span>
             </label>
-
             <input
               type="date"
               name="dueDate"
               value={formData.dueDate}
               onChange={handleChange}
               required
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
               Invoice Status
             </label>
-
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="Draft">Draft</option>
-              <option value="Sent">Sent</option>
-              <option value="Overdue">Overdue</option>
-              <option value="Cancelled">Cancelled</option>
-              <option value="Paid">Paid</option>
-            </select>
+            <div className="relative">
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full py-3 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800 appearance-none cursor-pointer"
+              >
+                <option value="Draft">Draft</option>
+                <option value="Sent">Sent</option>
+                <option value="Overdue">Overdue</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Paid">Paid</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
               Payment Status
             </label>
-
-            <select
-              name="paymentStatus"
-              value={formData.paymentStatus}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            >
-              <option value="Pending">Pending</option>
-              <option value="Partial">Partial</option>
-              <option value="Paid">Paid</option>
-              <option value="Failed">Failed</option>
-            </select>
+            <div className="relative">
+              <select
+                name="paymentStatus"
+                value={formData.paymentStatus}
+                onChange={handleChange}
+                className="w-full py-3 pl-4 pr-10 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800 appearance-none cursor-pointer"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Partial">Partial</option>
+                <option value="Paid">Paid</option>
+                <option value="Failed">Failed</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Invoice Items */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Invoice Items</h2>
+      {/* 3. Invoice Items */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+        <div className="flex items-center justify-between pb-3 mb-6 border-b border-slate-100 text-slate-800">
+          <div className="flex items-center gap-2">
+            <ClipboardList size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Line Items</h3>
+          </div>
 
           <button
             type="button"
             onClick={addItem}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-100 transition active:scale-95 cursor-pointer"
           >
-            + Add Item
+            <Plus size={14} />
+            <span>Add Item</span>
           </button>
         </div>
 
@@ -303,13 +313,12 @@ export default function InvoiceForm({
             return (
               <div
                 key={index}
-                className="grid grid-cols-1 gap-4 rounded-lg border bg-gray-50 p-4 md:grid-cols-12"
+                className="grid grid-cols-1 gap-4 rounded-xl border border-slate-150 bg-slate-50/50 p-5 md:grid-cols-12 items-end"
               >
-                <div className="md:col-span-5">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Description *
+                <div className="md:col-span-6">
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Description <span className="text-rose-500">*</span>
                   </label>
-
                   <input
                     type="text"
                     value={item.description}
@@ -318,15 +327,14 @@ export default function InvoiceForm({
                     }
                     required
                     placeholder="Product / service description"
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Quantity
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Qty
                   </label>
-
                   <input
                     type="number"
                     min="1"
@@ -334,15 +342,14 @@ export default function InvoiceForm({
                     onChange={(e) =>
                       handleItemChange(index, "quantity", e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Rate
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Rate (₹)
                   </label>
-
                   <input
                     type="number"
                     min="0"
@@ -351,34 +358,33 @@ export default function InvoiceForm({
                     onChange={(e) =>
                       handleItemChange(index, "rate", e.target.value)
                     }
-                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
                   />
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Amount
-                  </label>
-
-                  <div className="flex items-center gap-2">
+                <div className="md:col-span-2 flex items-center gap-2">
+                  <div className="w-full">
+                    <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Amount
+                    </label>
                     <input
                       type="text"
-                      value={amount.toFixed(2)}
+                      value={`₹${amount.toFixed(2)}`}
                       readOnly
-                      className="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-gray-700"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-100/50 text-slate-500 text-sm font-semibold outline-none"
                     />
-
-                    {formData.items.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeItem(index)}
-                        className="rounded-lg bg-red-100 px-3 py-2.5 text-red-600 transition hover:bg-red-200"
-                        title="Remove item"
-                      >
-                        ✕
-                      </button>
-                    )}
                   </div>
+
+                  {formData.items.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeItem(index)}
+                      className="p-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-100 transition active:scale-95 cursor-pointer shrink-0 mt-6"
+                      title="Remove item"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -386,105 +392,103 @@ export default function InvoiceForm({
         </div>
       </div>
 
-      {/* Tax / Discount / Total */}
+      {/* 4. Tax / Discount / Total */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-5 text-lg font-semibold text-gray-800">
-            Tax & Discount
-          </h2>
+        <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
+            <IndianRupee size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Tax & Discount</h3>
+          </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
                 Tax (%)
               </label>
-
               <input
                 type="number"
                 min="0"
                 value={formData.tax}
                 onChange={handleChange}
                 name="tax"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
                 Discount (%)
               </label>
-
               <input
                 type="number"
                 min="0"
                 value={formData.discount}
                 onChange={handleChange}
                 name="discount"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition text-sm text-slate-800"
               />
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-5 text-lg font-semibold text-gray-800">
-            Invoice Summary
-          </h2>
+        <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
+            <IndianRupee size={18} className="text-blue-500" />
+            <h3 className="text-base font-bold">Invoice Summary</h3>
+          </div>
 
-          <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+          <div className="space-y-3.5 text-sm font-medium">
+            <div className="flex justify-between text-slate-500">
+              <span>Subtotal</span>
+              <span className="font-semibold text-slate-700">₹{subtotal.toFixed(2)}</span>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-gray-600">Tax ({formData.tax || 0}%)</span>
-              <span className="font-medium">₹{taxAmount.toFixed(2)}</span>
+            <div className="flex justify-between text-slate-500">
+              <span>Tax ({formData.tax || 0}%)</span>
+              <span className="font-semibold text-slate-700">₹{taxAmount.toFixed(2)}</span>
             </div>
 
-            <div className="flex justify-between">
-              <span className="text-gray-600">
-                Discount ({formData.discount || 0}%)
-              </span>
-              <span className="font-medium text-red-600">
-                -₹{discountAmount.toFixed(2)}
-              </span>
+            <div className="flex justify-between text-slate-500">
+              <span>Discount ({formData.discount || 0}%)</span>
+              <span className="font-semibold text-rose-600">-₹{discountAmount.toFixed(2)}</span>
             </div>
 
-            <div className="border-t pt-3">
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
-                <span className="text-blue-600">₹{totalAmount.toFixed(2)}</span>
+            <div className="border-t border-slate-100 pt-4 mt-2">
+              <div className="flex justify-between text-lg font-black tracking-tight text-slate-800">
+                <span>Total Amount</span>
+                <span className="text-blue-600 font-mono">₹{totalAmount.toFixed(2)}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Notes */}
-      <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <label className="mb-2 block text-sm font-medium text-gray-700">
-          Notes
-        </label>
+      {/* 5. Notes */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
+          <FileText size={18} className="text-blue-500" />
+          <h3 className="text-base font-bold">Additional Remarks</h3>
+        </div>
 
         <textarea
           name="notes"
           value={formData.notes}
           onChange={handleChange}
-          rows={4}
-          placeholder="Enter additional notes..."
-          className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          rows={3}
+          placeholder="Enter payment notes, terms, bank details..."
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none resize-none transition text-sm text-slate-800"
         />
       </div>
 
-      {/* Submit */}
-      <div className="flex justify-end">
+      {/* 6. Form Footer Button */}
+      <div className="flex justify-end pt-2">
         <button
           type="submit"
           disabled={loading}
-          className="rounded-lg bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex items-center gap-1.5 px-7 py-3.5 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/10 transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-sm"
         >
-          {loading ? "Saving..." : submitText}
+          <Save size={16} />
+          <span>{loading ? "Saving..." : submitText}</span>
         </button>
       </div>
     </form>

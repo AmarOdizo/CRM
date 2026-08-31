@@ -2,137 +2,165 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+import { Eye, Edit2, Trash2, Shield } from "lucide-react";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import DeleteModal from "./DeleteModal";
 import StatusBadge from "./StatusBadge";
 
-export default function RoleTable({ roles, onDelete }) {
+export default function RoleTable({ roles, onDelete, onEdit }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
 
+  const columnDefs = [
+    {
+      headerName: "Role Name",
+      field: "roleName",
+      flex: 2,
+      minWidth: 220,
+      cellRenderer: (params) => (
+        <div className="flex items-center gap-3 h-full py-2">
+          <div className="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-white text-xs shadow-sm overflow-hidden border border-white/20">
+            <Shield size={16} />
+          </div>
+          <div className="flex flex-col justify-center leading-tight">
+            <h3 className="font-bold text-slate-700 hover:text-blue-600 transition duration-150">
+              {params.data.roleName}
+            </h3>
+            <p className="text-xs text-slate-400 truncate max-w-[200px]">
+              {params.data.description || "No description provided."}
+            </p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      headerName: "Role Code",
+      field: "roleCode",
+      flex: 1,
+      minWidth: 120,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <span className="font-mono font-semibold bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200/50 text-[10px]">
+            {params.value}
+          </span>
+        </div>
+      ),
+    },
+    {
+      headerName: "Department",
+      field: "department",
+      flex: 1.2,
+      minWidth: 130,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full text-sm font-semibold text-slate-600">
+          {params.value || "-"}
+        </div>
+      ),
+    },
+    {
+      headerName: "Permissions",
+      field: "permissions",
+      flex: 2,
+      minWidth: 240,
+      cellRenderer: (params) => (
+        <div className="flex flex-wrap gap-1 items-center h-full py-1">
+          {params.value?.length > 0 ? (
+            params.value.slice(0, 3).map((permission, index) => (
+              <span
+                key={index}
+                className="rounded-lg bg-blue-50 border border-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-600 shadow-sm"
+              >
+                {permission}
+              </span>
+            ))
+          ) : (
+            <span className="text-slate-400 text-xs font-semibold">
+              No Permissions
+            </span>
+          )}
+
+          {params.value?.length > 3 && (
+            <span className="rounded-lg bg-slate-100 border border-slate-200/50 px-1.5 py-0.5 text-[9px] font-bold text-slate-500">
+              +{params.value.length - 3}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1,
+      minWidth: 120,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <StatusBadge status={params.value} />
+        </div>
+      ),
+    },
+    {
+      headerName: "Actions",
+      cellRenderer: (params) => {
+        const role = params.data;
+        return (
+          <div className="flex items-center gap-1.5 h-full py-1">
+            <Link
+              href={`/admin1/role-management/view/${role.id}`}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200 border border-transparent hover:border-emerald-100"
+              title="View Details"
+            >
+              <Eye size={16} />
+            </Link>
+            <button
+              onClick={() => onEdit(role)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 cursor-pointer"
+              title="Edit Role"
+            >
+              <Edit2 size={16} />
+            </button>
+            <button
+              onClick={() => {
+                setSelectedRole(role);
+                setIsOpen(true);
+              }}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-all duration-200 border border-transparent hover:border-rose-100 cursor-pointer"
+              title="Delete Role"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+        );
+      },
+      width: 150,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
   return (
     <>
-      <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Role Name
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Role Code
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Department
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Permissions
-                </th>
-
-                <th className="px-6 py-4 text-left text-sm font-semibold">
-                  Status
-                </th>
-
-                <th className="px-6 py-4 text-center text-sm font-semibold">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {roles.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="py-10 text-center text-gray-500">
-                    No Roles Found
-                  </td>
-                </tr>
-              ) : (
-                roles.map((role) => (
-                  <tr
-                    key={role.id}
-                    className="border-b hover:bg-slate-50 transition"
-                  >
-                    <td className="px-6 py-4">
-                      <div>
-                        <h3 className="font-semibold text-slate-800">
-                          {role.roleName}
-                        </h3>
-
-                        <p className="text-sm text-slate-500">
-                          {role.description}
-                        </p>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">{role.roleCode}</td>
-
-                    <td className="px-6 py-4">{role.department}</td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {role.permissions?.length > 0 ? (
-                          role.permissions
-                            .slice(0, 3)
-                            .map((permission, index) => (
-                              <span
-                                key={index}
-                                className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700"
-                              >
-                                {permission}
-                              </span>
-                            ))
-                        ) : (
-                          <span className="text-gray-400">No Permissions</span>
-                        )}
-
-                        {role.permissions?.length > 3 && (
-                          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs">
-                            +{role.permissions.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <StatusBadge status={role.status} />
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center gap-2">
-                        <Link
-                          href={`/admin1/role-management/view/${role.id}`}
-                          className="rounded-lg bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700"
-                        >
-                          View
-                        </Link>
-
-                        <Link
-                          href={`/admin1/role-management/edit/${role.id}`}
-                          className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
-                        >
-                          Edit
-                        </Link>
-
-                        <button
-                          onClick={() => {
-                            setSelectedRole(role);
-                            setIsOpen(true);
-                          }}
-                          className="rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="ag-theme-quartz min-w-[800px] w-full">
+          <AgGridReact
+            rowData={roles}
+            columnDefs={columnDefs}
+            defaultColDef={defaultColDef}
+            domLayout="autoHeight"
+            rowHeight={65}
+            headerHeight={48}
+          />
         </div>
       </div>
 

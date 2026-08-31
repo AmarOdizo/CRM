@@ -60,149 +60,70 @@ export default function PaymentSummary({ invoiceAmount = 0, payments = [] }) {
   });
 
   return (
-    <div className="w-full">
-      {/* ======================================
-          SUMMARY GRID
-      ======================================= */}
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {/* ====================================
-            TOTAL INVOICE
-        ===================================== */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Invoice</p>
-
-              <p className="mt-2 text-2xl font-bold text-gray-800">
-                {formatCurrency(totalInvoiceAmount)}
-              </p>
-            </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <IndianRupee size={21} />
-            </div>
-          </div>
-
-          <p className="mt-3 text-xs text-gray-500">Total invoice amount</p>
-        </div>
-
-        {/* ====================================
-            TOTAL PAID
-        ===================================== */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Paid</p>
-
-              <p className="mt-2 text-2xl font-bold text-green-600">
-                {formatCurrency(totalPaidAmount)}
-              </p>
-            </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-green-600">
-              <CheckCircle2 size={21} />
-            </div>
-          </div>
-
-          <p className="mt-3 text-xs text-gray-500">Amount received so far</p>
-        </div>
-
-        {/* ====================================
-            REMAINING
-        ===================================== */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">
-                Remaining Balance
-              </p>
-
-              <p className="mt-2 text-2xl font-bold text-red-600">
-                {formatCurrency(remainingAmount)}
-              </p>
-            </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-600">
-              <WalletCards size={21} />
-            </div>
-          </div>
-
-          <p className="mt-3 text-xs text-gray-500">
-            Amount still to be collected
+    <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full">
+      {/* TOTAL INVOICE */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group">
+        <div>
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Invoice</h3>
+          <p className="mt-2 text-2xl font-extrabold text-slate-800 tracking-tight font-mono">
+            {formatCurrency(totalInvoiceAmount)}
           </p>
         </div>
-
-        {/* ====================================
-            PAYMENT PROGRESS
-        ===================================== */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500">
-                Payment Progress
-              </p>
-
-              <p className="mt-2 text-2xl font-bold text-purple-600">
-                {paymentPercentage.toFixed(0)}%
-              </p>
-            </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
-              <Percent size={21} />
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-
-          <div className="mt-4">
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-              <div
-                className="h-full rounded-full bg-purple-600 transition-all duration-500"
-                style={{
-                  width: `${paymentPercentage}%`,
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="mt-3 flex items-center justify-between">
-            <p className="text-xs text-gray-500">Collection progress</p>
-
-            <PaymentBadge status={paymentStatus} />
-          </div>
+        <div className="h-11 w-11 rounded-xl flex items-center justify-center border border-blue-100 bg-blue-50 text-blue-600">
+          <IndianRupee size={20} />
         </div>
       </div>
 
-      {/* ======================================
-          PAYMENT STATUS
-      ======================================= */}
+      {/* TOTAL PAID */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group">
+        <div>
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Paid</h3>
+          <p className="mt-2 text-2xl font-extrabold text-emerald-600 tracking-tight font-mono">
+            {formatCurrency(totalPaidAmount)}
+          </p>
+        </div>
+        <div className="h-11 w-11 rounded-xl flex items-center justify-center border border-emerald-100 bg-emerald-50 text-emerald-600">
+          <CheckCircle2 size={20} />
+        </div>
+      </div>
 
-      <div className="mt-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
-              {paymentStatus === "Paid" ? (
-                <CheckCircle2 size={19} />
-              ) : (
-                <Clock3 size={19} />
-              )}
-            </div>
+      {/* REMAINING BALANCE */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex items-center justify-between group">
+        <div>
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Remaining Balance</h3>
+          <p className="mt-2 text-2xl font-extrabold text-rose-600 tracking-tight font-mono">
+            {formatCurrency(remainingAmount)}
+          </p>
+        </div>
+        <div className="h-11 w-11 rounded-xl flex items-center justify-center border border-rose-100 bg-rose-50 text-rose-600">
+          <WalletCards size={20} />
+        </div>
+      </div>
 
-            <div>
-              <p className="text-sm font-semibold text-gray-800">
-                Payment Status
-              </p>
-
-              <p className="text-xs text-gray-500">Current collection status</p>
-            </div>
+      {/* PROGRESS */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md flex flex-col justify-between group">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Collection Progress</h3>
+            <p className="mt-1 text-2xl font-extrabold text-purple-600 tracking-tight">
+              {paymentPercentage.toFixed(0)}%
+            </p>
           </div>
+          <div className="h-11 w-11 rounded-xl flex items-center justify-center border border-purple-100 bg-purple-50 text-purple-600">
+            <Percent size={20} />
+          </div>
+        </div>
 
-          <PaymentBadge status={paymentStatus} />
+        {/* Progress Bar */}
+        <div className="mt-3">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="h-full rounded-full bg-purple-600 transition-all duration-500"
+              style={{
+                width: `${paymentPercentage}%`,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

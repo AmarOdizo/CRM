@@ -1,85 +1,93 @@
 "use client";
 
 import Link from "next/link";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+
 import StatusBadge from "./StatusBadge";
 
 export default function ReportTable({ reports }) {
+  const columnDefs = [
+    {
+      headerName: "Report Name",
+      field: "reportName",
+      flex: 2,
+      minWidth: 200,
+      cellRenderer: (params) => (
+        <span className="font-semibold text-slate-800">{params.value}</span>
+      ),
+    },
+    {
+      headerName: "Type",
+      field: "reportType",
+      flex: 1.2,
+      minWidth: 120,
+    },
+    {
+      headerName: "Created By",
+      field: "generatedBy",
+      flex: 1.5,
+      minWidth: 150,
+    },
+    {
+      headerName: "Date",
+      field: "createdAt",
+      flex: 1.2,
+      minWidth: 120,
+      valueGetter: (params) => {
+        return params.value ? new Date(params.value).toLocaleDateString() : "-";
+      },
+    },
+    {
+      headerName: "Status",
+      field: "status",
+      flex: 1,
+      minWidth: 120,
+      cellRenderer: (params) => (
+        <div className="flex items-center h-full">
+          <StatusBadge status={params.value} />
+        </div>
+      ),
+    },
+    {
+      headerName: "Action",
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-center h-full py-1">
+          <Link
+            href={`/admin1/report-management/view/${params.data._id}`}
+            className="rounded bg-blue-600 px-4 py-1 text-xs font-semibold text-white hover:bg-blue-700 transition"
+          >
+            View
+          </Link>
+        </div>
+      ),
+      width: 120,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-      <div className="overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-slate-100">
-            <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Report Name
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Type
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Created By
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Date
-              </th>
-
-              <th className="px-6 py-4 text-left text-sm font-semibold">
-                Status
-              </th>
-
-              <th className="px-6 py-4 text-center text-sm font-semibold">
-                Action
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {reports.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-10 text-center text-gray-500">
-                  No Reports Found
-                </td>
-              </tr>
-            ) : (
-              reports.map((report) => (
-                <tr
-                  key={report._id}
-                  className="border-b hover:bg-slate-50 transition"
-                >
-                  <td className="px-6 py-4 font-semibold">
-                    {report.reportName}
-                  </td>
-
-                  <td className="px-6 py-4">{report.reportType}</td>
-
-                  <td className="px-6 py-4">{report.generatedBy}</td>
-
-                  <td className="px-6 py-4">
-                    {new Date(report.createdAt).toLocaleDateString()}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <StatusBadge status={report.status} />
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center">
-                      <Link
-                        href={`/admin1/report-management/view/${report._id}`}
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
-                      >
-                        View
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+    <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="ag-theme-quartz min-w-[1000px] w-full">
+        <AgGridReact
+          rowData={reports}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          domLayout="autoHeight"
+          rowHeight={50}
+          headerHeight={50}
+        />
       </div>
     </div>
   );

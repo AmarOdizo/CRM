@@ -9,12 +9,19 @@ import {
   Users,
   Video,
 } from "lucide-react";
+import { AgGridReact } from "ag-grid-react";
+import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 import {
   calculateMeetingDuration,
   formatMeetingDate,
   formatMeetingTime,
   getMeetingLocation,
+  isMeetingExpired,
 } from "../utils";
 
 import MeetingBadge from "./MeetingBadge";
@@ -24,6 +31,7 @@ export default function MeetingTable({
   meetings = [],
   loading = false,
   onDelete,
+  onEdit,
 }) {
   // ==================================================
   // LOADING
@@ -65,213 +73,150 @@ export default function MeetingTable({
     );
   }
 
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-      {/* ==================================================
-          TABLE HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-2 border-b border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-bold text-gray-800">Meetings</h2>
-
-          <p className="text-xs text-gray-500">
-            {meetings.length} meeting
-            {meetings.length !== 1 ? "s" : ""} found
+  const columnDefs = [
+    {
+      headerName: "Meeting Info",
+      field: "title",
+      flex: 2,
+      minWidth: 200,
+      cellRenderer: (params) => (
+        <div className="flex flex-col justify-center h-full py-1 leading-tight text-left">
+          <p className="truncate text-xs font-bold text-slate-800">
+            {params.data.title || "Untitled Meeting"}
           </p>
+          {params.data.description && (
+            <p className="mt-0.5 truncate text-[10px] text-slate-400 font-medium">
+              {params.data.description}
+            </p>
+          )}
         </div>
-      </div>
-
-      {/* ==================================================
-          DESKTOP TABLE
-      ================================================== */}
-
-      <div className="hidden overflow-x-auto lg:block">
-        <table className="w-full min-w-[1100px]">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Meeting
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Date & Time
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Type
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Participants
-              </th>
-
-              <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wide text-gray-500">
-                Status
-              </th>
-
-              <th className="px-5 py-3 text-right text-xs font-bold uppercase tracking-wide text-gray-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-100">
-            {meetings.map((meeting) => {
-              const meetingId = meeting?._id || meeting?.id;
-
-              const participants = Array.isArray(meeting?.participants)
-                ? meeting.participants
-                : [];
-
-              return (
-                <tr key={meetingId} className="transition hover:bg-gray-50">
-                  {/* ==================================
-                        MEETING
-                    =================================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="max-w-[260px]">
-                      <p className="truncate text-sm font-bold text-gray-800">
-                        {meeting?.title || "Untitled Meeting"}
-                      </p>
-
-                      {meeting?.description && (
-                        <p className="mt-1 truncate text-xs text-gray-500">
-                          {meeting.description}
-                        </p>
-                      )}
+      ),
+    },
+    {
+      headerName: "Date & Timeline",
+      field: "meetingDate",
+      flex: 2,
+      minWidth: 220,
+      cellRenderer: (params) => (
+        <div className="flex flex-col justify-center h-full py-1 leading-tight text-[10px]">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+            <CalendarDays size={13} className="text-blue-500 shrink-0" />
+            {params.context.formatMeetingDate(params.data.meetingDate)}
+          </div>
+          <div className="flex items-center gap-1.5 text-slate-400 mt-1 font-medium">
+            <Clock size={12} className="shrink-0" />
+            <span>
+              {params.context.formatMeetingTime(params.data.startTime)} - {params.context.formatMeetingTime(params.data.endTime)}
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      headerName: "Type & Connect",
+      field: "meetingType",
+      flex: 1.5,
+      minWidth: 150,
+      cellRenderer: (params) => (
+        <div className="flex flex-col justify-center h-full py-1 leading-tight text-[10px] items-start gap-1">
+          <MeetingBadge meeting={params.data} />
+          {params.data.meetingType === "Online" && params.data.meetingLink && (
+            params.context.isMeetingExpired(params.data.meetingDate, params.data.endTime) ? (
+              <span className="inline-flex items-center gap-0.5 font-bold text-slate-400 text-[10px]">
+                Link Expired
+              </span>
+            ) : (
+              <a
+                href={params.data.meetingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-bold text-blue-600 hover:text-blue-800 text-[10px]"
+              >
+                <span>Join Link</span>
+                <ExternalLink size={10} />
+              </a>
+            )
+          )}
+          {params.data.meetingType === "Offline" && params.data.location && (
+            <div className="flex max-w-[180px] items-center gap-0.5 text-slate-400 font-medium">
+              <MapPin size={10} />
+              <span className="truncate">{params.data.location}</span>
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      headerName: "Participants",
+      field: "participants",
+      flex: 1.8,
+      minWidth: 185,
+      cellRenderer: (params) => {
+        const list = Array.isArray(params.value) ? params.value : [];
+        return (
+          <div className="flex items-center gap-1.5 h-full py-1 text-[10px]">
+            {list.length > 0 ? (
+              <div className="flex max-w-[220px] items-start gap-1.5">
+                <Users size={13} className="mt-0.5 shrink-0 text-slate-400" />
+                <div className="min-w-0 font-medium">
+                  {list.slice(0, 2).map((p, idx) => (
+                    <div key={idx} className="truncate text-slate-600 leading-tight">
+                      {p?.name || p?.email || "Participant"}
                     </div>
-                  </td>
+                  ))}
+                  {list.length > 2 && (
+                    <p className="text-[9px] font-bold text-blue-600 mt-0.5">
+                      +{list.length - 2} more
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <span className="text-slate-400">No participants</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Actions",
+      cellRenderer: (params) => (
+        <div className="flex items-center justify-end h-full py-1">
+          <MeetingActions meeting={params.data} onDelete={params.context.onDelete} onEdit={params.context.onEdit} />
+        </div>
+      ),
+      width: 100,
+      suppressMenu: true,
+      sortable: false,
+    },
+  ];
 
-                  {/* ==================================
-                        DATE & TIME
-                    =================================== */}
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
 
-                  <td className="px-5 py-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                        <CalendarDays size={15} className="text-blue-500" />
-
-                        {formatMeetingDate(meeting?.meetingDate)}
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <Clock size={14} className="text-gray-400" />
-
-                        <span>
-                          {formatMeetingTime(meeting?.startTime)}
-                          {" - "}
-                          {formatMeetingTime(meeting?.endTime)}
-                        </span>
-                      </div>
-
-                      <span className="inline-block rounded-md bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-600">
-                        {calculateMeetingDuration(
-                          meeting?.startTime,
-                          meeting?.endTime,
-                        )}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* ==================================
-                        TYPE
-                    =================================== */}
-
-                  <td className="px-5 py-4">
-                    <div className="flex flex-col items-start gap-2">
-                      <MeetingBadge meeting={meeting} />
-
-                      {meeting?.meetingType === "Online" &&
-                        meeting?.meetingLink && (
-                          <a
-                            href={meeting.meetingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800"
-                          >
-                            Join Meeting
-                            <ExternalLink size={12} />
-                          </a>
-                        )}
-
-                      {meeting?.meetingType === "Offline" &&
-                        meeting?.location && (
-                          <div className="flex max-w-[180px] items-center gap-1 text-xs text-gray-500">
-                            <MapPin size={12} />
-
-                            <span className="truncate">{meeting.location}</span>
-                          </div>
-                        )}
-                    </div>
-                  </td>
-
-                  {/* ==================================
-                        PARTICIPANTS
-                    =================================== */}
-
-                  <td className="px-5 py-4">
-                    {participants.length > 0 ? (
-                      <div className="flex max-w-[220px] items-start gap-2">
-                        <Users
-                          size={16}
-                          className="mt-0.5 shrink-0 text-gray-400"
-                        />
-
-                        <div className="min-w-0">
-                          {participants
-                            .slice(0, 2)
-                            .map((participant, index) => (
-                              <div
-                                key={index}
-                                className="truncate text-xs text-gray-700"
-                              >
-                                {participant?.name ||
-                                  participant?.email ||
-                                  "Participant"}
-                              </div>
-                            ))}
-
-                          {participants.length > 2 && (
-                            <p className="mt-1 text-[11px] font-semibold text-blue-600">
-                              +{participants.length - 2} more
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-xs text-gray-400">
-                        No participants
-                      </span>
-                    )}
-                  </td>
-
-                  {/* ==================================
-                        STATUS
-                    =================================== */}
-
-                  <td className="px-5 py-4">
-                    <MeetingBadge
-                      meeting={{
-                        status: meeting?.status,
-                        meetingType: undefined,
-                      }}
-                    />
-                  </td>
-
-                  {/* ==================================
-                        ACTIONS
-                    =================================== */}
-
-                  <td className="px-5 py-4">
-                    <MeetingActions meeting={meeting} onDelete={onDelete} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm w-full">
+      {/* Desktop Table */}
+      <div className="hidden lg:block ag-theme-quartz w-full">
+        <AgGridReact
+          rowData={meetings}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          domLayout="autoHeight"
+          rowHeight={60}
+          headerHeight={44}
+          context={{
+            onDelete,
+            onEdit,
+            formatMeetingDate,
+            formatMeetingTime,
+            calculateMeetingDuration,
+            isMeetingExpired,
+          }}
+        />
       </div>
 
       {/* ==================================================
@@ -305,7 +250,7 @@ export default function MeetingTable({
                   )}
                 </div>
 
-                <MeetingActions meeting={meeting} onDelete={onDelete} />
+                <MeetingActions meeting={meeting} onDelete={onDelete} onEdit={onEdit} />
               </div>
 
               {/* ==================================

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Invoice = require("../models/Invoice");
+const { resolveClientRef } = require("../config/relationResolver");
 
 // ======================================================
 // GET ALL INVOICES
@@ -10,7 +11,7 @@ const Invoice = require("../models/Invoice");
 
 router.get("/", async (req, res) => {
   try {
-    const invoices = await Invoice.find().sort({ createdAt: -1 });
+    const invoices = await Invoice.find().populate("client").sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -35,7 +36,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
+    const invoice = await Invoice.findById(req.params.id).populate("client");
 
     if (!invoice) {
       return res.status(404).json({
@@ -122,6 +123,7 @@ router.post("/", async (req, res) => {
       invoiceDate,
       dueDate,
       clientName: finalClientName,
+      client: await resolveClientRef(finalClientName),
       clientEmail: finalClientEmail,
       clientPhone: finalClientPhone,
       clientAddress: finalClientAddress,
@@ -225,6 +227,7 @@ router.put("/:id", async (req, res) => {
         invoiceDate,
         dueDate,
         clientName: finalClientName,
+        client: await resolveClientRef(finalClientName),
         clientEmail: finalClientEmail,
         clientPhone: finalClientPhone,
         clientAddress: finalClientAddress,

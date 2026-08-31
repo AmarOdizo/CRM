@@ -1,28 +1,37 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
+
 export default function DeleteModal({ isOpen, onClose, onConfirm, leadName }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
-        <h2 className="text-2xl font-bold text-red-600">Delete Lead</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-100">
+        <div className="flex items-center gap-3 text-rose-600">
+          <div className="rounded-full bg-rose-50 p-2">
+            <AlertTriangle size={24} />
+          </div>
+          <h2 className="text-xl font-bold text-slate-800">Delete Lead</h2>
+        </div>
 
-        <p className="mt-4 text-gray-600">
-          Are you sure you want to delete
-          <span className="font-semibold"> {leadName}</span>?
+        <p className="mt-4 text-sm text-slate-600 leading-relaxed">
+          Are you sure you want to delete <span className="font-semibold text-slate-800">{leadName}</span>? This action cannot be undone and will permanently remove this lead from the CRM records.
         </p>
 
-        <div className="mt-8 flex justify-end gap-3">
-          <button onClick={onClose} className="rounded-lg border px-5 py-2">
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 cursor-pointer"
+          >
             Cancel
           </button>
 
           <button
             onClick={onConfirm}
-            className="rounded-lg bg-red-600 px-5 py-2 text-white hover:bg-red-700"
+            className="rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-700 hover:shadow-lg hover:shadow-rose-500/20 cursor-pointer"
           >
-            Delete
+            Delete Lead
           </button>
         </div>
       </div>

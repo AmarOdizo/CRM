@@ -20,11 +20,11 @@ export default function DeleteModal({
   const customerName = invoice?.customerName || "this customer";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+          <h2 className="text-base font-bold text-slate-800">
             Delete Invoice
           </h2>
 
@@ -32,43 +32,42 @@ export default function DeleteModal({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6">
-          <div className="mb-5 flex justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <AlertTriangle size={28} className="text-red-600" />
+        <div className="px-6 py-6 text-center">
+          <div className="mb-4 flex justify-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 border border-rose-100 text-rose-600">
+              <AlertTriangle size={24} />
             </div>
           </div>
 
-          <h3 className="text-center text-lg font-semibold text-gray-800">
-            Are you sure?
+          <h3 className="text-lg font-bold text-slate-800">
+            Confirm Deletion
           </h3>
 
-          <p className="mt-2 text-center text-sm leading-6 text-gray-500">
-            You are about to delete invoice{" "}
-            <span className="font-semibold text-gray-700">{invoiceNumber}</span>{" "}
-            for{" "}
-            <span className="font-semibold text-gray-700">{customerName}</span>.
+          <p className="mt-2 text-sm leading-relaxed text-slate-500">
+            Are you sure you want to delete invoice{" "}
+            <span className="font-semibold text-slate-700">{invoiceNumber}</span> for{" "}
+            <span className="font-semibold text-slate-700">{customerName}</span>?
           </p>
 
-          <p className="mt-2 text-center text-sm text-red-500">
+          <p className="mt-2 text-xs font-semibold text-rose-500">
             This action cannot be undone.
           </p>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 border-t bg-gray-50 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             Cancel
           </button>
@@ -77,11 +76,10 @@ export default function DeleteModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-rose-700 shadow-md shadow-rose-500/10 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
-            <Trash2 size={16} />
-
-            {loading ? "Deleting..." : "Delete Invoice"}
+            <Trash2 size={15} />
+            <span>{loading ? "Deleting..." : "Delete Invoice"}</span>
           </button>
         </div>
       </div>

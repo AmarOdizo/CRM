@@ -28,44 +28,31 @@ export default function AddMeetingPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      {/* ==================================================
-          HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <CalendarDays size={22} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Schedule Meeting
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Create and schedule a new meeting
-            </p>
+    <div className="w-full space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+        {/* HEADER */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleCancel}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                Schedule Meeting
+              </h1>
+              <p className="text-xs font-medium text-slate-500 mt-0.5">
+                Book a client consultation, catch-up, or general update session.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* BACK */}
-
-        <Link
-          href="/admin1/meeting"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-        >
-          <ArrowLeft size={17} />
-          Back to Meetings
-        </Link>
+        {/* FORM */}
+        <MeetingForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
-
-      {/* ==================================================
-          FORM
-      ================================================== */}
-
-      <MeetingForm onSuccess={handleSuccess} onCancel={handleCancel} />
     </div>
   );
 }

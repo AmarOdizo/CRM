@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import LeadForm from "../../leadcomponents/LeadForm";
 import { getLeadById, updateLead } from "../../data";
@@ -35,7 +36,7 @@ export default function EditLead() {
         const data = await getLeadById(id);
 
         setFormData({
-          clientName: data.client.clientName || "",
+          clientName: data.client?.clientName || data.clientName || "",
           companyName: data.companyName || "",
           email: data.email || "",
           phone: data.phone || "",
@@ -89,28 +90,31 @@ export default function EditLead() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-xl font-semibold">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Lead...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve lead profile.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
-
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Edit Lead</h1>
-
-          <p className="mt-2 text-slate-500">Update lead information.</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Edit Lead</h1>
+          <p className="mt-1 text-slate-500 font-medium font-medium">Update lead information and status logs.</p>
         </div>
 
         <Link
           href="/admin1/lead-management"
-          className="rounded-xl bg-gray-700 px-5 py-3 text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 

@@ -14,18 +14,19 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use("/api/Employee", require("./routes/employeeRoutes"));
-app.use("/api/Admin", require("./routes/adminRoutes"));
-app.use("/api/Lead", require("./routes/leadsRoutes"));
-app.use("/api/User", require("./routes/userRoutes"));
-app.use("/api/Client", require("./routes/clientRoutes"));
-app.use("/api/Role", require("./routes/roleRoutes"));
-app.use("/api/Project", require("./routes/projectRoutes"));
+app.use("/api/Employee", require("./routes/EmployeeRoutes"));
+app.use("/api/Admin", require("./routes/AdminRoutes"));
+app.use("/api/Lead", require("./routes/LeadsRoutes"));
+app.use("/api/User", require("./routes/UserRoutes"));
+app.use("/api/Client", require("./routes/ClientRoutes"));
+app.use("/api/Role", require("./routes/RoleRoutes"));
+app.use("/api/Project", require("./routes/ProjectRoutes"));
 app.use("/api/Report", require("./routes/ReportRoutes"));
 app.use("/api/Task", require("./routes/taskRoutes"));
 app.use("/api/Invoice", require("./routes/invoiceRoutes"));
 app.use("/api/Payment", require("./routes/paymentRoutes"));
 app.use("/api/Meeting", require("./routes/meetingRoutes"));
+app.use("/api/Quotation", require("./routes/quotationRoutes"));
 
 app.get("/", (req, res) => {
   res.send("Employee API Running...");

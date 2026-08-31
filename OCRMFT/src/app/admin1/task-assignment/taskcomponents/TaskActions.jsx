@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
-export default function TaskActions({ task, onDelete }) {
+export default function TaskActions({ task, onDelete, onEdit }) {
   return (
     <div className="flex items-center gap-2">
       {/* View */}
@@ -18,15 +18,28 @@ export default function TaskActions({ task, onDelete }) {
       </Link>
 
       {/* Edit */}
-      <Link
-        href={`/admin1/task-assignment/edit/${task.id}`}
-        className="flex h-9 w-9 items-center justify-center rounded-lg
-                   bg-amber-50 text-amber-600 transition
-                   hover:bg-amber-500 hover:text-white"
-        title="Edit Task"
-      >
-        <Pencil size={17} />
-      </Link>
+      {onEdit ? (
+        <button
+          type="button"
+          onClick={() => onEdit(task)}
+          className="flex h-9 w-9 items-center justify-center rounded-lg
+                     bg-amber-50 text-amber-600 transition
+                     hover:bg-amber-500 hover:text-white cursor-pointer"
+          title="Edit Task"
+        >
+          <Pencil size={17} />
+        </button>
+      ) : (
+        <Link
+          href={`/admin1/task-assignment/edit/${task.id}`}
+          className="flex h-9 w-9 items-center justify-center rounded-lg
+                     bg-amber-50 text-amber-600 transition
+                     hover:bg-amber-500 hover:text-white"
+          title="Edit Task"
+        >
+          <Pencil size={17} />
+        </Link>
+      )}
 
       {/* Delete */}
       <button

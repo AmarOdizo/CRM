@@ -1,15 +1,41 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 const Client = require("../models/Client");
 const ClientCounter = require("../models/ClientCounter");
+const { resolveUserRef } = require("../config/relationResolver");
+
+// Helper function to build flexible lookup query for Client
+const getClientQuery = (paramId) => {
+  const isObjectId = mongoose.Types.ObjectId.isValid(paramId);
+  if (isObjectId) {
+    return {
+      $or: [
+        { _id: paramId },
+        { id: paramId },
+        { id: String(paramId) },
+        { id: Number(paramId) || paramId },
+      ],
+    };
+  }
+  return {
+    $or: [
+      { id: paramId },
+      { id: String(paramId) },
+      { id: Number(paramId) || paramId },
+    ],
+  };
+};
 
 // =======================
 // GET ALL Clients
 // =======================
 router.get("/", async (req, res) => {
   try {
-    const clients = await Client.find().sort({ createdAt: -1 });
+    const clients = await Client.find()
+      .populate("assignedEmployeeRef")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -17,7 +43,7 @@ router.get("/", async (req, res) => {
       data: clients,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching clients:", error);
 
     res.status(500).json({
       success: false,
@@ -27,13 +53,12 @@ router.get("/", async (req, res) => {
 });
 
 // =======================
-// GET Single Client By Custom ID
+// GET Single Client By ID / Custom ID
 // =======================
 router.get("/:id", async (req, res) => {
   try {
-    const client = await Client.findOne({
-      id: Number(req.params.id),
-    });
+    const query = getClientQuery(req.params.id);
+    const client = await Client.findOne(query).populate("assignedEmployeeRef");
 
     if (!client) {
       return res.status(404).json({
@@ -47,7 +72,7 @@ router.get("/:id", async (req, res) => {
       data: client,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching client:", error);
 
     res.status(500).json({
       success: false,
@@ -99,7 +124,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Auto Increment ID
+    // Auto Increment ID using ClientCounter collection
     const counter = await ClientCounter.findByIdAndUpdate(
       "clientId",
       { $inc: { seq: 1 } },
@@ -111,7 +136,7 @@ router.post("/", async (req, res) => {
 
     // Create Client
     const client = await Client.create({
-      id: counter.seq,
+      id: String(counter.seq),
       clientName,
       companyName,
       email,
@@ -128,6 +153,7 @@ router.post("/", async (req, res) => {
       clientType,
       status,
       assignedEmployee,
+      assignedEmployeeRef: await resolveUserRef(assignedEmployee),
       notes,
     });
 
@@ -137,7 +163,7 @@ router.post("/", async (req, res) => {
       data: client,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating client:", error);
 
     res.status(500).json({
       success: false,
@@ -145,14 +171,19 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
 // =======================
 // UPDATE Client
 // =======================
-
 router.put("/update/:id", async (req, res) => {
   try {
+    if (req.body.assignedEmployee !== undefined) {
+      req.body.assignedEmployeeRef = await resolveUserRef(req.body.assignedEmployee);
+    }
+
+    const query = getClientQuery(req.params.id);
     const client = await Client.findOneAndUpdate(
-      { id: Number(req.params.id) },
+      query,
       req.body,
       {
         new: true,
@@ -173,7 +204,7 @@ router.put("/update/:id", async (req, res) => {
       data: client,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating client:", error);
 
     res.status(500).json({
       success: false,
@@ -181,15 +212,14 @@ router.put("/update/:id", async (req, res) => {
     });
   }
 });
+
 // =======================
 // DELETE Client
 // =======================
-
 router.delete("/:id", async (req, res) => {
   try {
-    const client = await Client.findOneAndDelete({
-      id: Number(req.params.id),
-    });
+    const query = getClientQuery(req.params.id);
+    const client = await Client.findOneAndDelete(query);
 
     if (!client) {
       return res.status(404).json({
@@ -204,7 +234,7 @@ router.delete("/:id", async (req, res) => {
       data: client,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting client:", error);
 
     res.status(500).json({
       success: false,

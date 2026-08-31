@@ -6,16 +6,21 @@ import {
   LockOutlined,
   SafetyCertificateOutlined,
   LoginOutlined,
+  ArrowLeftOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
+
 export default function AdminLogin() {
   const router = useRouter();
 
   const [email, SetEmail] = useState("");
   const [password, SetPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   let handleAdminEmail = (e) => {
     SetEmail(e.target.value);
@@ -25,6 +30,11 @@ export default function AdminLogin() {
   };
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:5000/api/Admin/login",
@@ -46,79 +56,107 @@ export default function AdminLogin() {
       }
     } catch (error) {
       console.log(error);
-
       alert(error.response?.data?.message || "Login Failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center relative"
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center overflow-hidden p-6"
       style={{
-        backgroundImage: "url('/admin-bg.jpg')",
+        backgroundImage: "url('/abi.png')",
       }}
     >
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px] z-0"></div>
+
+      {/* Back Button */}
+      <button
+        onClick={() => router.push("/login")}
+        className="absolute top-6 left-6 z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all text-xs font-semibold backdrop-blur-md shadow-sm"
+      >
+        <ArrowLeftOutlined />
+        <span>Back to Portal selection</span>
+      </button>
 
       {/* Login Card */}
       <Card
-        className="relative z-10 w-full max-w-md border border-white/20 shadow-2xl"
+        className="relative z-10 w-full max-w-md border border-white/10 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700"
         style={{
-          background: "rgba(255,255,255,0.12)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-          borderRadius: "24px",
+          background: "rgba(15, 23, 42, 0.6)",
+          backdropFilter: "blur-24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          borderRadius: "28px",
         }}
         styles={{
           body: {
-            padding: "35px",
+            padding: "40px 32px",
             background: "transparent",
           },
         }}
       >
+        {/* Glow Element */}
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto rounded-full bg-red-500/20 flex items-center justify-center">
-            <SafetyCertificateOutlined
-              style={{
-                fontSize: 42,
-                color: "#ffffff",
-              }}
-            />
+        <div className="text-center mb-8 relative z-10">
+          <div className="mb-4 inline-block p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md shadow-inner">
+            <img src="/Logo.png" alt="Logo" className="h-14 w-auto object-contain" />
           </div>
 
-          <h1 className="text-3xl font-bold text-white mt-5">Admin Login</h1>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight flex items-center justify-center gap-2">
+            <SafetyCertificateOutlined className="text-rose-500 text-xl" />
+            <span>Admin Portal</span>
+          </h1>
 
-          <p className="text-gray-200 mt-2">
-            Sign in to access the Admin Dashboard
-          </p>
+          <p className="text-slate-400 text-xs mt-1.5">Sign in to access your administrative actions</p>
         </div>
 
         {/* Email */}
-        <Input
-          size="large"
-          placeholder="Admin Email"
-          prefix={<UserOutlined />}
-          onChange={handleAdminEmail}
-          className="mb-4 h-12 rounded-xl"
-        />
+        <div className="space-y-4 relative z-10">
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+              Admin Email
+            </label>
+            <Input
+              size="large"
+              placeholder="admin@company.com"
+              prefix={<UserOutlined className="text-slate-500" />}
+              onChange={handleAdminEmail}
+              className="h-12 rounded-xl !bg-slate-900/50 !border-white/10 !text-white hover:!border-rose-500/50 focus:!border-rose-500 placeholder-slate-600"
+            />
+          </div>
 
-        {/* Password */}
-        <Input.Password
-          size="large"
-          placeholder="Password"
-          prefix={<LockOutlined />}
-          onChange={handlePassword}
-          className="mb-4 h-12 rounded-xl"
-        />
+          {/* Password */}
+          <div>
+            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+              Password
+            </label>
+            <Input.Password
+              size="large"
+              placeholder="••••••••"
+              prefix={<LockOutlined className="text-slate-500" />}
+              onChange={handlePassword}
+              iconRender={(visible) =>
+                visible ? (
+                  <EyeOutlined className="text-slate-200 hover:text-white transition-colors cursor-pointer text-base" />
+                ) : (
+                  <EyeInvisibleOutlined className="text-slate-400 hover:text-slate-300 transition-colors cursor-pointer text-base" />
+                )
+              }
+              className="h-12 rounded-xl !bg-slate-900/50 !border-white/10 !text-white hover:!border-rose-500/50 focus:!border-rose-500 placeholder-slate-600"
+            />
+          </div>
+        </div>
 
         {/* Remember */}
-        <div className="flex justify-between items-center mb-6">
-          <Checkbox className="text-white">Remember Me</Checkbox>
+        <div className="flex justify-between items-center my-6 text-xs relative z-10">
+          <Checkbox className="!text-slate-300">Remember Me</Checkbox>
 
           <button
-            className="text-red-300 hover:text-red-200"
+            className="text-rose-400 hover:text-rose-300 font-semibold transition"
             onClick={() => router.push("/ForgotPassword/Admin")}
           >
             Forgot Password?
@@ -131,20 +169,22 @@ export default function AdminLogin() {
           danger
           size="large"
           block
+          loading={loading}
           icon={<LoginOutlined />}
-          className="!h-12 !rounded-xl !text-base !font-semibold"
+          className="!h-12 !rounded-xl !text-base !font-bold !bg-rose-600 hover:!bg-rose-700 hover:!shadow-[0_0_15px_rgba(225,29,72,0.35)] !border-0 transition-all duration-300 relative z-10"
           onClick={handleLogin}
         >
-          Admin Login
+          Sign In as Admin
         </Button>
-        <div className="text-center mt-6">
-          <span className="text-white">Do not have an admin account? </span>
 
+        {/* Register link */}
+        <div className="text-center mt-6 text-xs relative z-10">
+          <span className="text-slate-400">Do not have an admin account? </span>
           <Link
             href="/Register/Admin"
-            className="text-red-300 font-semibold hover:text-red-200 hover:underline"
+            className="text-rose-400 font-bold hover:text-rose-300 hover:underline transition"
           >
-            Register
+            Register Now
           </Link>
         </div>
       </Card>

@@ -28,10 +28,30 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
 
+    assignedToName: {
+      type: String,
+      default: "",
+    },
+
     assignedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+
+    assignedByName: {
+      type: String,
+      default: "",
+    },
+
+    projectId: {
+      type: String,
+      default: "",
+    },
+
+    projectName: {
+      type: String,
+      default: "",
     },
 
     priority: {

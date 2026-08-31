@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ClipboardEdit, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import TaskForm from "../../taskcomponents/TaskForm";
 import { getTaskById, updateTask } from "../../data";
@@ -19,9 +19,6 @@ export default function EditTaskPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // =========================
-  // GET TASK BY ID
-  // =========================
   useEffect(() => {
     if (!id) return;
 
@@ -31,11 +28,6 @@ export default function EditTaskPage() {
         setError("");
 
         const data = await getTaskById(id);
-
-        // Supports both:
-        // { task: {...} }
-        // OR
-        // {...}
         setTask(data?.data || data);
       } catch (error) {
         console.error("Fetch task error:", error);
@@ -51,9 +43,6 @@ export default function EditTaskPage() {
     fetchTask();
   }, [id]);
 
-  // =========================
-  // UPDATE TASK
-  // =========================
   const handleSubmit = async (formData) => {
     try {
       setSaving(true);
@@ -73,42 +62,31 @@ export default function EditTaskPage() {
     }
   };
 
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
     return (
-      <div className="flex min-h-[500px] items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 size={32} className="animate-spin text-blue-600" />
-
-          <p className="text-sm text-gray-500">Loading task...</p>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Task...</h2>
+          <p className="text-sm text-slate-400 mt-1">Please wait while we retrieve task details.</p>
         </div>
       </div>
     );
   }
 
-  // =========================
-  // ERROR / TASK NOT FOUND
-  // =========================
   if (error && !task) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm">
-          <h2 className="text-xl font-bold text-gray-800">
-            Unable to Load Task
-          </h2>
-
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
+          <h2 className="text-2xl font-black text-rose-600">Unable to Load Task</h2>
+          <p className="mt-2 text-sm text-slate-500 leading-relaxed mb-6">{error}</p>
 
           <Link
             href="/admin1/task-assignment"
-            className="mt-5 inline-flex items-center gap-2 rounded-lg
-                       bg-blue-600 px-4 py-2.5 text-sm font-medium
-                       text-white transition hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 cursor-pointer"
           >
-            <ArrowLeft size={17} />
-            Back to Tasks
+            <ArrowLeft size={16} />
+            <span>Back to Tasks</span>
           </Link>
         </div>
       </div>
@@ -116,47 +94,33 @@ export default function EditTaskPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100">
-            <ClipboardEdit size={22} className="text-amber-600" />
-          </div>
-
-          <div>
-            <h1 className="text-xl font-bold text-gray-800 md:text-2xl">
-              Edit Task
-            </h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Update the task information below.
-            </p>
-          </div>
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Edit Task</h1>
+          <p className="mt-1 text-slate-500 font-medium">Update the task information and deadlines.</p>
         </div>
 
         {/* Back */}
         <Link
           href="/admin1/task-assignment"
-          className="inline-flex w-fit items-center gap-2 rounded-lg
-                     border border-gray-300 bg-white px-4 py-2.5
-                     text-sm font-medium text-gray-700
-                     transition hover:bg-gray-100"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer w-fit"
         >
-          <ArrowLeft size={17} />
-          Back to Tasks
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
-          <p className="text-sm font-medium text-red-600">{error}</p>
+        <div className="mb-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-rose-600 font-semibold text-sm">
+          {error}
         </div>
       )}
 
       {/* Form */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm md:p-6">
+      <div className="max-w-4xl">
         <TaskForm
           initialData={task}
           onSubmit={handleSubmit}

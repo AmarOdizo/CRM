@@ -3,13 +3,18 @@ const router = express.Router();
 
 const Project = require("../models/Project");
 const ProjectCounter = require("../models/ProjectCounter");
+const { resolveClientRef, resolveUserRef } = require("../config/relationResolver");
 
 // ==========================
 // GET All Projects
 // ==========================
 router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const projects = await Project.find()
+      .populate("client")
+      .populate("projectManagerRef")
+      .populate("teamMembersRefs")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -30,7 +35,10 @@ router.get("/", async (req, res) => {
 // ==========================
 router.get("/:id", async (req, res) => {
   try {
-    const project = await Project.findOne({ id: req.params.id });
+    const project = await Project.findOne({ id: req.params.id })
+      .populate("client")
+      .populate("projectManagerRef")
+      .populate("teamMembersRefs");
 
     if (!project) {
       return res.status(404).json({
@@ -84,13 +92,21 @@ router.post("/", async (req, res) => {
       await counter.save();
     }
 
+    const clientRef = await resolveClientRef(clientName);
+    const projectManagerRef = await resolveUserRef(projectManager);
+    const membersList = Array.isArray(teamMembers) ? teamMembers : [];
+    const teamMembersRefs = (await Promise.all(membersList.map(member => resolveUserRef(member)))).filter(Boolean);
+
     const project = new Project({
       id: counter.seq.toString(),
       projectName,
       projectCode,
       clientName,
+      client: clientRef,
       projectManager,
+      projectManagerRef,
       teamMembers,
+      teamMembersRefs,
       startDate,
       endDate,
       budget,
@@ -145,18 +161,28 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    project.projectName = projectName;
-    project.projectCode = projectCode;
-    project.clientName = clientName;
-    project.projectManager = projectManager;
-    project.teamMembers = teamMembers;
-    project.startDate = startDate;
-    project.endDate = endDate;
-    project.budget = budget;
-    project.priority = priority;
-    project.status = status;
-    project.technologyStack = technologyStack;
-    project.description = description;
+    if (projectName !== undefined) project.projectName = projectName;
+    if (projectCode !== undefined) project.projectCode = projectCode;
+    if (clientName !== undefined) {
+      project.clientName = clientName;
+      project.client = await resolveClientRef(clientName);
+    }
+    if (projectManager !== undefined) {
+      project.projectManager = projectManager;
+      project.projectManagerRef = await resolveUserRef(projectManager);
+    }
+    if (teamMembers !== undefined) {
+      project.teamMembers = teamMembers;
+      const membersList = Array.isArray(teamMembers) ? teamMembers : [];
+      project.teamMembersRefs = (await Promise.all(membersList.map(member => resolveUserRef(member)))).filter(Boolean);
+    }
+    if (startDate !== undefined) project.startDate = startDate;
+    if (endDate !== undefined) project.endDate = endDate;
+    if (budget !== undefined) project.budget = budget;
+    if (priority !== undefined) project.priority = priority;
+    if (status !== undefined) project.status = status;
+    if (technologyStack !== undefined) project.technologyStack = technologyStack;
+    if (description !== undefined) project.description = description;
 
     await project.save();
 

@@ -37,3 +37,9 @@ export const exportPDF = async () => {
 
   return res.data;
 };
+
+// Generate Report
+export const generateReport = async (reportData) => {
+  const res = await axios.post(`${API}/generate`, reportData);
+  return res.data;
+};

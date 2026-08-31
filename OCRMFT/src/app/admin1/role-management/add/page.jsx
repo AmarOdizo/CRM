@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 import RoleForm from "../rolecomponents/RoleForm";
 import { addRole } from "../data";
@@ -48,23 +49,22 @@ export default function AddRole() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
-
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Add New Role</h1>
-
-          <p className="mt-2 text-slate-500">
-            Create a new role and assign permissions.
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">Add New Role</h1>
+          <p className="mt-1 text-slate-500 font-medium">
+            Create a new system role and assign modules permissions.
           </p>
         </div>
 
         <Link
           href="/admin1/role-management"
-          className="rounded-xl bg-gray-700 px-5 py-3 font-medium text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={16} />
+          <span>Back to List</span>
         </Link>
       </div>
 

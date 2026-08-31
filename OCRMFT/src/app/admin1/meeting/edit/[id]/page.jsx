@@ -112,158 +112,72 @@ export default function EditMeetingPage() {
     router.push("/admin1/meeting");
   };
 
-  // ==================================================
-  // LOADING
-  // ==================================================
-
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* HEADER */}
-
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <CalendarDays size={22} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Edit Meeting</h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Loading meeting information...
-            </p>
-          </div>
-        </div>
-
-        {/* LOADER */}
-
-        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-          <div className="flex min-h-[350px] flex-col items-center justify-center">
-            <div className="h-9 w-9 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
-
-            <p className="mt-4 text-sm text-gray-500">Loading meeting...</p>
-          </div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="rounded-2xl border border-slate-200 bg-white px-12 py-10 shadow-sm text-center">
+          <div className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-lg font-bold text-slate-700">Loading Schedule...</h2>
+          <p className="text-xs text-slate-400 mt-1">Please wait while we retrieve meeting parameters.</p>
         </div>
       </div>
     );
   }
-
-  // ==================================================
-  // ERROR
-  // ==================================================
 
   if (error || !meeting) {
     return (
-      <div className="mx-auto max-w-6xl space-y-6">
-        {/* HEADER */}
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600">
-              <AlertCircle size={22} />
-            </div>
-
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">Edit Meeting</h1>
-
-              <p className="mt-1 text-sm text-gray-500">
-                Unable to load meeting
-              </p>
-            </div>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div className="w-full max-w-md rounded-2xl border border-rose-200 bg-white p-8 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-600 mb-4">
+            <AlertCircle size={26} />
           </div>
+          <h2 className="text-2xl font-black text-rose-600">Schedule Not Found</h2>
+          <p className="mt-2 text-sm text-slate-500 leading-relaxed mb-6">
+            {error || "The requested meeting timeline details could not be found."}
+          </p>
 
-          <Link
-            href="/admin1/meeting"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+          <button
+            onClick={() => router.push("/admin1/meeting")}
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 cursor-pointer"
           >
-            <ArrowLeft size={17} />
-            Back to Meetings
-          </Link>
-        </div>
-
-        {/* ERROR CARD */}
-
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-          <div className="flex items-start gap-3">
-            <AlertCircle size={22} className="mt-0.5 shrink-0 text-red-600" />
-
-            <div>
-              <h2 className="font-bold text-red-800">Meeting Not Found</h2>
-
-              <p className="mt-1 text-sm text-red-700">
-                {error || "The requested meeting could not be found."}
-              </p>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={fetchMeeting}
-                  className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                >
-                  <RefreshCw size={15} />
-                  Try Again
-                </button>
-
-                <Link
-                  href="/admin1/meeting"
-                  className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100"
-                >
-                  <ArrowLeft size={15} />
-                  Back
-                </Link>
-              </div>
-            </div>
-          </div>
+            <ArrowLeft size={16} />
+            <span>Back to Meetings</span>
+          </button>
         </div>
       </div>
     );
   }
 
-  // ==================================================
-  // MAIN
-  // ==================================================
-
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      {/* ==================================================
-          HEADER
-      ================================================== */}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <CalendarDays size={22} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Edit Meeting</h1>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Update meeting information and schedule
-            </p>
+    <div className="w-full space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+        {/* HEADER */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleCancel}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 cursor-pointer"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                Edit Meeting
+              </h1>
+              <p className="text-xs font-medium text-slate-500 mt-0.5">
+                Modify participants, timing bounds, or online links for this meeting.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* BACK */}
-
-        <Link
-          href="/admin1/meeting"
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-        >
-          <ArrowLeft size={17} />
-          Back to Meetings
-        </Link>
+        {/* FORM */}
+        <MeetingForm
+          meeting={meeting}
+          onSuccess={handleSuccess}
+          onCancel={handleCancel}
+        />
       </div>
-
-      {/* ==================================================
-          FORM
-      ================================================== */}
-
-      <MeetingForm
-        meeting={meeting}
-        onSuccess={handleSuccess}
-        onCancel={handleCancel}
-      />
     </div>
   );
 }

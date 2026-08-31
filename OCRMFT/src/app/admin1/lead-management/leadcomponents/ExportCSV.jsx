@@ -1,14 +1,16 @@
 "use client";
 
+import { Download } from "lucide-react";
 import { exportLeadsToCSV } from "../utils";
 
 export default function ExportCSV({ leads }) {
   return (
     <button
       onClick={() => exportLeadsToCSV(leads)}
-      className="rounded-xl bg-green-600 px-5 py-3 font-semibold text-white shadow-md transition hover:bg-green-700"
+      className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition duration-300 hover:bg-slate-50 hover:text-slate-900 active:scale-95 cursor-pointer"
     >
-      Export CSV
+      <Download size={18} className="text-slate-400" />
+      <span>Export CSV</span>
     </button>
   );
 }
