@@ -47,15 +47,98 @@ router.post("/", async (req, res) => {
 });
 
 // =======================
-// UPDATE ADMIN
+// CHANGE PASSWORD API
 // =======================
 
-router.put("/phone/:phone", async (req, res) => {
+router.put("/change-password", async (req, res) => {
   try {
-    const employee = await Employee.findOneAndUpdate(
-      { phone: req.params.phone }, // Find by phone
-      req.body, // Update data
-      { new: true, runValidators: true },
+    const { id, email, oldPassword, newPassword } = req.body;
+
+    if ((!id && !email) || !oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID/Email, Old Password, and New Password are required",
+      });
+    }
+
+    // Find Employee by ID or Email
+    let employee = null;
+    if (id) {
+      employee = await Employee.findById(id).catch(() => null);
+    }
+    if (!employee && email) {
+      employee = await Employee.findOne({ email });
+    }
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    // Check if Old Password matches stored password
+    if (employee.password !== oldPassword) {
+      return res.status(400).json({
+        success: false,
+        isOldPasswordInvalid: true,
+        message: "not old password please old password correct fill",
+      });
+    }
+
+    // Save New Password into Employee table (overwriting old password)
+    employee.password = newPassword;
+    await employee.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully in Employee Table",
+      data: employee,
+    });
+  } catch (error) {
+    console.error("Change password route error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+});
+
+// =======================
+// GET SINGLE EMPLOYEE BY ID
+// =======================
+
+router.get("/:id", async (req, res) => {
+  try {
+    const employee = await Employee.findById(req.params.id);
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: employee,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// =======================
+// UPDATE EMPLOYEE BY ID
+// =======================
+
+router.put("/:id", async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
     );
 
     if (!employee) {
@@ -68,7 +151,39 @@ router.put("/phone/:phone", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Employee updated successfully",
-      data: Employee,
+      data: employee,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// =======================
+// UPDATE BY PHONE
+// =======================
+
+router.put("/phone/:phone", async (req, res) => {
+  try {
+    const employee = await Employee.findOneAndUpdate(
+      { phone: req.params.phone },
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Employee updated successfully",
+      data: employee,
     });
   } catch (error) {
     res.status(500).json({
@@ -86,7 +201,6 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -94,7 +208,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Find Employee by Email
     const employee = await Employee.findOne({ email });
 
     if (!employee) {
@@ -104,7 +217,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Check Password
     if (employee.password !== password) {
       return res.status(401).json({
         success: false,
@@ -112,7 +224,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Login Success
     res.status(200).json({
       success: true,
       message: "Login Successful",
@@ -124,22 +235,23 @@ router.post("/login", async (req, res) => {
         phone: employee.phone,
         department: employee.department,
         designation: employee.designation,
+        password: employee.password,
       },
     });
   } catch (error) {
     console.log(error);
-
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
   }
 });
-//
+
+let storedOtp = "";
+
 router.post("/send-otp", async (req, res) => {
   try {
     const { phone } = req.body;
-
     const employee = await Employee.findOne({ phone });
 
     if (!employee) {
@@ -149,12 +261,8 @@ router.post("/send-otp", async (req, res) => {
       });
     }
 
-    // OTP Generate
     storedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
     console.log("OTP:", storedOtp);
-
-    // SMS API se OTP send karo
 
     res.status(200).json({
       success: true,
@@ -167,12 +275,12 @@ router.post("/send-otp", async (req, res) => {
     });
   }
 });
-//
+
 router.post("/verify-otp", async (req, res) => {
   const { otp } = req.body;
 
   if (otp === storedOtp) {
-    storedOtp = ""; // OTP clear kar do
+    storedOtp = "";
 
     return res.json({
       success: true,
@@ -185,7 +293,7 @@ router.post("/verify-otp", async (req, res) => {
     message: "Invalid OTP",
   });
 });
-//
+
 router.put("/reset-password", async (req, res) => {
   try {
     const { phone, newPassword } = req.body;
@@ -205,7 +313,6 @@ router.put("/reset-password", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       success: false,
       message: error.message,
