@@ -138,7 +138,7 @@ export default function ViewInvoicePage({ params }) {
   const items = Array.isArray(invoice.items) ? invoice.items : [];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 print:bg-white print:p-0">
+    <div className="w-full space-y-6 print:bg-white print:p-0">
       <div className="mx-auto max-w-4xl">
         {/* PAGE HEADER */}
         <div className="mb-8 flex items-center justify-between print:hidden">

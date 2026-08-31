@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, X, Plus, Trash2, User, Calendar, ClipboardList, DollarSign, FileText } from "lucide-react";
+import { Save, X, Plus, Trash2, User, Calendar, ClipboardList, IndianRupee, FileText } from "lucide-react";
 import { formatDateForInput } from "../utils";
 
 const initialFormData = {
@@ -396,7 +396,7 @@ export default function InvoiceForm({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
           <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
-            <DollarSign size={18} className="text-blue-500" />
+            <IndianRupee size={18} className="text-blue-500" />
             <h3 className="text-base font-bold">Tax & Discount</h3>
           </div>
 
@@ -433,7 +433,7 @@ export default function InvoiceForm({
 
         <div className="rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
           <div className="flex items-center gap-2 pb-3 mb-6 border-b border-slate-100 text-slate-800">
-            <DollarSign size={18} className="text-blue-500" />
+            <IndianRupee size={18} className="text-blue-500" />
             <h3 className="text-base font-bold">Invoice Summary</h3>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, DollarSign, Layers, FileText } from "lucide-react";
+import { User, IndianRupee, Layers, FileText } from "lucide-react";
 
 export default function LeadForm({
   formData,
@@ -100,7 +100,7 @@ export default function LeadForm({
         {/* Section 2: Requirements & budget */}
         <div>
           <div className="flex items-center gap-2 pb-3 mb-5 border-b border-slate-100 text-slate-800">
-            <DollarSign size={18} className="text-blue-500" />
+            <IndianRupee size={18} className="text-blue-500" />
             <h3 className="text-base font-bold">Requirements & Budgets</h3>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -114,7 +114,7 @@ export default function LeadForm({
                 value={formData.estimatedBudget}
                 onChange={handleChange}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                placeholder="₹ 0"
+                placeholder="e.g. ₹50,000 or ₹1,00,000"
               />
             </div>
 

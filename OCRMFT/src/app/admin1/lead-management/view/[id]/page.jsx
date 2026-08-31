@@ -10,7 +10,7 @@ import {
   MapPin,
   Calendar,
   Layers,
-  DollarSign,
+  IndianRupee,
   User,
   Building,
   FileText
@@ -79,7 +79,7 @@ export default function ViewLead() {
     .toUpperCase();
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -148,7 +148,7 @@ export default function ViewLead() {
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { label: "Estimated Budget", val: lead.estimatedBudget || "-", icon: DollarSign, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+              { label: "Estimated Budget", val: lead.estimatedBudget || "-", icon: IndianRupee, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
               { label: "Lead Source", val: lead.leadSource || "-", icon: Layers, color: "text-blue-600 bg-blue-50 border-blue-100" },
               { label: "Assigned To", val: lead.assignedEmployee || "-", icon: User, color: "text-purple-600 bg-purple-50 border-purple-100" },
             ].map((metric, idx) => {

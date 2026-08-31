@@ -65,7 +65,7 @@ export default function LeadManagement() {
   const lostLeads = leads.filter((l) => l.status === "Lost").length;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="w-full space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>

@@ -66,7 +66,7 @@ export default function AddQuotationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="w-full space-y-6">
       <div className="mx-auto max-w-5xl space-y-6">
         {/* HEADER */}
         <div className="flex items-center justify-between">

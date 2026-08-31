@@ -15,7 +15,7 @@ import {
   CheckCircle2,
   MapPin,
   Clock,
-  DollarSign,
+  IndianRupee,
   UserCheck,
 } from "lucide-react";
 import {
@@ -212,7 +212,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Revenue</span>
             <div className="rounded-xl bg-cyan-50 p-2.5 text-cyan-600 group-hover:bg-cyan-100 transition-colors">
-              <DollarSign size={20} />
+              <IndianRupee size={20} />
             </div>
           </div>
           <div className="mt-4">

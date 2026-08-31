@@ -73,7 +73,7 @@ export default function ViewUser() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>

@@ -7,7 +7,7 @@ import {
   ArrowLeft,
   Calendar,
   Layers,
-  DollarSign,
+  IndianRupee,
   User,
   Briefcase,
   Code2,
@@ -82,7 +82,7 @@ export default function ViewProject() {
   const code = project.projectCode || "PRJ-XXX";
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -149,7 +149,7 @@ export default function ViewProject() {
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: "Budget", val: project.budget || "-", icon: DollarSign, color: "text-blue-600 bg-blue-50 border-blue-100" },
+              { label: "Budget", val: project.budget || "-", icon: IndianRupee, color: "text-blue-600 bg-blue-50 border-blue-100" },
               { label: "Start Date", val: project.startDate || "-", icon: Calendar, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
               { label: "Deadline", val: project.endDate || "-", icon: Clock, color: "text-rose-600 bg-rose-50 border-rose-100" },
               {

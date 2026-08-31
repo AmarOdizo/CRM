@@ -13,7 +13,7 @@ import {
   RefreshCw,
   Plus,
   FileText,
-  DollarSign,
+  IndianRupee,
   Clock,
   CheckCircle2,
   Eye,
@@ -383,7 +383,7 @@ export default function InvoiceTable() {
           {
             title: "Total Volume",
             val: formatCurrency(totalAmountVal),
-            icon: DollarSign,
+            icon: IndianRupee,
             color: "text-purple-600 bg-purple-50/50 border-purple-200/50",
           },
         ].map((card, idx) => {

@@ -11,7 +11,7 @@ import {
   Activity,
   CheckCircle2,
   Clock,
-  DollarSign,
+  IndianRupee,
   UserCheck,
   Receipt,
   CreditCard,
@@ -505,21 +505,21 @@ export default function AdminReportDashboard() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         <KPICard
           title="Revenue (Paid)"
-          value={`$${totalRevenue.toLocaleString()}`}
-          icon={DollarSign}
+          value={`₹${totalRevenue.toLocaleString("en-IN")}`}
+          icon={IndianRupee}
           color="bg-emerald-500"
           textColor="text-emerald-600"
         />
         <KPICard
           title="Total Invoiced"
-          value={`$${totalInvoiced.toLocaleString()}`}
+          value={`₹${totalInvoiced.toLocaleString("en-IN")}`}
           icon={Receipt}
           color="bg-blue-500"
           textColor="text-blue-600"
         />
         <KPICard
           title="Unpaid Balance"
-          value={`$${pendingInvoiced.toLocaleString()}`}
+          value={`₹${pendingInvoiced.toLocaleString("en-IN")}`}
           icon={CreditCard}
           color="bg-rose-500"
           textColor="text-rose-600"
@@ -968,7 +968,7 @@ function TableRowData({ tab, data }) {
         <>
           {cell(data._id, "font-mono text-xs text-slate-550 max-w-[120px] truncate")}
           {cell(data.transactionId)}
-          {cell(`$${(Number(data.amount) || 0).toLocaleString()}`, "font-bold text-emerald-600")}
+          {cell(`₹${(Number(data.amount) || 0).toLocaleString("en-IN")}`, "font-bold text-emerald-600")}
           {cell(data.paymentMethod)}
           {cell(formatDate(data.paymentDate))}
           {statusBadge(data.status)}
@@ -1013,8 +1013,8 @@ function TableRowData({ tab, data }) {
         <>
           {cell(data.invoiceNumber, "font-bold text-slate-800")}
           {cell(data.clientName)}
-          {cell(`$${(Number(data.totalAmount) || 0).toLocaleString()}`, "font-bold")}
-          {cell(`$${(Number(data.paidAmount) || 0).toLocaleString()}`, "text-emerald-600")}
+          {cell(`₹${(Number(data.totalAmount) || 0).toLocaleString("en-IN")}`, "font-bold")}
+          {cell(`₹${(Number(data.paidAmount) || 0).toLocaleString("en-IN")}`, "text-emerald-600")}
           {statusBadge(data.paymentStatus)}
           {cell(formatDate(data.invoiceDate))}
         </>
@@ -1063,7 +1063,7 @@ function TableRowData({ tab, data }) {
         <>
           {cell(data.quotationNumber, "font-bold text-slate-800")}
           {cell(data.customerName)}
-          {cell(`$${(Number(data.grandTotal) || 0).toLocaleString()}`, "font-bold text-indigo-600")}
+          {cell(`₹${(Number(data.grandTotal) || 0).toLocaleString("en-IN")}`, "font-bold text-indigo-600")}
           {cell(data.createdBy)}
           {cell(formatDate(data.quotationDate || data.createdAt))}
           {statusBadge(data.status)}
